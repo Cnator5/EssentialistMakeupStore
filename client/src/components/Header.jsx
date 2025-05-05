@@ -11,6 +11,8 @@ import UserMenu from './UserMenu';
 import { DisplayPriceInRupees } from '../utils/DisplayPriceInRupees';
 import { useGlobalContext } from '../provider/GlobalProvider';
 import DisplayCartItem from './DisplayCartItem';
+import Dropdown from './Dropdown';
+
 
 const Header = () => {
     const [isMobile] = useMobile()
@@ -22,6 +24,7 @@ const Header = () => {
     const cartItem = useSelector(state => state.cartItem.cart)
     const { totalPrice, totalQty } = useGlobalContext()
     const [openCartSection, setOpenCartSection] = useState(false)
+    const [openMakeup, setOpenMakeup] = useState(false)
 
     const redirectToLoginPage = () => {
         navigate("/login")
@@ -38,6 +41,19 @@ const Header = () => {
         }
         navigate("/user")
     }
+
+    // Optional: close dropdown when clicking away
+    useEffect(() => {
+        const handler = (e) => {
+            if (!e.target.closest('.makeup-dropdown')) {
+                setOpenMakeup(false);
+            }
+        };
+        if (openMakeup) {
+            document.addEventListener('mousedown', handler);
+        }
+        return () => document.removeEventListener('mousedown', handler);
+    }, [openMakeup]);
 
     return (
         <header className='h-24 lg:h-20 lg:shadow-md sticky top-0 z-40 flex flex-col justify-center gap-1 bg-white'>
@@ -66,6 +82,13 @@ const Header = () => {
                             </Link>
                         </div>
 
+                        {/* Makeup category dropdown */}
+                        <div className='flex-1 lg:flex hidden items-center justify-center relative'>
+                            <Dropdown />
+                        </div>
+
+                       
+
                         {/* Search */}
                         <div className='hidden lg:block flex-1 px-3'>
                             <Search />
@@ -83,7 +106,7 @@ const Header = () => {
                                 {
                                     user?._id ? (
                                         <div className='relative'>
-                                            <div onClick={() => setOpenUserMenu(preve => !preve)} className='flex select-none items-center gap-1 cursor-pointer'>
+                                            <div onClick={() => setOpenUserMenu(preve => !preve)} className='flex select-none items-center gap-1 cursor-pointer text-semibold text-lg'>
                                                 <p>Account</p>
                                                 {
                                                     openUserMenu ? (
