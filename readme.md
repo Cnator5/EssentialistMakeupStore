@@ -1,0 +1,1 @@
+# EssentialistMakeupStore Full Stack MERN App
