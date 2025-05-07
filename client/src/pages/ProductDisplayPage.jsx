@@ -11,6 +11,8 @@ import image2 from '../assets/Best_Prices_Offers.png';
 import image3 from '../assets/Wide_Assortment.avif';
 import { pricewithDiscount } from '../utils/PriceWithDiscount';
 import AddToCartButton from '../components/AddToCartButton';
+import { valideURLConvert } from '../utils/valideURLConvert'
+
 import { Helmet } from 'react-helmet';
 
 const ProductDisplayPage = () => {
@@ -57,13 +59,51 @@ const ProductDisplayPage = () => {
     imageContainer.current.scrollLeft -= 100;
   };
 
+  const imageUrl =
+  data && data.image && data.image[0]
+    ? (data.image[0].startsWith("http")
+        ? data.image[0]
+        : `https://www.esmakeupstore.com/assets/${data.image[0]}`)
+    : "https://www.esmakeupstore.com/assets/logo.jpg";
+
   return (
     <section className='container mx-auto p-4 grid lg:grid-cols-2 '>
       <Helmet>
-        <title>{data.name} - Essentialist Makeup Store</title>
-        <meta name="description" content={data.description} />
-        <meta name="keywords" content="makeup, beauty, cosmetics, {data.name}, {data.unit}, discounts, offers" />
-      </Helmet>
+  <title>{data.name} - Essentialist Makeup Store | Makeup Essentials</title>
+  <meta name="description" content={data.description} />
+  <meta
+    name="keywords"
+    content={`makeup, beauty, cosmetics, ${data.name}, ${data.unit}, discounts, offers`}
+  />
+  <link
+    rel="canonical"
+    href={`https://www.esmakeupstore.com/${valideURLConvert(data.name)}-${productId}`}
+  />
+  <meta property="og:title" content={`${data.name} - Essentialist Makeup Store`} />
+  <meta property="og:description" content={data.description} />
+  <meta
+    property="og:image"
+    content={
+      data.image && data.image[0]
+        ? (data.image[0].startsWith("http")
+            ? data.image[0]
+            : `https://www.esmakeupstore.com/assets/${data.image[0]}`)
+        : "https://www.esmakeupstore.com/assets/default-og-image.jpg"
+    }
+  />
+  <meta
+    property="og:url"
+    content={`https://www.esmakeupstore.com/${valideURLConvert(data.name)}-${productId}`}
+  />
+  <meta property="og:type" content="product" />
+  <meta property="og:site_name" content="Essentialist Makeup Store" />
+
+  {/* Product Price OG tags (use correct prefix) */}
+  <meta property="product:price:amount" content={data.price} />
+  <meta property="product:price:currency" content="XAF" />
+
+  <meta name="robots" content="index, follow" />
+</Helmet>
 
       <div className=''>
         <div className='bg-white lg:min-h-[65vh] lg:max-h-[65vh] rounded min-h-56 max-h-56 h-full w-full'>

@@ -8,7 +8,8 @@ import EditCategory from '../components/EditCategory';
 import CofirmBox from '../components/CofirmBox';
 import toast from 'react-hot-toast';
 import AxiosToastError from '../utils/AxiosToastError';
-import { Helmet } from 'react-helmet';
+
+
 
 const CategoryPage = () => {
     const [openUploadCategory, setOpenUploadCategory] = useState(false);
@@ -67,12 +68,6 @@ const CategoryPage = () => {
 
     return (
         <section className=''>
-            <Helmet>
-                <title>Categories - Essentialist Makeup Store in Douala</title>
-                <meta name="description" content="Explore various categories of makeup products at the Essentialist Makeup Store in Douala. Find the best beauty products and offers." />
-                <meta name="keywords" content="makeup, beauty, cosmetics, Douala, makeup categories, beauty products" />
-            </Helmet>
-
             <div className='p-2 bg-white shadow-md flex items-center justify-between'>
                 <h2 className='font-semibold'>Category</h2>
                 <button onClick={() => setOpenUploadCategory(true)} className='text-sm border border-primary-200 hover:bg-primary-200 px-3 py-1 rounded'>Add Category</button>

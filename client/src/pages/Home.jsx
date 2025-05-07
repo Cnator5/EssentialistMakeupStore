@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import banner from '../assets/banner.avif';
+import banner2 from '../assets/banner2.avif';
 import bannerMobile from "../assets/cosmetics-beauty-products-for-make-up-sale-banner-vector-25170220.avif";
 import { useSelector } from 'react-redux';
 import { valideURLConvert } from '../utils/valideURLConvert';
@@ -23,13 +24,6 @@ const Home = () => {
 
   return (
     <section className='bg-white'>
-      <Helmet>
-        <title>Essentialist Makeup Store | Discover clean beauty</title>
-        <meta name="description" content="Discover clean beauty products and makeup essentials at Essentialist Makeup Store. Shop our collection of top categories." />
-        <meta name="keywords" content="clean beauty, makeup, cosmetics, skincare, beauty essentials, cruelty-free, vegan makeup" />
-        <link rel="canonical" href="https://www.essentialistmakeupstore.com/" />
-      </Helmet>
-
       <div className='container mx-auto mt-2 px-4'>
         <div className={`w-full h-full min-h-48 bg-blue-10 rounded ${!banner && "animate-pulse my-2"}`}>
           <img src={banner} className='w-full h-full hidden lg:block' alt='banner' />
@@ -37,7 +31,7 @@ const Home = () => {
         </div>
       </div>
       
-      <div className='container mx-auto px-4 my-2 grid grid-cols-5 md:grid-cols-8 lg:grid-cols-10 gap-2'>
+      <div className='container mx-auto px-4 my-2 grid grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2'>
         {
           loadingCategory ? (
             new Array(12).fill(null).map((_, index) => (
@@ -56,7 +50,7 @@ const Home = () => {
                 <div>
                   <img src={cat.image} alt={cat.name} className="w-full h-full object-scale-down" />
                 </div>
-                <div className="text-center text-xs sm:text-sm md:text-base font-semibold text-gray-700 mt-2 truncate">
+                <div className="text-center text-xs sm:text-sm md:text-base font-semibold text-gray-700 mt-2">
                   {cat.name}
                 </div>
               </div>
@@ -75,6 +69,13 @@ const Home = () => {
           />
         ))
       }
+
+      <div className='container mx-auto mt-2 px-4'>
+        <div className={`w-full h-full min-h-48 bg-blue-10 rounded ${!banner && "animate-pulse my-2"}`}>
+          <img src={banner2} className='w-full h-full hidden lg:block' alt='banner' />
+          <img src={bannerMobile} className='w-full h-full lg:hidden' alt='banner' />
+        </div>
+      </div>
     </section>
   );
 };

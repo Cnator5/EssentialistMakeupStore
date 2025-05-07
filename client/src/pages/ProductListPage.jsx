@@ -7,6 +7,7 @@ import Loading from '../components/Loading'
 import CardProduct from '../components/CardProduct'
 import { useSelector } from 'react-redux'
 import { valideURLConvert } from '../utils/valideURLConvert'
+import { Helmet } from 'react-helmet'
 
 const ProductListPage = () => {
   const [data, setData] = useState([])
@@ -74,6 +75,22 @@ const ProductListPage = () => {
 
   return (
     <section className='sticky top-24 lg:top-20'>
+    <Helmet>
+  {/* SEO Meta Tags */}
+  <title>{subCategoryName} - Essentialist Makeup Store | Makeup Essentials</title>
+  <meta name="description" content={`Discover the best of ${subCategoryName} at Essentialist Makeup Store. Shop quality makeup essentials in the ${subCategoryName} category.`} />
+  <meta name="keywords" content={`${subCategoryName}, beauty, cosmetics, makeup, ${subCategoryName} products`} />
+  <link rel="canonical" href={`https://www.esmakeupstore.com/${valideURLConvert(subCategoryName)}-${subCategoryId}`} />
+  <meta name="robots" content="index, follow" />
+
+  {/* Open Graph (OG) Meta Tags */}
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Essentialist Makeup Store" />
+  <meta property="og:url" content={`https://www.esmakeupstore.com/${valideURLConvert(subCategoryName)}-${subCategoryId}`} />
+  <meta property="og:title" content={`${subCategoryName} - Essentialist Makeup Store | Makeup Essentials`} />
+  <meta property="og:description" content={`Discover the best of ${subCategoryName} at Essentialist Makeup Store.`} />
+  <meta property="og:image" content="https://www.esmakeupstore.com/assets/logo.jpg" />
+</Helmet>
       <div className='container sticky top-24  mx-auto grid grid-cols-[90px,1fr]  md:grid-cols-[200px,1fr] lg:grid-cols-[280px,1fr]'>
         {/**sub category **/}
         <div className=' min-h-[88vh] max-h-[88vh] overflow-y-scroll  grid gap-1 shadow-md scrollbarCustom bg-white py-2'>
