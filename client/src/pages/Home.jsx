@@ -1,7 +1,6 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import banner from '../assets/banner.avif';
-import banner2 from '../assets/banner2.avif';
+import banner_two from '../assets/banner_two.avif';
 import bannerMobile from "../assets/cosmetics-beauty-products-for-make-up-sale-banner-vector-25170220.avif";
 import { useSelector } from 'react-redux';
 import { valideURLConvert } from '../utils/valideURLConvert';
@@ -72,7 +71,7 @@ const Home = () => {
 
       <div className='container mx-auto mt-2 px-4'>
         <div className={`w-full h-full min-h-48 bg-blue-10 rounded ${!banner && "animate-pulse my-2"}`}>
-          <img src={banner2} className='w-full h-full hidden lg:block' alt='banner' />
+          <img src={banner_two} className='w-full h-full hidden lg:block' alt='banner_two' />
           <img src={bannerMobile} className='w-full h-full lg:hidden' alt='banner' />
         </div>
       </div>
