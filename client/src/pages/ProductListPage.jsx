@@ -74,7 +74,7 @@ const ProductListPage = () => {
   }, [params, AllSubCategory])
 
   return (
-    <section className='sticky top-24 lg:top-20'>
+   <>
     <Helmet>
   {/* SEO Meta Tags */}
   <title>{subCategoryName} - Essentialist Makeup Store | Makeup Essentials</title>
@@ -91,6 +91,7 @@ const ProductListPage = () => {
   <meta property="og:description" content={`Discover the best of ${subCategoryName} at Essentialist Makeup Store.`} />
   <meta property="og:image" content="https://www.esmakeupstore.com/assets/logo.jpg" />
 </Helmet>
+ <section className='sticky top-24 lg:top-20'>
       <div className='container sticky top-24  mx-auto grid grid-cols-[90px,1fr]  md:grid-cols-[200px,1fr] lg:grid-cols-[280px,1fr]'>
         {/**sub category **/}
         <div className=' min-h-[88vh] max-h-[88vh] overflow-y-scroll  grid gap-1 shadow-md scrollbarCustom bg-white py-2'>
@@ -110,7 +111,7 @@ const ProductListPage = () => {
                       className=' w-14 lg:h-14 lg:w-12 h-full object-scale-down'
                     />
                   </div>
-                  <p className='-mt-6 lg:mt-0 text-xs text-center lg:text-left lg:text-base'>{s.name}</p>
+                  <p className='-mt-6 lg:mt-0 text-xs text-center lg:text-left lg:text-base sm:text-sm text-pink-400 font-semibold py-6 lg:py-0'>{s.name}</p>
                 </Link>
               )
             })
@@ -150,6 +151,7 @@ const ProductListPage = () => {
         </div>
       </div>
     </section>
+    </>
   )
 }
 

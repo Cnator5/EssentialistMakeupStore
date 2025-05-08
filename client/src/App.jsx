@@ -37,7 +37,8 @@ function App() {
            dispatch(setAllCategory(responseData.data.sort((a, b) => a.name.localeCompare(b.name)))) 
         }
     } catch (error) {
-        
+      console.error("Category fetch failed:", error);
+      toast.error("Failed to fetch categories");
     }finally{
       dispatch(setLoadingCategory(false))
     }
@@ -53,11 +54,13 @@ function App() {
         if(responseData.success){
            dispatch(setAllSubCategory(responseData.data.sort((a, b) => a.name.localeCompare(b.name)))) 
         }
-    } catch (error) {
-        
-    }finally{
+    }catch (error) {
+      console.error("Category fetch failed:", error);
+      toast.error("Failed to fetch categories");
+    } finally {
+      dispatch(setLoadingCategory(false));
     }
-  }
+  };
 
   
 
@@ -86,3 +89,5 @@ function App() {
 }
 
 export default App
+
+

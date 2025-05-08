@@ -67,7 +67,7 @@ const ProductDisplayPage = () => {
     : "https://www.esmakeupstore.com/assets/logo.jpg";
 
   return (
-    <section className='container mx-auto p-4 grid lg:grid-cols-2 '>
+   <>
       <Helmet>
   <title>{data.name} - Essentialist Makeup Store | Makeup Essentials</title>
   <meta name="description" content={data.description} />
@@ -88,7 +88,7 @@ const ProductDisplayPage = () => {
         ? (data.image[0].startsWith("http")
             ? data.image[0]
             : `https://www.esmakeupstore.com/assets/${data.image[0]}`)
-        : "https://www.esmakeupstore.com/assets/default-og-image.jpg"
+        : "https://www.esmakeupstore.com/assets/0d7ef2eINSIG00000668_01n (1).avif"
     }
   />
   <meta
@@ -104,12 +104,12 @@ const ProductDisplayPage = () => {
 
   <meta name="robots" content="index, follow" />
 </Helmet>
-
+   <section className='container mx-auto p-4 grid lg:grid-cols-2 '>
       <div className=''>
         <div className='bg-white lg:min-h-[65vh] lg:max-h-[65vh] rounded min-h-56 max-h-56 h-full w-full'>
           <img
             src={data.image[image]}
-            className='w-full h-full object-scale-down'
+            className='w-full h-full object-scale-down scale-125'
             alt={data.name}
           />
         </div>
@@ -256,6 +256,7 @@ const ProductDisplayPage = () => {
         </div>
       </div>
     </section>
+    </>
   );
 }
 

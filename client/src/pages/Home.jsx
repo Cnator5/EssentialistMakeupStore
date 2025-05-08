@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { valideURLConvert } from '../utils/valideURLConvert';
 import { Link, useNavigate } from 'react-router-dom';
 import CategoryWiseProductDisplay from '../components/CategoryWiseProductDisplay';
+// import AdMarquee from './../components/AdMarquee';
 
 const Home = () => {
   const loadingCategory = useSelector(state => state.product.loadingCategory);
@@ -23,6 +24,7 @@ const Home = () => {
 
   return (
     <section className='bg-white'>
+      {/* <AdMarquee/> */}
       <div className='container mx-auto mt-2 px-4'>
         <div className={`w-full h-full min-h-48 bg-blue-10 rounded ${!banner && "animate-pulse my-2"}`}>
           <img src={banner} className='w-full h-full hidden lg:block' alt='banner' />
@@ -30,7 +32,7 @@ const Home = () => {
         </div>
       </div>
       
-      <div className='container mx-auto px-4 my-2 grid grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2'>
+      <div className='container mx-auto px-4 my-2 grid grid-cols-5 md:grid-cols-5 lg:grid-cols-5 gap-2'>
         {
           loadingCategory ? (
             new Array(12).fill(null).map((_, index) => (
