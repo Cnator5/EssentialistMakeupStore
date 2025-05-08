@@ -73,8 +73,8 @@ const ProductDisplayPage = () => {
   <meta name="description" content={data.description} />
   <meta
     name="keywords"
-    content={`makeup, beauty, cosmetics, ${data.name}, ${data.unit}, discounts, offers`}
-  />
+  content={`makeup, beauty, cosmetics, ${data.name}, ${data.unit}, discounts, offers, foundation, lipstick, mascara, eyeliner, eyeshadow, blush, bronzer, highlighter, contour, concealer, primer, setting spray, setting powder, makeup base, tinted moisturizer, BB cream, CC cream, powder, face palette, makeup palette, lip gloss, lip liner, matte lipstick, liquid lipstick, lip balm, lip stain, brow pencil, brow gel, brow powder, lash serum, false lashes, eyelash curler, eyeshadow palette, shimmer, glitter makeup, makeup remover, cleansing oil, cleansing balm, facial wipes, makeup sponges, beauty blender, makeup brushes, kabuki brush, blending brush, contour brush, fan brush, eye brush, lip brush, brush cleaner, vegan makeup, cruelty free, organic makeup, mineral makeup, hypoallergenic makeup, waterproof makeup, long wear makeup, sweat proof makeup, travel makeup kit, compact mirror, pocket mirror, makeup bag, vanity case, professional makeup, makeup artist, bridal makeup, wedding makeup, party makeup, glam makeup, natural makeup, nude makeup, smokey eye, cat eye, dewy finish, matte finish, luminous skin, glowing skin, radiant look, skin care, moisturizer, face serum, sheet mask, pore minimizer, anti-aging, sun protection, SPF makeup, beauty tips, makeup tutorial, makeup hacks, makeup trends, best sellers, top rated makeup, new makeup arrivals, exclusive offers, makeup sale, limited edition, gift sets, beauty box, makeup subscription, online makeup store, makeup shopping, beauty store Cameroon, beauty products Cameroon, cosmetics Cameroon, international makeup, imported makeup, premium makeup, affordable makeup, budget beauty, makeup deals, flash sale, best price, free shipping, cash on delivery, easy returns, customer reviews, latest makeup, trending makeup, influencer picks, must-have makeup, essentials`}
+  />  
   <link
     rel="canonical"
     href={`https://www.esmakeupstore.com/${valideURLConvert(data.name)}-${productId}`}
@@ -97,6 +97,8 @@ const ProductDisplayPage = () => {
   />
   <meta property="og:type" content="product" />
   <meta property="og:site_name" content="Essentialist Makeup Store" />
+  <meta property="og:image" content={data.image} />
+  <meta property="og:image:secure_url" content={data.image} />
 
   {/* Product Price OG tags (use correct prefix) */}
   <meta property="product:price:amount" content={data.price} />

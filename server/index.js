@@ -32,7 +32,7 @@ app.use(helmet({
     crossOriginResourcePolicy : false
 }))
 
-const PORT = process.env.PORT || 1010
+const PORT = process.env.PORT || 2025
 
 app.get("/",(request,response)=>{
     ///server to client

@@ -7,6 +7,7 @@ import { valideURLConvert } from '../utils/valideURLConvert';
 import { Link, useNavigate } from 'react-router-dom';
 import CategoryWiseProductDisplay from '../components/CategoryWiseProductDisplay';
 // import AdMarquee from './../components/AdMarquee';
+import { Helmet } from 'react-helmet';
 
 const Home = () => {
   const loadingCategory = useSelector(state => state.product.loadingCategory);
@@ -23,8 +24,49 @@ const Home = () => {
   };
 
   return (
+    <>
+    <Helmet>
+    <title>Buy Makeup Products &amp; Cosmetics Online in Cameroon | EssentialisMakeupStore</title>
+  <meta name="description" content="Shop authentic makeup essentials, cosmetics, and beauty products online in Cameroon. Discover top makeup brands, new arrivals, and exclusive makeup deals only at EssentialisMakeupStore. Free shipping and cash on delivery available!" />
+  <meta name="keywords" content="makeup, makeup store, buy makeup online, makeup Cameroon, cosmetics, beauty, lipstick, foundation, eyeshadow, mascara, makeup essentials, EssentialisMakeupStore, beauty products, online makeup shop, best makeup brands Cameroon, makeup deals, beauty shopping" />
+
+  {/* SEO Canonical */}
+  <link rel="canonical" href="https://www.esmakeupstore.com/" />
+
+  {/* Favicon & Icons */}
+  <link rel="icon" type="image/avif" href="/icon.avif" />
+  <link rel="apple-touch-icon" href="/icon.png" />
+
+  {/* PWA / Mobile  */}
+  <meta name="theme-color" content="#faf6f3" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  {/* Open Graph (Facebook, Messenger, WhatsApp etc.)  */}
+  <meta property="og:title" content="Shop Makeup Essentials &amp; Cosmetics Online in Cameroon | EssentialisMakeupStore" />
+  <meta property="og:description" content="Get the latest makeup products, cosmetics, and beauty essentials from your favorite brands. Shop lipsticks, eyeshadows, foundations, and more at EssentialisMakeupStore. Free shipping &amp; cash on delivery!" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="EssentialisMakeupStore" />
+  <meta property="og:url" content="https://www.esmakeupstore.com/" />
+  <meta property="og:image" content="https://www.esmakeupstore.com/icon.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="EssentialisMakeupStore Logo" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="fr_CM" />
+
+  <meta name="twitter:title" content="Shop Makeup Essentials &amp; Cosmetics Online in Cameroon | EssentialisMakeupStore" />
+  <meta name="twitter:description" content="Discover a wide range of makeup products and cosmetics at EssentialisMakeupStore. Shop online for the best makeup deals and trending beauty items in Cameroon." />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <meta property="al:android:package" content="com.fsn.esmakeupstore" />
+  <meta property="al:android:app_name" content="EssentialisMakeupStore: Makeup Shopping App" />
+  <meta property="al:ios:app_name" content="EssentialisMakeupStore – Makeup Shopping" />
+    </Helmet>
     <section className='bg-white'>
       {/* <AdMarquee/> */}
+     
       <div className='container mx-auto mt-2 px-4'>
         <div className={`w-full h-full min-h-48 bg-blue-10 rounded ${!banner && "animate-pulse my-2"}`}>
           <img src={banner} className='w-full h-full hidden lg:block' alt='banner' />
@@ -78,6 +120,7 @@ const Home = () => {
         </div>
       </div>
     </section>
+    </>
   );
 };
 
