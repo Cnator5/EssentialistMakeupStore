@@ -4,31 +4,60 @@
     <loc>https://esmakeupstore.com/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-  </url>
+  </url>  
   <url>
     <loc>https://esmakeupstore.com/search</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://esmakeupstore.com/login</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://esmakeupstore.com/register</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <!-- Example dynamic routes, update with real slugs/IDs -->
-  <url>
-    <loc>https://esmakeupstore.com/makeup/subCategoryId</loc>
+    <loc>https://esmakeupstore.com/makeup/face</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://esmakeupstore.com/product/productId</loc>
+    <loc>https://esmakeupstore.com/makeup/eyes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
+  <url>
+    <loc>https://esmakeupstore.com/makeup/lips</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://esmakeupstore.com/makeup/nails</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://esmakeupstore.com/makeup/makeup-top-brands</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://esmakeupstore.com/makeup/makeup-kits-combos</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://esmakeupstore.com/makeup/makeup-tools-brushes</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://esmakeupstore.com/makeup/makeup-trending-searches</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://esmakeupstore.com/makeup/multi-functional-makeup-palettes</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://esmakeupstore.com/product/123456</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>  
 </urlset>

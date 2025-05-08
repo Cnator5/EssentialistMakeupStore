@@ -36,21 +36,6 @@
 //     })
 // })
 
-// app.use('/api/user',userRouter)
-// app.use("/api/category",categoryRouter)
-// app.use("/api/file",uploadRouter)
-// app.use("/api/subcategory",subCategoryRouter)
-// app.use("/api/product",productRouter)
-// app.use("/api/cart",cartRouter)
-// app.use("/api/address",addressRouter)
-// app.use('/api/order',orderRouter)
-
-// connectDB().then(()=>{
-//     app.listen(PORT,()=>{
-//         console.log("Server is running",PORT)
-//     })
-// })
-
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
@@ -68,7 +53,7 @@ import cartRouter from './route/cart.route.js'
 import addressRouter from './route/address.route.js'
 import orderRouter from './route/order.route.js'
 
-// Import your models (adjust paths as necessary)
+// Import your models (adjust the paths as needed)
 import Category from './models/category.model.js'
 import SubCategory from './models/subCategory.model.js'
 import Product from './models/product.model.js'
@@ -80,48 +65,48 @@ app.use(cors({
 }))
 app.use(express.json())
 app.use(cookieParser())
-app.use(morgan())
+app.use(morgan('dev'))
 app.use(helmet({
     crossOriginResourcePolicy : false
 }))
 
 const PORT = process.env.PORT || 1010
 
-app.get("/",(request,response)=>{
-    ///server to client
-    response.json({
-        message : "Server is running " + PORT
+app.get("/", (req, res) => {
+    res.json({
+        message: "Server is running " + PORT
     })
 })
 
-app.use('/api/user',userRouter)
-app.use("/api/category",categoryRouter)
-app.use("/api/file",uploadRouter)
-app.use("/api/subcategory",subCategoryRouter)
-app.use("/api/product",productRouter)
-app.use("/api/cart",cartRouter)
-app.use("/api/address",addressRouter)
-app.use('/api/order',orderRouter)
+app.use('/api/user', userRouter)
+app.use("/api/category", categoryRouter)
+app.use("/api/file", uploadRouter)
+app.use("/api/subcategory", subCategoryRouter)
+app.use("/api/product", productRouter)
+app.use("/api/cart", cartRouter)
+app.use("/api/address", addressRouter)
+app.use('/api/order', orderRouter)
 
-// --- SITEMAP ROUTE ---
+// ---- SITEMAP ROUTE ----
 app.get('/sitemap.xml', async (req, res) => {
     const domain = 'https://esmakeupstore.com'
 
-    // Static public URLs
+    // Static URLs
     const staticUrls = [
-        '/',
-        '/search',
-        '/login',
-        '/register'
+        { path: '/', changefreq: 'weekly', priority: 1.0 },
+        { path: '/search', changefreq: 'weekly', priority: 0.8 },
+        { path: '/login', changefreq: 'monthly', priority: 0.5 },
+        { path: '/register', changefreq: 'monthly', priority: 0.5 }
     ]
 
-    // Fetch categories and subcategories
-    // Adjust queries according to your schema!
-    const categories = await Category.find({}).lean()
-    const subcategories = await SubCategory.find({}).lean()
-    const products = await Product.find({}).lean()
+    // Fetch dynamic data
+    const [categories, subcategories, products] = await Promise.all([
+        Category.find({}).lean(),
+        SubCategory.find({}).lean(),
+        Product.find({}).lean()
+    ])
 
-    // Map subcategories by categoryId for easier lookup
+    // Map subcategories by categoryId
     const subCategoriesByCat = {}
     subcategories.forEach(sub => {
         if (!subCategoriesByCat[sub.categoryId]) subCategoriesByCat[sub.categoryId] = []
@@ -129,60 +114,54 @@ app.get('/sitemap.xml', async (req, res) => {
     })
 
     // Build URLs
-    let urls = staticUrls.map(path => ({
-        loc: `${domain}${path}`,
-        changefreq: 'weekly',
-        priority: path === '/' ? 1.0 : 0.7,
+    let urls = staticUrls.map(item => ({
+        loc: `${domain}${item.path}`,
+        changefreq: item.changefreq,
+        priority: item.priority
     }))
 
     // Category/SubCategory URLs
-    categories.forEach(category => {
-        const catSlug = encodeURIComponent(category.slug || category.name || category._id)
-        if (subCategoriesByCat[category._id]) {
-            subCategoriesByCat[category._id].forEach(sub => {
+    categories.forEach(cat => {
+        const catSlug = encodeURIComponent(cat.slug || cat.name || cat._id)
+        if (subCategoriesByCat[cat._id]) {
+            subCategoriesByCat[cat._id].forEach(sub => {
                 const subSlug = encodeURIComponent(sub.slug || sub.name || sub._id)
                 urls.push({
                     loc: `${domain}/${catSlug}/${subSlug}`,
                     changefreq: 'weekly',
-                    priority: 0.7,
+                    priority: 0.7
                 })
             })
         }
     })
 
     // Product URLs
-    products.forEach(product => {
-        const prodId = encodeURIComponent(product.slug || product._id)
+    products.forEach(prod => {
+        const prodSlug = encodeURIComponent(prod.slug || prod._id)
         urls.push({
-            loc: `${domain}/product/${prodId}`,
+            loc: `${domain}/product/${prodSlug}`,
             changefreq: 'weekly',
-            priority: 0.7,
+            priority: 0.7
         })
     })
 
     // Generate XML
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset
-  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
->
-  ${urls
-    .map(
-      (u) => `<url>
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+        urls.map(u => 
+`  <url>
     <loc>${u.loc}</loc>
     <changefreq>${u.changefreq}</changefreq>
     <priority>${u.priority}</priority>
-  </url>`
-    )
-    .join('\n  ')}
-</urlset>`
+  </url>`).join('\n') +
+        `\n</urlset>`
 
     res.header('Content-Type', 'application/xml')
     res.send(xml)
 })
-// --- END SITEMAP ROUTE ---
+// ---- END SITEMAP ROUTE ----
 
-connectDB().then(()=>{
-    app.listen(PORT,()=>{
-        console.log("Server is running",PORT)
+connectDB().then(() => {
+    app.listen(PORT, () => {
+        console.log("Server is running", PORT)
     })
 })
