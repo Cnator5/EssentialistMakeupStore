@@ -1,5 +1,4 @@
 User-agent: *
-Disallow: /login
-Disallow: /register
+
 Allow: /
 Sitemap: https://esmakeupstore.com/sitemap.xml
