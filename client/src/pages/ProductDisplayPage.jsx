@@ -69,7 +69,7 @@ const ProductDisplayPage = () => {
   return (
    <>
       <Helmet>
-  <title>{data.name} - Essentialist Makeup Store | Makeup Essentials</title>
+      <title>{`${data.name} Makeup Essentials &amp;  Makeup in Cameroon | Essentialist Makeup Store`}</title>
   <meta name="description" content={data.description} />
   <meta
     name="keywords"

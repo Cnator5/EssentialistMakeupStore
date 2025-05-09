@@ -76,15 +76,13 @@ const ProductListPage = () => {
   return (
    <>
     <Helmet>
-  {/* SEO Meta Tags */}
-  <title>{subCategoryName} - Essentialist Makeup Store | Makeup Essentials</title>
+  <title>{subCategoryName} - Essentialist Makeup Store | Makeup in Cameroon</title>
   <meta name="description" content={`Discover the best of ${subCategoryName} at Essentialist Makeup Store. Shop quality makeup essentials in the ${subCategoryName} category.`} />
   {/* <meta name="keywords" content={`${subCategoryName}, beauty, cosmetics, makeup, ${subCategoryName} products`} /> */}
   <meta name="keywords" content={`${subCategoryName}, beauty, cosmetics, makeup, ${subCategoryName} products, face makeup, eye makeup, lipsticks, foundations, concealers, blush, bronzer, highlighter, mascara, eyeliner, eyeshadow, makeup brushes, makeup tools, setting spray, primer, makeup remover, cruelty-free makeup, waterproof makeup, vegan makeup, makeup kits, contour, makeup trends, affordable makeup, professional makeup, makeup palette, skin care, glowing skin, natural makeup, glam makeup, long lasting makeup, matte lipstick, liquid foundation, makeup tutorial, bridal makeup, makeup sale, makeup deals, makeup online Cameroon"`} />
   <link rel="canonical" href={`https://www.esmakeupstore.com/${valideURLConvert(subCategoryName)}-${subCategoryId}`} />
   <meta name="robots" content="index, follow" />
 
-  {/* Open Graph (OG) Meta Tags */}
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Essentialist Makeup Store" />
   <meta property="og:url" content={`https://www.esmakeupstore.com/${valideURLConvert(subCategoryName)}-${subCategoryId}`} />

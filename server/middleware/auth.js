@@ -6,7 +6,8 @@ const auth = async(request,response,next)=>{
        
         if(!token){
             return response.status(401).json({
-                message : "Provide token"
+                // message : "Provide token"
+                message : "Please login to have access",
             })
         }
 
@@ -14,7 +15,7 @@ const auth = async(request,response,next)=>{
 
         if(!decode){
             return response.status(401).json({
-                message : "unauthorized access",
+                message : "unauthorized access, please login", 
                 error : true,
                 success : false
             })
