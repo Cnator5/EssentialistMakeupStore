@@ -64,7 +64,7 @@ const Footer = () => {
       </div>
       
       {/* Main Footer Content */}
-      <div className="px-8 py-12">
+      <div className="px-8 py-12 text-black">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* About Us Section */}
           <div>
@@ -77,7 +77,7 @@ const Footer = () => {
             <div className="space-y-2">
               <div className="flex items-center text-black">
                 <span className="inline-block mr-2">✉</span>
-                <a href="mailto:info@girlyessentials.com.ng" className="hover:text-pink-500 transition duration-300">esssmakeup@gmail.com</a>
+                <a href="mailto:info@girlyessentials.com.ng" className="hover:text-pink-500 transition duration-300 text-black">esssmakeup@gmail.com</a>
               </div>
               
               <div className="flex items-center text-black">
@@ -189,7 +189,7 @@ const Footer = () => {
           </div>
         </div>
           {/* Legal Links */}
-          <div className="border-t border-gray-200 pt-6 text-center text-xs bg-gray-500 text-white p-4 mt-10">
+          {/* <div className="border-t border-gray-200 pt-6 text-center text-xs bg-gray-500 text-white p-4 mt-10">
             <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 mb-4">
               <a href="#" className="hover:text-yellow-400">Terms & Conditions</a>
               <a href="#" className="hover:text-yellow-400">Shipping Policy</a>
@@ -197,11 +197,11 @@ const Footer = () => {
               <a href="#" className="hover:text-yellow-400">Privacy Policy</a>
             </div>
             <p>© {currentYear} EssentialistMakeupStore E-RETAIL LIMITED All Rights Reserved.</p>
-          </div>
+          </div> */}
        {/* Popular Links */}
-          <div className="mt-8">
-            <h4 className="text-sm font-medium mb-3 text-gray-900">Popular Makeup Links</h4>
-            <div className="text-xs text-gray-900 flex flex-wrap gap-x-2 gap-y-1">
+         {/*  <div className="mt-8">
+            <h4 className="text-sm font-medium mb-3 text-black">Popular Makeup Links</h4>
+            <div className="text-xs text-black flex flex-wrap gap-x-2 gap-y-1">
               <a href="#" className="hover:text-pink-600">lipstick</a>|
               <a href="#" className="hover:text-pink-600">highlighter</a>|
               <a href="#" className="hover:text-pink-600">concealer</a>|
@@ -225,7 +225,7 @@ const Footer = () => {
               <a href="#" className="hover:text-pink-600">contour palette</a>|
               <a href="#" className="hover:text-pink-600">primer</a>
             </div>
-          </div>
+          </div> */}
       </div>
     </footer>
   );

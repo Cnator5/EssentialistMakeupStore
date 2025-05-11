@@ -16,6 +16,7 @@ const Login = () => {
         password: "",
     })
     const [showPassword, setShowPassword] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
@@ -35,6 +36,7 @@ const Login = () => {
 
     const handleSubmit = async(e)=>{
         e.preventDefault()
+        setIsLoading(true)
 
         try {
             const response = await Axios({
@@ -63,10 +65,9 @@ const Login = () => {
 
         } catch (error) {
             AxiosToastError(error)
+        } finally {
+            setIsLoading(false)
         }
-
-
-
     }
     return (
         <section className='w-full container mx-auto px-2'>
@@ -110,7 +111,12 @@ const Login = () => {
                         <Link to={"/forgot-password"} className='block ml-auto hover:text-primary-200'>Forgot password ?</Link>
                     </div>
     
-                    <button disabled={!valideValue} className={` ${valideValue ? "bg-pink-400 hover:bg-yeelow-400" : "bg-gray-500" }    text-white py-2 rounded font-semibold my-3 tracking-wide`}>Login</button>
+                    <button 
+                        disabled={!valideValue || isLoading} 
+                        className={` ${valideValue ? "bg-pink-400 hover:bg-yeelow-400" : "bg-gray-500" }    text-white py-2 rounded font-semibold my-3 tracking-wide`}
+                    >
+                        {isLoading ? 'Logging...' : 'Login'}
+                    </button>
 
                 </form>
 

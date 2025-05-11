@@ -7,6 +7,7 @@ import CardProduct from '../components/CardProduct'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { useLocation } from 'react-router-dom'
 import noDataImage from '../assets/nothing here yet.webp'
+import Search from './../components/Search';
 
 const SearchPage = () => {
   const [data,setData] = useState([])
@@ -73,7 +74,7 @@ const SearchPage = () => {
               hasMore={true}
               next={handleFetchMore}
         >
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 py-4 gap-4'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 py-4 gap-4'>
               {
                 data.map((p,index)=>{
                   return(

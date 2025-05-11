@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import logo from '../assets/logo.jpg'
 import Search from './Search'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
@@ -31,6 +31,11 @@ const Header = () => {
     const [openCartSection, setOpenCartSection] = useState(false)
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [categoryDropdown, setCategoryDropdown] = useState(null)
+    const [isHeaderVisible, setIsHeaderVisible] = useState(true)
+    const [prevScrollPos, setPrevScrollPos] = useState(0)
+
+    const headerRef = useRef(null)
+    const searchBarRef = useRef(null)
 
     const redirectToLoginPage = () => {
         navigate("/login")
@@ -51,6 +56,23 @@ const Header = () => {
         navigate("/user")
     }
 
+    // Handle scroll events for header visibility
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollPos = window.scrollY
+            const isScrollingUp = prevScrollPos > currentScrollPos
+            
+            // Make header visible when scrolling up
+            setIsHeaderVisible(isScrollingUp)
+            
+            // Update previous scroll position
+            setPrevScrollPos(currentScrollPos)
+        }
+
+        window.addEventListener('scroll', handleScroll)
+        return () => window.removeEventListener('scroll', handleScroll)
+    }, [prevScrollPos])
+
     // Close mobile menu on route change
     useEffect(() => {
         setMobileMenuOpen(false)
@@ -69,8 +91,18 @@ const Header = () => {
         return () => document.removeEventListener('mousedown', handler);
     }, [categoryDropdown]);
 
+    // Define header transition styles
+    const headerStyle = {
+        transform: isHeaderVisible ? 'translateY(0)' : 'translateY(-100%)',
+        transition: 'transform 0.3s ease-in-out',
+    };
+
     return (
-        <header className="sticky top-0 z-40 bg-white shadow">
+        <header 
+            ref={headerRef} 
+            className="sticky top-0 z-40 bg-white shadow" 
+            style={headerStyle}
+        >
             {/* Top Contact Bar */}
             <div className="bg-pink-400 text-white py-2 px-2 sm:px-4 flex flex-col lg:flex-row items-center justify-between text-xs sm:text-sm">
                 <div className="flex items-center justify-center lg:justify-start w-full lg:w-auto gap-4">
@@ -119,9 +151,16 @@ const Header = () => {
                             />
                         </Link>
                     </div>
-                    {/* Desktop Search */}
+                    {/* Always Visible Search (shrinks but doesn't disappear) */}
                     {!(isSearchPage && isMobile) && (
-                        <div className="hidden lg:block flex-1 px-3">
+                        <div 
+                            ref={searchBarRef} 
+                            className="lg:block flex-1 px-3"
+                            style={{ 
+                                transition: 'all 0.3s ease',
+                                transform: isHeaderVisible ? 'scale(1)' : 'scale(0.9)',
+                            }}
+                        >
                             <Search />
                         </div>
                     )}
@@ -201,12 +240,7 @@ const Header = () => {
                         </button>
                     </div>
                 </div>
-                {/* Mobile Search */}
-                {!(isSearchPage && isMobile) && (
-                    <div className="block lg:hidden mt-3">
-                        <Search />
-                    </div>
-                )}
+              
             </nav>
 
             {/* Desktop Category Menu */}
@@ -216,23 +250,17 @@ const Header = () => {
                         <div className="flex items-center justify-between hover:text-purple-400 cursor-pointer">
                             <Link to="/">HOME</Link>
                         </div>
-                        <li
-                           
-                        >
+                        <li>
                             <div className="flex text-black items-center hover:text-black">
                                 <Dropdown />
                             </div>
                         </li>
-                        <li
-                      
-                        >
+                        <li>
                         <li>
                          <Link to="/brands" className="block text-white px-2 py-2 hover:text-purple-400">BRANDS</Link>
                         </li>
                         </li>
-                        <li
-                         
-                        >
+                        <li>
                              <li>
                          <Link to="/new-arrival" className="block text-white px-2 py-2 hover:text-purple-400">NEW & HOT</Link>
                         </li>
@@ -258,7 +286,7 @@ const Header = () => {
                             />
                         </Link>
                         <button
-                            className="text-black"
+                            className="text-white"
                             onClick={() => setMobileMenuOpen(false)}
                             aria-label="Close Menu"
                         >
@@ -266,28 +294,27 @@ const Header = () => {
                         </button>
                     </div>
                   {/* mobile Category Menu */}
-            {/* mobile Category Menu */}
-<div className="block   border-t border-purple-800">
-    <div className="block text-black ">
-        <ul className="flex flex-col py-2 space-y-2">
-            <li>
-                <Link to="/" className="block text-white px-2 py-2 hover:text-purple-400">HOME</Link>
-            </li>
-            <li>
-            <Dropdown />
-            </li>
-            <li>
-                <Link to="/brands" className="block text-white px-2 py-2 hover:text-purple-400">Brands</Link>
-            </li>
-            <li>
-                <Link to="/new-arrival" className="block text-white px-2 py-2 hover:text-purple-400">NEW & HOT</Link>
-            </li>
-            <li>
-                <Link to="/contact" className="block text-white px-2 py-2 hover:text-purple-400">CONTACT US</Link>
-            </li>
-        </ul>
-    </div>
-</div>
+                  <div className="block border-t border-purple-800 bg-pink-400 text-black">
+                      <div className="block text-black ">
+                          <ul className="flex flex-col py-2 space-y-2">
+                              <li>
+                                  <Link to="/" className="block text-white px-2 py-2 hover:text-purple-400">HOME</Link>
+                              </li>
+                              <li>
+                              <Dropdown />
+                              </li>
+                              <li>
+                                  <Link to="/brands" className="block text-white px-2 py-2 hover:text-purple-400">Brands</Link>
+                              </li>
+                              <li>
+                                  <Link to="/new-arrival" className="block text-white px-2 py-2 hover:text-purple-400">NEW & HOT</Link>
+                              </li>
+                              <li>
+                                  <Link to="/contact" className="block text-white px-2 py-2 hover:text-purple-400">CONTACT US</Link>
+                              </li>
+                          </ul>
+                      </div>
+                  </div>
 
                 </div>
                 {/* Click overlay to close */}

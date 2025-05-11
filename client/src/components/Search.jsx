@@ -31,19 +31,19 @@ const Search = () => {
     return (
         <div
             className="
-                w-400
-                min-w-[250px] 
-                xs:min-w-[200px]
-                sm:min-w-[260px]
-                md:min-w-[320px]
-                lg:min-w-[420px]
+                w-100
+                min-w-[10px] 
+                xs:min-w-[10px]
+                sm:min-w-[10px]
+                md:min-w-[10px]
+                lg:min-w-[30px]
                 max-w-full
                 h-11 
                 md:h-12
                 rounded-lg border
                 overflow-hidden
                 flex items-center
-                text-neutral-500
+                text-white
                 group focus-within:border-primary-200
                 transition-all
                 duration-200

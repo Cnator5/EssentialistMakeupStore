@@ -7,18 +7,28 @@ import AxiosToastError from '../utils/AxiosToastError'
 import Loading from './Loading'
 import { useSelector } from 'react-redux'
 import { FaMinus, FaPlus } from "react-icons/fa6";
+import { useNavigate } from 'react-router-dom'
 
 const AddToCartButton = ({ data }) => {
     const { fetchCartItem, updateCartItem, deleteCartItem } = useGlobalContext()
     const [loading, setLoading] = useState(false)
     const cartItem = useSelector(state => state.cartItem.cart)
+    const user = useSelector(state => state.user)
     const [isAvailableCart, setIsAvailableCart] = useState(false)
     const [qty, setQty] = useState(0)
-    const [cartItemDetails,setCartItemsDetails] = useState()
+    const [cartItemDetails, setCartItemsDetails] = useState()
+    const navigate = useNavigate()
 
     const handleADDTocart = async (e) => {
         e.preventDefault()
         e.stopPropagation()
+
+        // Check if user is logged in
+        if (!user || !user._id) {
+            toast.error("Please login to add items to cart")
+            navigate("/login")
+            return
+        }
 
         try {
             setLoading(true)
@@ -43,7 +53,6 @@ const AddToCartButton = ({ data }) => {
         } finally {
             setLoading(false)
         }
-
     }
 
     //checking this item in cart or not
@@ -60,17 +69,32 @@ const AddToCartButton = ({ data }) => {
     const increaseQty = async(e) => {
         e.preventDefault()
         e.stopPropagation()
-    
-       const response = await  updateCartItem(cartItemDetails?._id,qty+1)
         
-       if(response.success){
-        toast.success("Item added")
-       }
+        // Check if user is logged in
+        if (!user || !user._id) {
+            toast.error("Please login to add items to cart")
+            navigate("/login")
+            return
+        }
+    
+        const response = await updateCartItem(cartItemDetails?._id, qty+1)
+        
+        if(response.success){
+            toast.success("Item added")
+        }
     }
 
     const decreaseQty = async(e) => {
         e.preventDefault()
         e.stopPropagation()
+        
+        // Check if user is logged in
+        if (!user || !user._id) {
+            toast.error("Please login to manage your cart")
+            navigate("/login")
+            return
+        }
+        
         if(qty === 1){
             deleteCartItem(cartItemDetails?._id)
         }else{
@@ -81,6 +105,7 @@ const AddToCartButton = ({ data }) => {
             }
         }
     }
+    
     return (
         <div className='w-full max-w-[150px]'>
             {
@@ -98,7 +123,6 @@ const AddToCartButton = ({ data }) => {
                     </button>
                 )
             }
-
         </div>
     )
 }

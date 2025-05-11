@@ -15,6 +15,7 @@ const Register = () => {
         confirmPassword: ""
     })
     const [showPassword, setShowPassword] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const navigate = useNavigate()
 
@@ -34,6 +35,8 @@ const Register = () => {
 
     const handleSubmit = async(e)=>{
         e.preventDefault()
+        setIsLoading(true)
+
 
         if(data.password !== data.confirmPassword){
             toast.error(
@@ -66,8 +69,9 @@ const Register = () => {
         } catch (error) {
             AxiosToastError(error)
         }
-
-
+        finally {
+            setIsLoading(false)
+        }
 
     }
     return (
@@ -148,12 +152,19 @@ const Register = () => {
                         </div>
                     </div>
 
-                    <button disabled={!valideValue} className={` ${valideValue ? "bg-pink-400 hover:bg-yellow-400" : "bg-gray-500" }    text-white py-2 rounded font-semibold my-3 tracking-wide`}>Register</button>
+                    {/* <button disabled={!valideValue} className={` ${valideValue ? "bg-pink-400 hover:bg-yellow-400" : "bg-gray-500" }    text-white py-2 rounded font-semibold my-3 tracking-wide`}>Register</button> */}
+
+                     <button 
+                        disabled={!valideValue || isLoading} 
+                        className={` ${valideValue ? "bg-pink-400 hover:bg-yeelow-400" : "bg-gray-500" }    text-white py-2 rounded font-semibold my-3 tracking-wide`}
+                    >
+                        {isLoading ? 'Logging...' : 'Register'}
+                    </button>
 
                 </form>
 
                 <p>
-                    Already have account ? <Link to={"/login"} className='font-semibold text-pink-400 hover:text-yellow-400'>Login</Link>
+                    Already have account ? <Link to={"/login"} className='font-semibold text-pink-400 hover:text-yellow-400'>Register</Link>
                 </p>
             </div>
         </section>
