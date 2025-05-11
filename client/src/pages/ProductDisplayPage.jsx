@@ -12,6 +12,8 @@ import image3 from '../assets/Wide_Assortment.avif';
 import { pricewithDiscount } from '../utils/PriceWithDiscount';
 import AddToCartButton from '../components/AddToCartButton';
 import { valideURLConvert } from '../utils/valideURLConvert'
+import CategoryWiseProductDisplay from '../components/CategoryWiseProductDisplay';
+
 
 import { Helmet } from 'react-helmet';
 
@@ -22,6 +24,7 @@ const ProductDisplayPage = () => {
     name: "",
     image: []
   });
+  const categoryData = useSelector(state => state.product.allCategory);
   const [image, setImage] = useState(0);
   const [loading, setLoading] = useState(false);
   const imageContainer = useRef();
@@ -237,6 +240,17 @@ const ProductDisplayPage = () => {
             </div>
           </div>
         </div>
+
+         {/***display category product */}
+      {
+        categoryData?.map((c) => (
+          <CategoryWiseProductDisplay 
+            key={c?._id + "CategorywiseProduct"} 
+            id={c?._id} 
+            name={c?.name}
+          />
+        ))
+      }
 
         <div className='my-4 grid gap-3 lg:hidden'>
           <div>

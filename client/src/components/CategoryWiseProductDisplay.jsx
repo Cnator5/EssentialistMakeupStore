@@ -71,17 +71,6 @@ const CategoryWiseProductDisplay = ({ id, name }) => {
   const redirectURL =  handleRedirectProductListpage()
     return (
         <div>
-      {/*   <Helmet>
-            <title>{name}</title>
-            <meta name="description" content={`Explore our ${name} collection, featuring a wide range of products to enhance your beauty routine. Shop now for the best ${name} products!`} />
-            <meta name="keywords" content={`${name}, beauty, cosmetics, makeup, ${name} products`} />
-            <link rel="canonical" href={`https://www.esmakeupstore.com/${name}`} />
-            <meta property="og:title" content={`${name} - Essentialist Makeup Store`} />
-            <meta property="og:description" content={`Explore our ${name} collection, featuring a wide range of products to enhance your beauty routine. Shop now for the best ${name} products!`} />
-            <meta property="og:url" content={`https://www.esmakeupstore.com/${name}`} />
-            <meta property="og:type" content="product" />
-            <meta property="og:site_name" content="Essentialist Makeup Store" />
-        </Helmet> */}
             <div className='container mx-auto p-4 flex items-center justify-between gap-4'>
                 <h3 className='font-semibold text-lg md:text-xl'>{name}</h3>
                 <Link  to={redirectURL} className='text-green-600 hover:text-green-400'>See All</Link>

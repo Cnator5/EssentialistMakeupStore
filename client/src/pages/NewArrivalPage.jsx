@@ -1,7 +1,6 @@
 import React from 'react';
-// import bannerVideo from '/banner.mp4';
 import banner from '../assets/banner.avif';
-// import banner_two from '../assets/banner_two.avif';
+import banner_two from '../assets/banner_two.avif';
 import bannerMobile from "../assets/cosmetics-beauty-products-for-make-up-sale-banner-vector-25170220.avif";
 import { useSelector } from 'react-redux';
 import { valideURLConvert } from '../utils/valideURLConvert';
@@ -10,7 +9,7 @@ import CategoryWiseProductDisplay from '../components/CategoryWiseProductDisplay
 // import AdMarquee from './../components/AdMarquee';
 import { Helmet } from 'react-helmet';
 
-const Home = () => {
+const NewArrivalPage = () => {
   const loadingCategory = useSelector(state => state.product.loadingCategory);
   const categoryData = useSelector(state => state.product.allCategory);
   const subCategoryData = useSelector(state => state.product.allSubCategory);
@@ -27,8 +26,8 @@ const Home = () => {
   return (
   <>
   <Helmet>
-  <title>Essentialist Makeup | Discover the Best Makeup Products in Cameroon</title>
-  <meta name="description" content="Explore the best selection of authentic makeup products and cosmetics in Cameroon at Essentialist Makeup Store. Find foundations, lipsticks, eyeshadows, and more. Shop top brands, enjoy exclusive deals, and experience free shipping & cash on delivery!" />
+  <title>New Makeup Products | Discover the Best Makeup Products in Cameroon</title>
+  <meta name="description" content="Explore new selection of authentic makeup products and cosmetics in Cameroon at Essentialist Makeup Store. Find foundations, lipsticks, eyeshadows, and more. Shop top brands, enjoy exclusive deals, and experience free shipping & cash on delivery!" />
   <meta name="keywords" content="makeup, makeup store, buy makeup online, makeup Cameroon, cosmetics, beauty, lipstick, foundation, eyeshadow, mascara, makeup essentials, EssentialisMakeupStore, beauty products, online makeup shop, best makeup brands Cameroon, makeup deals, beauty shopping" />
 
   {/* SEO Canonical */}
@@ -66,17 +65,9 @@ const Home = () => {
   <meta property="al:ios:app_name" content="EssentialisMakeupStore – Makeup Shopping" />
     </Helmet>
     <section className='bg-white'>
-      {/* <AdMarquee/> */}
-     
-      <div className='container mx-auto mt-2 px-4'>
-        <div className={`w-full h-full min-h-48 bg-blue-10 rounded ${!banner && "animate-pulse my-2"}`}>
-        {/* <video autoPlay muted loop className='w-full h-full rounded'>
-          <source src={bannerVideo} type="video/mp4" />
-        </video> */}
-          <img src={banner} className='w-full h-full hidden lg:block' alt='banner' />
-          <img src={bannerMobile} className='w-full h-full lg:hidden' alt='banner' />
+      <div className='hidden md:block'>
+      <h1 className='text-center text-2xl font-bold text-gray-700 my-4'>New Arrival</h1>
         </div>
-      </div>
       
       <div className='container mx-auto px-4 my-2 grid grid-cols-5 md:grid-cols-5 lg:grid-cols-5 gap-2'>
         {
@@ -105,20 +96,9 @@ const Home = () => {
           )
         }
       </div>
-
-      {/***display category product */}
-      {
-        categoryData?.map((c) => (
-          <CategoryWiseProductDisplay 
-            key={c?._id + "CategorywiseProduct"} 
-            id={c?._id} 
-            name={c?.name}
-          />
-        ))
-      }
     </section>
     </>
   );
 };
 
-export default Home;
+export default NewArrivalPage;

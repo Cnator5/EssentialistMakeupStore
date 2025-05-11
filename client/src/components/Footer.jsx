@@ -1,220 +1,195 @@
 import React from 'react';
+import { FaFacebook, FaInstagram, FaTiktok, FaYoutube, FaWhatsapp } from 'react-icons/fa';
 import mtnlogo from '../assets/mtnlogo.png';
 import orange from '../assets/orange.png';
 import stripe from '../assets/stripe.png';
-import google_play from '../assets/google_play.png';
-import app_store from '../assets/app_store.jpeg';
-import {
-  FaPhone,
-  FaInstagram,
-  FaFacebook,
-  FaTiktok,
-  FaYoutube,
-  FaTwitter,
-  FaPinterest,
-  FaHeart,
-  FaTruck,
-  FaUndo,
-  FaCheck,
-  FaStore,
-  FaEnvelope,
-  FaMapMarkerAlt
-} from 'react-icons/fa';
-
 const Footer = () => {
-  const currentYear = new Date().getFullYear();
+  const currentYear = new Date().getFullYear(); // Get the current year
   return (
-    <>
-      <footer className="bg-gray-50 pt-5 mt-5 pb-6 text-gray-900 border-t-8 border-pink-200 shadow-xl">
-        <div className="container mx-auto px-4">
-          {/* Customer Support & Partners */}
-          <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            {/* Customer Support Left */}
-            <div className="text-center md:text-left flex flex-col items-center md:items-start justify-center">
-              <p className="text-gray-900 font-meduim mb-2 uppercase">
-                For any help, you may call us:
-              </p>
-              <div className="flex items-center gap-2 mb-1">
-                <FaPhone className="text-pink-400" />
-                <span className="">+237 6 55 22 55 69</span>
-              </div>
-              <div className="flex items-center gap-2 mb-1">
-                <FaEnvelope className="text-pink-400" />
-                <span className="">essentialistmakeup@gmail.com</span>
-              </div>
-              <div className="flex items-center gap-2 mb-1">
-                <FaMapMarkerAlt className="text-pink-400" />
-                <span className="">
-                  Carrefour Macon, Bonamoussadi Douala Cameroon
-                </span>
-              </div>
-              <p className="text-sm text-gray-500 mt-1">
-                (Monday to Saturday, 8AM to 10PM and Sunday, 10AM to 7PM)
-              </p>
-            </div>
-
-            {/* Partners Right */}
-            <div className="flex flex-col items-center md:items-start">
-              <h1 className="text-sm font-medium text-gray-700 mb-2 self-start">Partners</h1>
-              <div className="w-full">
-                <div className="flex flex-row items-center gap-6 overflow-x-auto py-4 px-2 rounded-lg scrollbar-thin scrollbar-thumb-pink-200 scrollbar-track-gray-100 shadow-md">
-                  <div className="flex-shrink-0 flex items-center justify-center">
-                    <img src={mtnlogo} alt="MTN logo" className="w-20 h-20" />
-                  </div>
-                  <div className="flex-shrink-0 flex items-center justify-center">
-                    <img src={orange} alt="Orange logo" className="w-20 h-20" />
-                  </div>
-                  
-                  <div className="flex-shrink-0 flex items-center justify-center">
-                    <img src={stripe} alt="Stripe logo" className="w-20 h-20" />
-                  </div>
-                  <div className="flex-shrink-0 flex items-center justify-center">
-                    <img src={google_play} alt="google_play logo" className="w-20 h-20" /> 
-                  </div>
-                  <div className="flex-shrink-0 flex items-center justify-center">
-                    <img src={app_store} alt="app_store logo" className="w-20 h-20" /> 
-                  </div>
-                </div>
-              </div>
-            </div>
+    <footer className="bg-white text-white mt-10">
+      {/* Service Benefits Banner */}
+      <div className="flex flex-wrap justify-between py-6 px-8 bg-black border-b border-gray-800">
+        <div className="flex items-center space-x-4">
+          <div className="min-w-14">
+            <svg className="w-14 h-14" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15 20H45M15 20C15 22.7614 12.7614 25 10 25C7.23858 25 5 22.7614 5 20C5 17.2386 7.23858 15 10 15C12.7614 15 15 17.2386 15 20ZM35 35H10M35 35C35 37.7614 37.2386 40 40 40C42.7614 40 45 37.7614 45 35C45 32.2386 42.7614 30 40 30C37.2386 30 35 32.2386 35 35Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </div>
-
-          {/* Main Footer Links */}
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-10 bg-gray-300 p-4">
-            {/* Column 1 */}
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-4">Who are we?</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-pink-400 transition-colors">Careers</a></li>
-                <li><a href="#" className="hover:text-pink-400 transition-colors">Authenticity</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Press</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Testimonials</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors flex">Essential Makeup Store CSR</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Responsible Disclosure</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Investor Relations</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Link to Smart ODR</a></li>
-              </ul>
-            </div>
-
-            {/* Column 2 */}
-            <div>
-              <h3 className="font-semibold text-gray-800 mb-4">Help</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Contact Us</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Frequently asked questions</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Store Locator</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Cancellation & Return</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Shipping & Delivery</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors flex flex-wrap">Sell on Essential Makeup Store</a></li>
-              </ul>
-
-              <h3 className="font-semibold text-gray-800 mb-4 mt-8">Inspire Me</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Beauty Book</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Games Board</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Buying Guides</a></li>
-              </ul>
-            </div>
-
-            {/* Column 3 */}
-            <div>
-              <h3 className="font-semibold text-gray-800 mb-4">Quick Links</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Offer Zone</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">New Launches</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Essential Makeup Store Man</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Essential Makeup Store Fashion</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Essential Makeup Store Pro</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Sitemap</a></li>
-              </ul>
-            </div>
-
-            {/* Column 4 */}
-            <div>
-              <h3 className="font-semibold text-gray-800 mb-4">Top Makeup Categories</h3>
-              <ul className="space-y-2 text-sm">
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Lipstick</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Foundation</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Concealer</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Eyeliner</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Mascara</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Highlighter</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Eyeshadow Palette</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Lip Gloss</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Compact Powder</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Makeup Brushes</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Blush</a></li>
-                <li><a href="#" className="hover:text-pink-600 transition-colors">Bronzer</a></li>
-              </ul>
-            </div>
-
-            {/* Column 5 - Feature Blocks */}
-            <div className="col-span-2 md:col-span-1">
-              <div className="space-y-6">
-                <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-3 mb-2">
-                    <FaTruck className="text-pink-500 text-xl" />
-                    <span className="font-medium">Free Shipping</span>
-                  </div>
-                  <p className="text-xs text-gray-500">On Orders Above 50.000FCFA</p>
-                </div>
-
-                <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-3 mb-2">
-                    <FaUndo className="text-pink-500 text-xl" />
-                    <span className="font-medium">Easy Returns</span>
-                  </div>
-                  <p className="text-xs text-gray-500">15-Day Return Policy</p>
-                </div>
-
-                <div className="border border-gray-200 rounded-lg p-4  hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-3 mb-2">
-                    <FaCheck className="text-pink-500 text-xl" />
-                    <span className="font-medium">100% Authentic</span>
-                  </div>
-                  <p className="text-xs text-gray-500">Products Sourced Directly</p>
-                </div>
-
-                <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-3 mb-2">
-                    <FaStore className="text-pink-500 text-xl" />
-                    <span className="font-medium">1900+ Brands</span>
-                  </div>
-                  <p className="text-xs text-gray-500">1.2 Lakh+ Products</p>
-                </div>
-              </div>
-            </div>
+          <div>
+            <h3 className="text-white font-bold text-base uppercase">NATIONWIDE</h3>
+            <h3 className="text-white font-bold text-base uppercase">SHIPPING</h3>
+            <p className="text-white text-sm">Fast & Reliable</p>
           </div>
-
-          {/* Social Media */}
-          <div className="border-t border-gray-200 pt-8 mb-8">
-            <p className="mb-4 text-center">
-              Show us some love <FaHeart className="inline text-pink-500 animate-pulse" /> on social media
+        </div>
+        
+        <div className="flex items-center space-x-4">
+          <div className="min-w-14">
+            <svg className="w-14 h-14" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="15" width="36" height="26" rx="2" stroke="white" strokeWidth="2"/>
+              <path d="M10 25H46" stroke="white" strokeWidth="2"/>
+              <path d="M16 32H24" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-white font-bold text-base uppercase">ONLINE PAYMENT</h3>
+            <p className="text-white text-sm">100% Secure</p>
+          </div>
+        </div>
+        
+        <div className="flex items-center space-x-4">
+          <div className="min-w-14">
+            <svg className="w-14 h-14" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="28" cy="20" r="8" stroke="white" strokeWidth="2"/>
+              <path d="M14 40V38C14 31.373 20.373 26 28 26C35.627 26 42 31.373 42 38V40" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-white font-bold text-base uppercase">CUSTOMER SUPPORT</h3>
+            <p className="text-white text-sm">Friendly & Courteous</p>
+          </div>
+        </div>
+        
+        <div className="flex items-center space-x-4">
+          <div className="min-w-14">
+            <svg className="w-14 h-14" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="28" cy="28" r="16" stroke="white" strokeWidth="2"/>
+              <path d="M28 18V28L35 32" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-white font-bold text-base uppercase">GREAT PRICES</h3>
+            <p className="text-white text-sm">Value For Money</p>
+          </div>
+        </div>
+      </div>
+      
+      {/* Main Footer Content */}
+      <div className="px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* About Us Section */}
+          <div>
+            <h2 className="text-black uppercase font-bold mb-6 relative after:content-[''] after:absolute after:left-0 after:-bottom-3 after:h-0.5 after:w-12 after:bg-gray-700">ABOUT US</h2>
+            
+            <p className="text-black mb-6">
+              EssentialistMakeupStore is an online retailer that provides one-stop shopping for women's day-to-day essentials. Established in 2025, we are the best and only niche skincare, makeup, and lifestyle store in Cameroon wholly targeted at providing an unmatched range of products for women.
             </p>
-            <div className="flex justify-center space-x-6">
-              <a href="https://www.instagram.com/Essentialistmakeupstore" className="bg-pink-500 text-white p-3 rounded-full hover:bg-pink-600 transition-colors" aria-label="Essentialist Makeup Store Instagram">
-                <FaInstagram className="text-xl" />
-              </a>
-              <a href="https://www.facebook.com/Essentialistmakeupstore" className="bg-pink-500 text-white p-3 rounded-full hover:bg-pink-600 transition-colors" aria-label="Essentialist Makeup Store Facebook">
-                <FaFacebook className="text-xl" />
-              </a>
-              <a href="https://www.tiktok.com/@essentialistmakeupstore" className="bg-pink-500 text-white p-3 rounded-full hover:bg-pink-600 transition-colors" aria-label="Essentialist Makeup Store TikTok">
-                <FaTiktok className="text-xl" />
-              </a>
-              {/* <a href="#" className="bg-pink-500 text-white p-3 rounded-full hover:bg-pink-600 transition-colors">
-                <FaYoutube className="text-xl" />
-              </a>
-              <a href="#" className="bg-pink-500 text-white p-3 rounded-full hover:bg-pink-600 transition-colors">
-                <FaTwitter className="text-xl" />
-              </a>
-              <a href="#" className="bg-pink-500 text-white p-3 rounded-full hover:bg-pink-600 transition-colors">
-                <FaPinterest className="text-xl" />
-              </a> */}
+            
+            <div className="space-y-2">
+              <div className="flex items-center text-black">
+                <span className="inline-block mr-2">✉</span>
+                <a href="mailto:info@girlyessentials.com.ng" className="hover:text-pink-500 transition duration-300">esssmakeup@gmail.com</a>
+              </div>
+              
+              <div className="flex items-center text-black">
+                <span className="inline-block mr-2">📱</span>
+                <span>Phone: +237 655 22 55 69</span>
+              </div>
+              
+              <div className="flex items-center text-black">
+                <span className="inline-block mr-2">🏢</span>
+                <span>Office opening hours - Monday to Friday 9am - 5:30pm</span>
+              </div>
             </div>
           </div>
-
+          
+          {/* Quick Navigation */}
+          <div>
+            <h2 className="text-black uppercase font-bold mb-6 relative after:content-[''] after:absolute after:left-0 after:-bottom-3 after:h-0.5 after:w-12 after:bg-gray-700">QUICK NAVIGATION</h2>
+            
+            <ul className="space-y-3">
+              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">How To Shop</a></li>
+              <li><a href="/cart" className="text-black hover:text-pink-500 transition duration-300">Payments</a></li>
+              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">Shipping</a></li>
+              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">Returns Policy</a></li>
+              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">Terms & Conditions</a></li>
+              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">FAQs</a></li>
+            </ul>
+          </div>
+          
+          {/* Useful Links */}
+          <div>
+            <h2 className="text-black uppercase font-bold mb-6 relative after:content-[''] after:absolute after:left-0 after:-bottom-3 after:h-0.5 after:w-12 after:bg-gray-700">USEFUL LINKS</h2>
+            
+            <ul className="space-y-3">
+              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">Profile</a></li>
+              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">Cart</a></li>
+              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">MY Basket</a></li>
+              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">Returns Policy</a></li>
+              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">Register</a></li>
+              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">Blog</a></li>
+            </ul>
+          </div>
+          
+          {/* Newsletter Section */}
+          <div>
+            <h2 className="text-black uppercase font-bold mb-6 relative after:content-[''] after:absolute after:left-0 after:-bottom-3 after:h-0.5 after:w-12 after:bg-gray-700">JOIN NEWSLETTER!</h2>
+            
+            <div className="flex mb-4">
+              <input 
+                type="email" 
+                placeholder="Your email address" 
+                className="py-2.5 px-4 w-full rounded-l bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-500 transition duration-300"
+              />
+              <button className="bg-pink-400 flex text-white w-auto px-5 py-1 rounded-r font-bold border border-white hover:bg-gray-900 transition duration-300">
+                Sign Up
+              </button>
+            </div>
+            
+            <p className="text-black">
+              Is there a product you can't find on our website? Do tell us <a href="#" className="text-pink-500 hover:underline">here!</a>
+            </p>
+          </div>
+        </div>
+        
+        {/* Divider */}
+        <div className="border-t border-gray-800 my-8"></div>
+        
+        {/* Payment Methods & Social Media */}
+        <div className="flex flex-col md:flex-row justify-between">
+          <div className="mb-6 md:mb-0">
+            <h3 className="text-black font-bold mb-4">Payment Methods:</h3>
+            <div className="flex space-x-2">
+              <div className="bg-white p-1 rounded h-10 w-16 flex items-center justify-center">
+                <img src={stripe} alt="Stripe logo" className="w-40 h-20" />
+              </div>
+              <div className="bg-white p-1 rounded h-10 w-16 flex items-center justify-center">
+                <img src={orange} alt="Orange logo" className="w-20 h-10" />
+              </div>
+              <div className="bg-white  rounded h-10 w-16 flex items-center justify-center">
+                <img src={mtnlogo} alt="mtnlogo" className="w-20 h-10" />
+              </div>
+              {/* <div className="bg-white p-1 rounded h-10 w-16 flex items-center justify-center">
+                <img src="paystack-placeholder.png" alt="Paystack" className="max-h-full" />
+              </div>
+              <div className="bg-white p-1 rounded h-10 w-16 flex items-center justify-center">
+                <img src="verve-placeholder.png" alt="Verve" className="max-h-full" />
+              </div> */}
+            </div>
+          </div>
+          
+          <div>
+            <h3 className="text-black font-bold mb-4">Stay Connected:</h3>
+            <div className="flex space-x-2">
+              <a href="https://www.facebook.com/Essentialistmakeupstore" className="bg-blue-600 w-10 h-10 rounded-full flex items-center justify-center hover:opacity-90 transition duration-300">
+                <FaFacebook size={20} color="white" />
+              </a>
+              <a href="https://www.instagram.com/Essentialistmakeupstore" className="bg-black w-10 h-10 rounded-full flex items-center justify-center hover:opacity-90 transition duration-300 border border-white">
+                <FaInstagram size={20} color="white" />
+              </a>
+              <a href="https://www.youtube.com/Essentialistmakeupstore" className="bg-rose-600 w-10 h-10 rounded-full flex items-center justify-center hover:opacity-90 transition duration-300">
+                <FaYoutube size={20} color="white" />
+              </a>
+              <a href="https://www.whatsapp.com/Essentialistmakeupstore" className="bg-green-600 w-10 h-10 rounded-full flex items-center justify-center hover:opacity-90 transition duration-300">
+                <FaWhatsapp size={20} color="white" />
+              </a>
+              <a href="https://www.tiktok.com/@essentialistmakeupstore" className="bg-black w-10 h-10 rounded-full flex items-center justify-center hover:opacity-90 transition duration-300">
+                <FaTiktok size={20} color="white" />
+                </a>
+            </div>
+          </div>
+        </div>
           {/* Legal Links */}
-          <div className="border-t border-gray-200 pt-6 text-center text-xs bg-gray-500 text-white p-4">
+          <div className="border-t border-gray-200 pt-6 text-center text-xs bg-gray-500 text-white p-4 mt-10">
             <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 mb-4">
               <a href="#" className="hover:text-yellow-400">Terms & Conditions</a>
               <a href="#" className="hover:text-yellow-400">Shipping Policy</a>
@@ -223,8 +198,7 @@ const Footer = () => {
             </div>
             <p>© {currentYear} EssentialistMakeupStore E-RETAIL LIMITED All Rights Reserved.</p>
           </div>
-
-          {/* Popular Links */}
+       {/* Popular Links */}
           <div className="mt-8">
             <h4 className="text-sm font-medium mb-3 text-gray-900">Popular Makeup Links</h4>
             <div className="text-xs text-gray-900 flex flex-wrap gap-x-2 gap-y-1">
@@ -252,9 +226,8 @@ const Footer = () => {
               <a href="#" className="hover:text-pink-600">primer</a>
             </div>
           </div>
-        </div>
-      </footer>
-    </>
+      </div>
+    </footer>
   );
 };
 

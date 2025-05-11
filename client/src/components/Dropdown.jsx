@@ -26,7 +26,7 @@ const Dropdown = () => {
         <div className="relative group">
             {/* Makeup Button - Border Removed */}
             <button
-                className="px-5 py-2.5 bg-gradient-to-r from-pink-50 to-white text-gray-700 font-medium rounded-lg hover:text-pink-600 transition-all duration-300 focus:outline-none"
+                className="p-2 text-white font-medium rounded-lg hover:text-pink-400 transition-all duration-300 focus:outline-none"
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 onFocus={() => setIsHovered(true)}
@@ -35,8 +35,8 @@ const Dropdown = () => {
                 aria-expanded={isHovered}
             >
                 <span className="flex items-center text-semibold text-lg">
-                   Shop All Makeup
-                    <svg className="w-4 h-4 ml-1.5 transition-transform duration-300 transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    Shop All Makeup
+                    <svg className="w-auto h-4 ml-1.5 transition-transform duration-300 transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </span>
@@ -45,14 +45,21 @@ const Dropdown = () => {
             {/* Dropdown Panel */}
             {isHovered && (
                 <div
-                    className="absolute left-0 translate-x-[-25%] top-full mt-1 w-[1250px] max-w-[1250px] bg-white rounded-xl shadow-xl z-50 overflow-hidden transform origin-top scale-y-100 transition-all duration-200"
+                    className="
+                        absolute left-0 top-full mt-1
+                        w-full max-w-full
+                        md:w-[1250px] md:max-w-[1250px]
+                        md:translate-x-[-26.5%]
+                        bg-white rounded-xl shadow-xl z-50 overflow-hidden
+                        transform origin-top scale-y-100 transition-all duration-200
+                    "
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
                 >
                     <div className="bg-gradient-to-r from-pink-500 via-pink-400 to-pink-500 h-1.5"></div>
-                    <div className="p-6 md:p-8">
+                    <div className="p-4 md:p-8">
                         {loadingCategory ? (
-                            <div className="grid grid-cols-3 md:grid-cols-6 gap-6">
+                            <div className="grid grid-cols-2 md:grid-cols-6 gap-6">
                                 {[...Array(12)].map((_, index) => (
                                     <div key={index} className="animate-pulse">
                                         <div className="h-6 w-2/3 bg-gray-200 rounded mb-3" />
@@ -63,7 +70,7 @@ const Dropdown = () => {
                                 ))}
                             </div>
                         ) : (
-                            <div className="grid grid-cols-3 md:grid-cols-6 gap-6">
+                            <div className="grid grid-cols-2 md:grid-cols-6 gap-6">
                                 {categoryData.map((category) => (
                                     <div key={category._id} className="break-inside-avoid">
                                         <div className="font-bold text-dark-50 pb-2 mb-3 text-base tracking-wide border-b border-pink-100">
@@ -73,7 +80,7 @@ const Dropdown = () => {
                                             {getSubcategoriesForCategory(category._id).map((subCat) => (
                                                 <div
                                                     key={subCat._id}
-                                                    className="text-sm text-gray-600 rounded-md hover:bg-pink-50 hover:text-pink-400 cursor-pointer"
+                                                    className="text-sm text-black rounded-md hover:bg-pink-50 hover:text-pink-400 cursor-pointer"
                                                     onClick={() => handleRedirectProductListpage(category._id, category.name, subCat)}
                                                 >
                                                     {subCat.name}

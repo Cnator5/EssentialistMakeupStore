@@ -31,8 +31,8 @@ const Search = () => {
     return (
         <div
             className="
-                w-full
-                min-w-[160px] 
+                w-400
+                min-w-[250px] 
                 xs:min-w-[200px]
                 sm:min-w-[260px]
                 md:min-w-[320px]
@@ -44,11 +44,11 @@ const Search = () => {
                 overflow-hidden
                 flex items-center
                 text-neutral-500
-                bg-slate-50
                 group focus-within:border-primary-200
                 transition-all
                 duration-200
                 px-2
+                 bg-black 
                 "
             style={{
                 boxSizing: 'border-box'

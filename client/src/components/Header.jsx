@@ -14,6 +14,11 @@ import DisplayCartItem from './DisplayCartItem';
 import Dropdown from './Dropdown';
 
 
+import { BsSearch } from 'react-icons/bs';
+import { FaMapMarkerAlt } from 'react-icons/fa';
+import { HiPhone, HiMail } from 'react-icons/hi';
+import { RiMenu3Line, RiCloseLine, RiArrowDropDownLine } from 'react-icons/ri';
+
 const Header = () => {
     const [isMobile] = useMobile()
     const location = useLocation()
@@ -24,10 +29,14 @@ const Header = () => {
     const cartItem = useSelector(state => state.cartItem.cart)
     const { totalPrice, totalQty } = useGlobalContext()
     const [openCartSection, setOpenCartSection] = useState(false)
-    const [openMakeup, setOpenMakeup] = useState(false)
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    const [categoryDropdown, setCategoryDropdown] = useState(null)
 
     const redirectToLoginPage = () => {
         navigate("/login")
+    }
+    const redirectToBrandsPage = () => {
+        navigate("/brands")
     }
 
     const handleCloseUserMenu = () => {
@@ -42,128 +51,253 @@ const Header = () => {
         navigate("/user")
     }
 
-    // Optional: close dropdown when clicking away
+    // Close mobile menu on route change
+    useEffect(() => {
+        setMobileMenuOpen(false)
+    }, [location.pathname])
+
+    // For closing category dropdown on desktop when clicking away
     useEffect(() => {
         const handler = (e) => {
-            if (!e.target.closest('.makeup-dropdown')) {
-                setOpenMakeup(false);
+            if (!e.target.closest('.desktop-dropdown')) {
+                setCategoryDropdown(null);
             }
         };
-        if (openMakeup) {
+        if (categoryDropdown) {
             document.addEventListener('mousedown', handler);
         }
         return () => document.removeEventListener('mousedown', handler);
-    }, [openMakeup]);
+    }, [categoryDropdown]);
 
     return (
-        <header className='h-24 lg:h-20 lg:shadow-md sticky top-0 z-40 flex flex-col justify-center gap-1 bg-white'>
-            {
-                !(isSearchPage && isMobile) && (
-                    <div className='w-full max-w-screen-2xl mx-auto flex items-center px-2 justify-between min-h-[56px]'>
-                        {/* logo */}
-                        <div className='h-full flex-1 min-w-[80px]'>
-                            <Link to={"/"} className='h-full flex justify-start items-center'>
-                                <img
-                                    src={logo}
-                                    width={180}
-                                    height={60}
-                                    alt='logo'
-                                    className='hidden lg:block'
-                                    style={{ maxWidth: "100%", objectFit: "contain" }}
-                                />
-                                <img
-                                    src={logo}
-                                    width={120}
-                                    height={60}
-                                    alt='logo'
-                                    className='lg:hidden'
-                                    style={{ maxWidth: "100%", objectFit: "contain" }}
-                                />
-                            </Link>
-                        </div>
-
-                        {/* Makeup category dropdown */}
-                        <div className='flex-1 lg:flex hidden items-center justify-center relative'>
-                            <Dropdown />
-                        </div>
-
-                       
-
-                        {/* Search */}
-                        <div className='hidden lg:block flex-1 px-3'>
-                            <Search />
-                        </div>
-
-                        {/* login and my cart */}
-                        <div className='flex items-center flex-1 justify-end min-w-[120px]'>
-                            {/* user icons display in only mobile version*/}
-                            <button className='text-pink-400 lg:hidden p-2' onClick={handleMobileUser}>
-                                <FaRegCircleUser size={26} />
-                            </button>
-
-                            {/* Desktop */}
-                            <div className='hidden lg:flex items-center gap-6 xl:gap-10'>
-                                {
-                                    user?._id ? (
-                                        <div className='relative'>
-                                            <div onClick={() => setOpenUserMenu(preve => !preve)} className='flex select-none items-center gap-1 cursor-pointer text-semibold text-lg'>
-                                                <p>Account</p>
-                                                {
-                                                    openUserMenu ? (
-                                                        <GoTriangleUp size={25} />
-                                                    ) : (
-                                                        <GoTriangleDown size={25} />
-                                                    )
-                                                }
-                                            </div>
-                                            {
-                                                openUserMenu && (
-                                                    <div className='absolute right-0 top-12 z-50'>
-                                                        <div className='bg-white rounded p-4 min-w-52 lg:shadow-lg'>
-                                                            <UserMenu close={handleCloseUserMenu} />
-                                                        </div>
-                                                    </div>
-                                                )
-                                            }
-
-                                        </div>
-                                    ) : (
-                                        <button onClick={redirectToLoginPage} className='text-lg px-2'>Login</button>
-                                    )
-                                }
-                                <button onClick={() => setOpenCartSection(true)} className='flex items-center gap-2 bg-pink-400 hover:bg-yellow-400 px-3 py-2 rounded text-white transition-colors duration-200'>
-                                    {/* add to card icons */}
-                                    <div className='animate-bounce'>
-                                        <BsCart4 size={26} />
-                                    </div>
-                                    <div className='font-semibold text-sm text-left'>
-                                        {
-                                            cartItem[0] ? (
-                                                <div>
-                                                    <p>{totalQty} Items</p>
-                                                    <p>{DisplayPriceInRupees(totalPrice)}</p>
-                                                </div>
-                                            ) : (
-                                                <p>My Cart</p>
-                                            )
-                                        }
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
+        <header className="sticky top-0 z-40 bg-white shadow">
+            {/* Top Contact Bar */}
+            <div className="bg-pink-400 text-white py-2 px-2 sm:px-4 flex flex-col lg:flex-row items-center justify-between text-xs sm:text-sm">
+                <div className="flex items-center justify-center lg:justify-start w-full lg:w-auto gap-4">
+                    <div className="flex items-center">
+                        <HiPhone className="mr-1" />
+                        <span className=" sm:flex">+237 655 22 55 69</span>
                     </div>
-                )
-            }
-
-            <div className='w-full max-w-screen-2xl mx-auto px-2 lg:hidden flex'>
-                <Search />
+                    <div className="flex items-center">
+                        <HiMail className="mr-1" />
+                        <span className=" sm:flex">esssmakeup@gmail.com</span>
+                    </div>
+                </div>
+                <div className="font-medium text-center w-full lg:w-auto py-1 lg:py-0">
+                    Welcome To Essentialist Makeup Store
+                </div>
+                <div className="flex items-center justify-center lg:justify-end w-full lg:w-auto gap-2 sm:gap-4 mt-1 lg:mt-0">
+                    <div className="flex items-center cursor-pointer hover:text-purple-200 text-xs sm:text-sm">
+                        <FaMapMarkerAlt className="mr-1" />
+                        <span className="hidden sm:inline">Bonamoussadi, Carrefour Maçon, Douala, Cameroon</span>
+                        <span className="inline sm:hidden">Store</span>
+                    </div>
+                </div>
             </div>
 
-            {
-                openCartSection && (
-                    <DisplayCartItem close={() => setOpenCartSection(false)} />
-                )
-            }
+            {/* Main Navbar */}
+            <nav className="bg-black text-white px-2 sm:px-4 py-3">
+                <div className="flex items-center justify-between">
+                    {/* Logo */}
+                    <div className="flex items-center flex-shrink-0">
+                        <Link to="/" className="flex items-center h-full">
+                            <img
+                                src={logo}
+                                width={180}
+                                height={60}
+                                alt="logo"
+                                className="hidden lg:block"
+                                style={{ maxWidth: "100%", objectFit: "contain" }}
+                            />
+                            <img
+                                src={logo}
+                                width={120}
+                                height={60}
+                                alt="logo"
+                                className="lg:hidden"
+                                style={{ maxWidth: "100%", objectFit: "contain" }}
+                            />
+                        </Link>
+                    </div>
+                    {/* Desktop Search */}
+                    {!(isSearchPage && isMobile) && (
+                        <div className="hidden lg:block flex-1 px-3">
+                            <Search />
+                        </div>
+                    )}
+                    {/* Desktop right actions */}
+                    <div className="hidden lg:flex items-center gap-5">
+                        {/* Account */}
+                        {user?._id ? (
+                            <div className="relative">
+                                <div onClick={() => setOpenUserMenu(prev => !prev)} className="flex select-none items-center gap-1 cursor-pointer text-semibold text-lg">
+                                    <span>Account</span>
+                                    {openUserMenu
+                                        ? <GoTriangleUp size={22} />
+                                        : <GoTriangleDown size={22} />}
+                                </div>
+                                {openUserMenu && (
+                                    <div className='absolute right-0 top-9 z-50'>
+                                        <div className='bg-white text-black rounded p-3 min-w-40 shadow-lg'>
+                                            <UserMenu close={handleCloseUserMenu} />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <button onClick={redirectToLoginPage} className='text-lg px-2'>Login</button>
+                        )}
+                        {/* Cart */}
+                        <button
+                            onClick={() => setOpenCartSection(true)}
+                            className="flex items-center gap-2 bg-pink-400 hover:bg-yellow-400 px-4 py-2 rounded text-white transition-colors duration-200"
+                        >
+                            <div className="animate-bounce">
+                                <BsCart4 size={24} />
+                            </div>
+                            <div className="font-semibold text-sm text-left">
+                                {cartItem[0] ? (
+                                    <>
+                                        <p>{totalQty} Items</p>
+                                        <p>{DisplayPriceInRupees(totalPrice)}</p>
+                                    </>
+                                ) : (
+                                    <p>My Cart</p>
+                                )}
+                            </div>
+                        </button>
+                    </div>
+                    {/* Mobile Hamburger */}
+                    <div className="lg:hidden flex items-center gap-2">
+                        <button
+                            className="text-white mx-1"
+                            onClick={() => setOpenCartSection(true)}
+                            aria-label="Cart"
+                        >
+                            <BsCart4 size={24} />
+                            {totalQty > 0 && (
+                                <span className="ml-1 text-xs bg-pink-400 px-2 py-0.5 rounded-full font-bold">
+                                    {totalQty}
+                                </span>
+                            )}
+                        </button>
+                        <button
+                            className="text-white mx-1"
+                            onClick={handleMobileUser}
+                            aria-label="Account"
+                        >
+                            <FaRegCircleUser size={24} />
+                        </button>
+                        <button
+                            className="text-white mx-1"
+                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            aria-label="Menu"
+                        >
+                            {mobileMenuOpen ? (
+                                <RiCloseLine size={30} />
+                            ) : (
+                                <RiMenu3Line size={30} />
+                            )}
+                        </button>
+                    </div>
+                </div>
+                {/* Mobile Search */}
+                {!(isSearchPage && isMobile) && (
+                    <div className="block lg:hidden mt-3">
+                        <Search />
+                    </div>
+                )}
+            </nav>
+
+            {/* Desktop Category Menu */}
+            <div className="hidden lg:block bg-black text-white border-t border-purple-800">
+                <div className="max-w-screen-2xl mx-auto px-4">
+                    <ul className="flex justify-center space-x-20 py-2">
+                        <div className="flex items-center justify-between hover:text-purple-400 cursor-pointer">
+                            <Link to="/">HOME</Link>
+                        </div>
+                        <li
+                           
+                        >
+                            <div className="flex text-black items-center hover:text-black">
+                                <Dropdown />
+                            </div>
+                        </li>
+                        <li
+                      
+                        >
+                        <li>
+                         <Link to="/brands" className="block text-white px-2 py-2 hover:text-purple-400">BRANDS</Link>
+                        </li>
+                        </li>
+                        <li
+                         
+                        >
+                             <li>
+                         <Link to="/new-arrival" className="block text-white px-2 py-2 hover:text-purple-400">NEW & HOT</Link>
+                        </li>
+                        </li>
+                        <div className="flex items-center hover:text-purple-400 cursor-pointer">
+                            <Link to="/contact">CONTACT US</Link>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+
+            {/* Mobile Slide-out Menu */}
+            <div className={`lg:hidden fixed top-0 left-0 w-full h-full z-50  bg-opacity-80 transition-transform duration-300 ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"} flex`}>
+                <div className="w-4/5 max-w-xs bg-pink-400 text-black h-full flex flex-col">
+                    <div className="flex justify-between items-center px-4 py-3 border-b border-gray-100">
+                        <Link to="/" onClick={() => setMobileMenuOpen(false)}>
+                            <img
+                                src={logo}
+                                width={120}
+                                height={60}
+                                alt="logo"
+                                style={{ maxWidth: "100%", objectFit: "contain" }}
+                            />
+                        </Link>
+                        <button
+                            className="text-black"
+                            onClick={() => setMobileMenuOpen(false)}
+                            aria-label="Close Menu"
+                        >
+                            <RiCloseLine size={30} />
+                        </button>
+                    </div>
+                  {/* mobile Category Menu */}
+            {/* mobile Category Menu */}
+<div className="block   border-t border-purple-800">
+    <div className="block text-black ">
+        <ul className="flex flex-col py-2 space-y-2">
+            <li>
+                <Link to="/" className="block text-white px-2 py-2 hover:text-purple-400">HOME</Link>
+            </li>
+            <li>
+            <Dropdown />
+            </li>
+            <li>
+                <Link to="/brands" className="block text-white px-2 py-2 hover:text-purple-400">Brands</Link>
+            </li>
+            <li>
+                <Link to="/new-arrival" className="block text-white px-2 py-2 hover:text-purple-400">NEW & HOT</Link>
+            </li>
+            <li>
+                <Link to="/contact" className="block text-white px-2 py-2 hover:text-purple-400">CONTACT US</Link>
+            </li>
+        </ul>
+    </div>
+</div>
+
+                </div>
+                {/* Click overlay to close */}
+                <div className="flex-1" onClick={() => setMobileMenuOpen(false)} />
+            </div>
+
+            {/* Cart display section */}
+            {openCartSection && (
+                <DisplayCartItem close={() => setOpenCartSection(false)} />
+            )}
         </header>
     )
 }
