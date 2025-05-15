@@ -1,3 +1,5 @@
+// Add this import at the top if not already:
+import { URL } from 'url';
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
@@ -49,6 +51,66 @@ app.use("/api/product",productRouter)
 app.use("/api/cart",cartRouter)
 app.use("/api/address",addressRouter)
 app.use('/api/order',orderRouter)
+
+// ---- SITEMAP ROUTE ----
+app.get('/sitemap.xml', async (req, res) => {
+    try {
+        // Set your base URL
+        const baseUrl = process.env.FRONTEND_URL?.replace(/\/$/, '') || 'http://localhost:5173';
+
+        // Fetch all categories, subcategories, and products
+        const [categories, subCategories, products] = await Promise.all([
+            Category.find(),
+            SubCategory.find(),
+            Product.find()
+        ]);
+
+        // Helper to encode XML special chars
+        function escapeXml(unsafe) {
+            return unsafe.replace(/[<>&'"]/g, function (c) {
+                switch (c) {
+                    case '<': return '&lt;';
+                    case '>': return '&gt;';
+                    case '&': return '&amp;';
+                    case '\'': return '&apos;';
+                    case '"': return '&quot;';
+                }
+            });
+        }
+
+        // Build URL entries
+        let urls = [
+            `<url><loc>${baseUrl}/</loc></url>`,
+        ];
+
+        // Categories
+        for (const cat of categories) {
+            urls.push(`<url><loc>${baseUrl}/category/${escapeXml(cat._id.toString())}</loc></url>`);
+        }
+        // SubCategories
+        for (const sub of subCategories) {
+            urls.push(`<url><loc>${baseUrl}/category/${escapeXml(sub.category.toString())}/subcategory/${escapeXml(sub._id.toString())}</loc></url>`);
+        }
+        // Products
+        for (const prod of products) {
+            // If you have a slug, use it. Otherwise, use _id
+            urls.push(`<url><loc>${baseUrl}/product/${escapeXml(prod._id.toString())}</loc></url>`);
+        }
+
+        // Create XML
+        const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.join('\n')}
+</urlset>`;
+
+        res.header('Content-Type', 'application/xml');
+        res.send(xml);
+    } catch (error) {
+        console.error('Sitemap error:', error);
+        res.status(500).send('Could not generate sitemap');
+    }
+});
+// ---- END SITEMAP ROUTE ----
 
 connectDB().then(()=>{
     app.listen(PORT,()=>{
