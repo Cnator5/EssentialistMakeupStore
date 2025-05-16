@@ -36,7 +36,7 @@ const Home = () => {
 
   {/* Favicon & Icons */}
   <link rel="icon" type="image/avif" href="/icon.avif" />
-  <link rel="apple-touch-icon" href="/icon.png" />
+  <link rel="apple-touch-icon" href="/logo.jpg" />
 
   {/* PWA / Mobile  */}
   <meta name="theme-color" content="#faf6f3" />
@@ -50,7 +50,7 @@ const Home = () => {
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="EssentialisMakeupStore" />
   <meta property="og:url" content="https://www.esmakeupstore.com/" />
-  <meta property="og:image" content="https://www.esmakeupstore.com/icon.png" />
+  <meta property="og:image" content="https://www.esmakeupstore.com/logo.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="EssentialisMakeupStore Logo" />
