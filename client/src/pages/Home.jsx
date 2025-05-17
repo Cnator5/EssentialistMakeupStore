@@ -27,7 +27,7 @@ const Home = () => {
   return (
   <>
   <Helmet>
-  <title>Essentialist Makeup Store | Discover the Best Makeup Products in Cameroon</title>
+  <title>Essentialist Makeup Store | Best Makeup Products in Cameroon</title>
   <link rel="apple-touch-icon" href="/logo.jpg" />
   <meta name="description" content="Explore the best selection of authentic makeup products and cosmetics in Cameroon at Essentialist Makeup Store. Find foundations, lipsticks, eyeshadows, and more. Shop top brands, enjoy exclusive deals, and experience free shipping & cash on delivery!" />
   {/* <meta name="keywords" content="makeup, makeup store, buy makeup online, best makeup in Cameroon, cosmetics, beauty, lipstick, foundation, eyeshadow, mascara, makeup essentials, EssentialisMakeupStore, beauty products, online makeup shop, best makeup brands Cameroon, makeup deals, beauty shopping" /> */}
