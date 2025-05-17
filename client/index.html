@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Primary Meta -->
-  <title>Esmakeupstore</title>
-  <meta name="title" content="Esmakeupstore" />
-  <meta name="description" content="Esmakeupstore is a professional makeup store that sells high-quality makeup products. We offer a wide range of makeup products including foundation, lipstick, eyeshadow, and more. Our products are designed to meet the needs of all skin types and preferences." />
-  <meta name="keywords" content="makeup, store, foundation, lipstick, eyeshadow, beauty, professional, high-quality" />
+  <title>Essentialist Makeup Store - Professional Makeup Products in Cameroon</title>
+  <link rel="apple-touch-icon" href="/logo.jpg" />
+  <meta name="title" content="Esmakeupstore - Professional Makeup Products in Cameroon" />
+  <meta name="description" content="Esmakeupstore is a professional makeup store in Douala, Cameroon offering high-quality makeup products including foundation, lipstick, eyeshadow, and more for all skin types. Shop online with free delivery." />
+  <meta name="keywords" content="makeup, makeup Cameroon, makeup Douala, African makeup, Cameroon beauty, Douala beauty, buy makeup online Cameroon, best makeup brands Cameroon, makeup store Douala, online makeup Douala, cosmetics Cameroon, beauty Cameroon, EssentialisMakeupStore" />
   <meta name="author" content="Esmakeupstore" />
   <link rel="canonical" href="https://www.esmakeupstore.com/" />
 
@@ -39,14 +40,91 @@
   <meta name="twitter:title" content="Shop Makeup Essentials &amp; Cosmetics Online in Cameroon | EssentialisMakeupStore" />
   <meta name="twitter:description" content="Discover a wide range of makeup products and cosmetics at EssentialisMakeupStore. Shop online for the best makeup deals and trending beauty items in Cameroon." />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://www.esmakeupstore.com/logo.jpg" />
+  <meta name="twitter:image:alt" content="EssentialisMakeupStore Logo" />
 
   <!-- App Links -->
   <meta property="al:android:package" content="com.fsn.esmakeupstore" />
   <meta property="al:android:app_name" content="EssentialisMakeupStore: Makeup Shopping App" />
-  <meta property="al:ios:app_name" content="EssentialisMakeupStore – Makeup Shopping" />
+  <meta property="al:ios:app_name" content="EssentialisMakeupStore -- Makeup Shopping" />
+  
+  <!-- For Images & Videos Indexing -->
+  <meta name="robots" content="index, follow, max-image-preview:large, max-video-preview:-1" />
+  <meta data-react-helmet="true" name="robots" content="index, follow, max-image-preview:large,">
+  <meta property="og:video" content="https://www.esmakeupstore.com/essentialist-video.mp4" />
+  <meta property="og:video:secure_url" content="https://www.esmakeupstore.com/essentialist-video.mp4" />
+  <meta property="og:video:type" content="video/mp4" />
+  <meta property="og:video:width" content="1280" />
+  <meta property="og:video:height" content="720" />
+  
+  <!-- Structured Data for Products and Images -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    "name": "EssentialisMakeupStore",
+    "image": "https://www.esmakeupstore.com/logo.jpg",
+    "logo": "https://www.esmakeupstore.com/logo.jpg",
+    "url": "https://www.esmakeupstore.com",
+    "description": "Professional makeup store in Douala, Cameroon, offering high-quality makeup products for all skin types.",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Douala",
+      "addressRegion": "Littoral-Douala, Bonamoussadi at Carrefour Marcon",
+      "addressCountry": "CM"
+    },
+    "openingHours": "Mo-Sa 09:00-18:00",
+    "telephone": "+237 655 22 55 69",
+    "priceRange": "$",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://www.esmakeupstore.com/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+  
+  <!-- Dynamically load page-specific metadata -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // This ensures other pages can have their own unique meta tags
+      if (window.location.pathname !== '/') {
+        document.querySelector('meta[name="description"]').setAttribute('content', '');
+        document.querySelector('link[rel="canonical"]').setAttribute('href', window.location.href);
+      }
+    });
+  </script>
+  
+  <!-- Preload key images -->
+  <link rel="preload" as="image" href="/logo.jpg" />
+  <link rel="preload" as="image" href="/images/featured-products.jpg" />
 </head>
 <body>
   <div id="root"></div>
+  
+  <!-- Add image sitemap reference -->
   <script type="module" src="/src/main.jsx"></script>
+  
+  <!-- Lazy loading for images -->
+  <script>
+    // Enable lazy loading for images to improve performance
+    document.addEventListener('DOMContentLoaded', function() {
+      const images = document.querySelectorAll('img[data-src]');
+      const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+            imageObserver.unobserve(img);
+          }
+        });
+      });
+      
+      images.forEach(img => {
+        imageObserver.observe(img);
+      });
+    });
+  </script>
 </body>
 </html>

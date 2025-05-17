@@ -27,10 +27,13 @@ const Home = () => {
   return (
   <>
   <Helmet>
-  <title>Essentialist Makeup | Discover the Best Makeup Products in Cameroon</title>
+  <title>Essentialist Makeup Store | Discover the Best Makeup Products in Cameroon</title>
+  <link rel="apple-touch-icon" href="/logo.jpg" />
   <meta name="description" content="Explore the best selection of authentic makeup products and cosmetics in Cameroon at Essentialist Makeup Store. Find foundations, lipsticks, eyeshadows, and more. Shop top brands, enjoy exclusive deals, and experience free shipping & cash on delivery!" />
-  <meta name="keywords" content="makeup, makeup store, buy makeup online, makeup Cameroon, cosmetics, beauty, lipstick, foundation, eyeshadow, mascara, makeup essentials, EssentialisMakeupStore, beauty products, online makeup shop, best makeup brands Cameroon, makeup deals, beauty shopping" />
-
+  {/* <meta name="keywords" content="makeup, makeup store, buy makeup online, best makeup in Cameroon, cosmetics, beauty, lipstick, foundation, eyeshadow, mascara, makeup essentials, EssentialisMakeupStore, beauty products, online makeup shop, best makeup brands Cameroon, makeup deals, beauty shopping" /> */}
+<meta name="keywords" content="makeup, makeup Cameroon, makeup Douala, African makeup, Cameroon beauty, Douala beauty, buy makeup Cameroon, makeup brands Cameroon, makeup store Douala, cosmetics Cameroon, EssentialisMakeupStore, makeup artist Douala, beauty shop Douala, foundation, concealer, contour, bronzer, blush, highlighter, pressed powder, setting spray, primer, eyeshadow, eyeshadow palette, eyeliner, mascara, eyebrow pencil, lipsticks, lip gloss, lip liner, makeup brushes, beauty blender, makeup remover, skincare, moisturizer, face mask, African makeup trends, Cameroonian beauty, best makeup products Douala, affordable makeup Cameroon, professional makeup Douala, bridal makeup Cameroon, makeup for dark skin, melanin makeup, makeup tutorials Cameroon, beauty influencers Cameroon, beauty supply Douala, face makeup Cameroon, eye makeup Cameroon, lip makeup Cameroon, makeup tools Cameroon, Douala cosmetics, Cameroon makeup shop, best beauty brands Douala, Essentialis makeup, trending makeup Cameroon, makeup sale Cameroon, Douala beauty trends, Cameroon makeup artists, best beauty shop Douala, buy cosmetics Douala, authentic makeup Cameroon, popular makeup brands Cameroon, best eye shadow Cameroon, beauty care Cameroon, top makeup Cameroon, trending cosmetics Douala"/>  
+<meta name="description" content="Shop for makeup products in Cameroon. Buy blush, bronzer, contour sticks, make-up base, highlight, and more. Find the best beauty brands in Douala. Shop online and get your makeup products delivered to your doorstep." />
+  <meta name="robots" content="index, follow" />
   {/* SEO Canonical */}
   <link rel="canonical" href="https://www.esmakeupstore.com/" />
 
