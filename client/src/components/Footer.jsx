@@ -101,14 +101,14 @@ const Footer = () => {
             {/* Payment Methods */}
             <div>
               <h3 className="text-black font-bold mb-3">Payment Methods:</h3>
-              <div className="flex  space-y-2 items-baseline">
+              <div className="flex  space-y-2">
                 <div className="bg-white p-1 flex items-start shadow-md">
-                  <img src={stripe} alt="Stripe logo" className="w-auto h-auto max-w-full max-h-24 object-contain" />                </div>
                 <div className=" p-1  flex items-center justify-center shadow-md">
                   <img src={orange} alt="Orange logo" className="w-12 md:w-16 h-10 object-contain" />
                 </div>
                 <div className="  flex items-center justify-center shadow-md">
                   <img src={mtnlogo} alt="MTN logo" className="w-12 md:w-16 h-10 object-contain" />
+                  <img src={stripe} alt="Stripe logo" className="w-auto h-auto max-w-full max-h-24 object-contain" />                </div>
                 </div>
               </div>
             </div>
