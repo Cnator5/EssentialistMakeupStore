@@ -2,14 +2,14 @@ import React from 'react';
 import { FaFacebook, FaInstagram, FaTiktok, FaYoutube, FaWhatsapp } from 'react-icons/fa';
 import mtnlogo from '../assets/mtnlogo.png';
 import orange from '../assets/orange.png';
-import stripe from '../assets/stripe.png';
+import stripe from '../assets/stipe.png';
 import google_play from '../assets/google_play.png';
 import app_store from '../assets/app_store.jpeg';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear(); // Get the current year
   return (
-    <footer className="bg-white text-white mt-10">
+    <footer className="bg-white text-black font-bold md:font-normal mt-10">
       {/* Service Benefits Banner */}
       <div className="flex flex-wrap justify-between py-6 px-4 md:px-8 bg-black border-b border-gray-800">
         {/* ... Service Icons ... */}
@@ -69,10 +69,10 @@ const Footer = () => {
           {/* About Us Section */}
           <div>
             <h2 className="text-black uppercase font-bold mb-6 relative after:content-[''] after:absolute after:left-0 after:-bottom-3 after:h-0.5 after:w-12 after:bg-gray-700">ABOUT US</h2>
-            <p className="text-black mb-6">
+            <p className="text-black font-bold md:font-normal mb-6 text-base">
               EssentialistMakeupStore is an online retailer that provides one-stop shopping for women's day-to-day essentials. Established in 2025, we are the best and only niche skincare, makeup, and lifestyle store in Cameroon wholly targeted at providing an unmatched range of products for women.
             </p>
-            <div className="space-y-2">
+            <div className="space-y-2 font-bold">
               <div className="flex items-center text-black">
                 <span className="inline-block mr-2">✉</span>
                 <a href="mailto:info@girlyessentials.com.ng" className="hover:text-pink-500 transition duration-300 text-black">esssmakeup@gmail.com</a>
@@ -91,24 +91,23 @@ const Footer = () => {
           <div>
             <h2 className="text-black uppercase font-bold mb-6 relative after:content-[''] after:absolute after:left-0 after:-bottom-3 after:h-0.5 after:w-12 after:bg-gray-700">QUICK NAVIGATION</h2>
             <ul className="space-y-3 mb-8">
-              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">How To Shop</a></li>
-              <li><a href="/cart" className="text-black hover:text-pink-500 transition duration-300">Payments</a></li>
-              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">Shipping</a></li>
-              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">Returns Policy</a></li>
-              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">Terms & Conditions</a></li>
-              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">FAQs</a></li>
+              <li><a href="#" className="text-black font-bold md:font-normal hover:text-pink-500 transition duration-300">How To Shop</a></li>
+              <li><a href="/cart" className="text-black font-bold md:font-normal hover:text-pink-500 transition duration-300">Payments</a></li>
+              <li><a href="#" className="text-black font-bold md:font-normal hover:text-pink-500 transition duration-300">Shipping</a></li>
+              <li><a href="#" className="text-black font-bold md:font-normal hover:text-pink-500 transition duration-300">Returns Policy</a></li>
+              <li><a href="#" className="text-black font-bold md:font-normal hover:text-pink-500 transition duration-300">Terms & Conditions</a></li>
+              <li><a href="#" className="text-black font-bold md:font-normal hover:text-pink-500 transition duration-300">FAQs</a></li>
             </ul>
             {/* Payment Methods */}
             <div>
               <h3 className="text-black font-bold mb-3">Payment Methods:</h3>
-              <div className="flex space-x-3">
-                <div className="bg-white p-1 rounded-lg flex items-center justify-center shadow-md">
-                  <img src={stripe} alt="Stripe logo" className="w-16 md:w-24 h-10 object-contain" />
-                </div>
-                <div className="bg-white p-1 rounded-lg flex items-center justify-center shadow-md">
+              <div className="flex  space-y-2 items-baseline">
+                <div className="bg-white p-1 flex items-start shadow-md">
+                  <img src={stripe} alt="Stripe logo" className="w-auto h-auto max-w-full max-h-24 object-contain" />                </div>
+                <div className=" p-1  flex items-center justify-center shadow-md">
                   <img src={orange} alt="Orange logo" className="w-12 md:w-16 h-10 object-contain" />
                 </div>
-                <div className="bg-white p-1 rounded-lg flex items-center justify-center shadow-md">
+                <div className="  flex items-center justify-center shadow-md">
                   <img src={mtnlogo} alt="MTN logo" className="w-12 md:w-16 h-10 object-contain" />
                 </div>
               </div>
@@ -118,12 +117,12 @@ const Footer = () => {
           <div>
             <h2 className="text-black uppercase font-bold mb-6 relative after:content-[''] after:absolute after:left-0 after:-bottom-3 after:h-0.5 after:w-12 after:bg-gray-700">USEFUL LINKS</h2>
             <ul className="space-y-3 mb-8">
-              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">Profile</a></li>
-              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">Cart</a></li>
-              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">MY Basket</a></li>
-              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">Returns Policy</a></li>
-              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">Register</a></li>
-              <li><a href="#" className="text-black hover:text-pink-500 transition duration-300">Blog</a></li>
+              <li><a href="#" className="text-black font-bold md:font-normal hover:text-pink-500 transition duration-300">Profile</a></li>
+              <li><a href="#" className="text-black font-bold md:font-normal hover:text-pink-500 transition duration-300">Cart</a></li>
+              <li><a href="#" className="text-black font-bold md:font-normal hover:text-pink-500 transition duration-300">MY Basket</a></li>
+              <li><a href="#" className="text-black font-bold md:font-normal hover:text-pink-500 transition duration-300">Returns Policy</a></li>
+              <li><a href="#" className="text-black font-bold md:font-normal hover:text-pink-500 transition duration-300">Register</a></li>
+              <li><a href="#" className="text-black font-bold md:font-normal hover:text-pink-500 transition duration-300">Blog</a></li>
             </ul>
             {/* Stay Connected */}
             <div>
@@ -150,7 +149,7 @@ const Footer = () => {
           {/* App Section & Newsletter */}
           <div>
             <h2 className="text-black uppercase font-bold mb-6 relative after:content-[''] after:absolute after:left-0 after:-bottom-3 after:h-0.5 after:w-12 after:bg-gray-700">DOWNLOAD OUR APP</h2>
-            <p className="text-black mb-4">Download our app for the best shopping experience.</p>
+            <p className="text-black mb-4 font-bold md:font-normal">Download our app for the best shopping experience.</p>
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
               <a href="https://play.google.com" target="_blank" rel="noopener noreferrer" className="flex-1">
                 <img
@@ -179,7 +178,7 @@ const Footer = () => {
                 Sign Up
               </button>
             </div>
-            <p className="text-black text-sm">
+            <p className="text-black text-sm font-bold md:font-normal">
               Is there a product you can't find on our website? Do tell us <a href="/contact" className="text-pink-500 hover:underline">here!</a>
             </p>
           </div>

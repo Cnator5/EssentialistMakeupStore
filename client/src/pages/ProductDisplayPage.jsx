@@ -111,7 +111,7 @@ const ProductDisplayPage = () => {
 
   <meta name="robots" content="index, follow" />
 </Helmet>
-   <section className='container mx-auto p-4 grid lg:grid-cols-2 text-black'>
+   <section className='container mx-auto p-4 grid lg:grid-cols-2 text-black font-bold md:font-normal'>
       <div className=''>
         <div className='bg-white lg:min-h-[65vh] lg:max-h-[65vh] rounded min-h-56 max-h-56 h-full w-full'>
           <img
