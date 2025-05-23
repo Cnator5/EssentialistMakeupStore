@@ -3,7 +3,7 @@ import './App.css'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import toast, { Toaster } from 'react-hot-toast';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import fetchUserDetails from './utils/fetchUserDetails';
 import { setUserDetails } from './store/userSlice';
 import { setAllCategory,setAllSubCategory,setLoadingCategory } from './store/productSlice';
@@ -14,6 +14,8 @@ import { handleAddItemCart } from './store/cartProduct'
 import GlobalProvider from './provider/GlobalProvider';
 import { FaCartShopping } from "react-icons/fa6";
 import CartMobileLink from './components/CartMobile';
+import Modal from './components/Modal';
+import Login from './pages/Login';
 
 function App() {
   const dispatch = useDispatch()
@@ -71,12 +73,28 @@ function App() {
     // fetchCartItem()
   },[])
 
+    const [showLoginModal, setShowLoginModal] = useState(false);
+
+  // Listen for a "show login" event (can use context, or a global state manager if you prefer)
+  // Here is a quick demo using window event:
+  useEffect(() => {
+    const handler = () => setShowLoginModal(true);
+    window.addEventListener("show-login", handler);
+    return () => window.removeEventListener("show-login", handler);
+  }, []);
+
+
   return (
     <GlobalProvider> 
       <Header/>
       <main className='min-h-[78vh]'>
           <Outlet/>
       </main>
+       <Modal open={showLoginModal} onClose={() => setShowLoginModal(false)}>
+        <Login
+          onSuccess={() => setShowLoginModal(false)}
+        />
+      </Modal>
       <Footer/>
       <Toaster/>
       {

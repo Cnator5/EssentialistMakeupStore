@@ -89,7 +89,7 @@ const Product = () => {
   return (
     <>
       <Helmet>
-        <title>Products | Essentialist Makeup Store</title>
+        <title>Essential Makeup products | Best Makeup Store</title>
         <meta name="description" content="Browse the best makeup and beauty products at Essentialist Makeup Store." />
         <link rel="canonical" href={`https://esmakeupstore.com/product`} />
         <meta name="keywords" content="makeup, beauty, Makeup in Douala, cosmetics, essentialist, products, discounts, offers" />
@@ -105,7 +105,7 @@ const Product = () => {
             <div key={index} className='border p-4 rounded-md'>
               <img src={item.image[0]} alt={item.name} className='w-full h-32 object-cover' />
               <h2 className='text-lg font-semibold'>{item.name}</h2>
-              <p className='text-gray-500'>{item.description}</p>
+              <p className='text-black'>{item.description}</p>
             </div>
           ))}
         </div>

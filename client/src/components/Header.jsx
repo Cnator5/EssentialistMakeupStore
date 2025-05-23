@@ -93,18 +93,21 @@ const Header = () => {
 
     // Define header transition styles
     const headerStyle = {
-        transform: isHeaderVisible ? 'translateY(0)' : 'translateY(-100%)',
-        transition: 'transform 0.3s ease-in-out',
+        transform: isHeaderVisible ? 'translateY(0)' : 'translateY(-40%)',
+        transition: 'transform 0.5s ease-in-out',
+        position: 'relative',
+        width: '100%',
+        zIndex: 40
     };
 
     return (
         <header 
             ref={headerRef} 
-            className="sticky top-0 z-40 bg-white shadow" 
+            className="bg-white shadow" 
             style={headerStyle}
         >
             {/* Top Contact Bar */}
-            <div className="bg-pink-400 text-white py-2 px-2 sm:px-4 flex flex-col lg:flex-row items-center justify-between text-xs sm:text-sm">
+            <div className="bg-pink-400 text-white  px-2 py-2 sm:px-4 flex flex-col lg:flex-row items-center justify-between text-xs sm:text-sm">
                 <div className="flex items-center justify-center lg:justify-start w-full lg:w-auto gap-4">
                     <div className="flex items-center">
                         <HiPhone className="mr-1" />
@@ -128,15 +131,15 @@ const Header = () => {
             </div>
 
             {/* Main Navbar */}
-            <nav className="bg-black text-white px-2 sm:px-4 py-3">
+            <nav className="bg-black text-white px-2 sm:px-4 ">
                 <div className="flex items-center justify-between">
                     {/* Logo */}
                     <div className="flex items-center flex-shrink-0">
                         <Link to="/" className="flex items-center h-full">
                             <img
                                 src={logo}
-                                width={180}
-                                height={60}
+                                width={130}
+                                height={40}
                                 alt="logo"
                                 className="hidden lg:block"
                                 style={{ maxWidth: "100%", objectFit: "contain" }}
@@ -165,7 +168,7 @@ const Header = () => {
                         </div>
                     )}
                     {/* Desktop right actions */}
-                    <div className="hidden lg:flex items-center gap-5">
+                    <div className="hidden lg:flex items-center gap-8">
                         {/* Account */}
                         {user?._id ? (
                             <div className="relative">
@@ -273,8 +276,12 @@ const Header = () => {
             </div>
 
             {/* Mobile Slide-out Menu */}
-            <div className={`lg:hidden fixed top-0 left-0 w-full h-full z-50  bg-opacity-80 transition-transform duration-300 ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"} flex`}>
-                <div className="w-4/5 max-w-xs bg-pink-400 text-black h-full flex flex-col">
+        <div
+        className={`lg:hidden fixed top-0 left-0 w-full h-screen z-50 bg-opacity-80 transition-transform duration-300 ${
+            mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+        } flex overflow-y-auto bg-black`}
+        >     
+           <div className="w-full bg-black text-white h-full flex flex-col">
                     <div className="flex justify-between items-center px-4 py-3 border-b border-gray-100">
                         <Link to="/" onClick={() => setMobileMenuOpen(false)}>
                             <img
@@ -294,8 +301,8 @@ const Header = () => {
                         </button>
                     </div>
                   {/* mobile Category Menu */}
-                  <div className="block border-t border-purple-800 bg-pink-400 text-black">
-                      <div className="block text-black ">
+                  <div className="block border-t border-purple-800 bg-black text-white">
+                      <div className="block text-white ">
                           <ul className="flex flex-col py-2 space-y-2">
                               <li>
                                   <Link to="/" className="block text-white px-2 py-2 hover:text-purple-400">HOME</Link>

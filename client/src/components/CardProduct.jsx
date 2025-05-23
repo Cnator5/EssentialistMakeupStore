@@ -16,21 +16,21 @@ const CardProduct = ({data}) => {
     const [loading,setLoading] = useState(false)
   
   return (
-    <Link to={url} className='border py-2 lg:p-4 grid gap-1 lg:gap-3 min-w-36 lg:min-w-72 rounded cursor-pointer bg-white' >
-      <div className='min-h-40 w-full max-h-24 lg:max-h-32 rounded overflow-hidden'>
+    <Link to={url} className='border py-2 lg:p-4 grid gap-1 lg:gap-2 min-w-72 lg:min-w-72 rounded cursor-pointer bg-white' >
+      <div className='grid grid-flow-col-3 gap-1 lg:gap-2'>
             <img 
                 src={data.image[0]}
-                className='w-full h-full object-scale-down lg:scale-125'
+                className='w-full h-full object-scale-down lg:scale-125 lg:object-cover rounded'
             />
       </div>
       <div className='flex items-center gap-1'>
-        <div className='rounded text-xs w-fit p-[1px] px-2 text-green-600 bg-green-50'>
+        <div className='rounded text-xs w-fit p-[1px] px-2 text-green-600 bg-green-50 pt-6'>
               10 min 
         </div>
         <div>
             {
               Boolean(data.discount) && (
-                <p className='text-green-600 bg-green-100 px-2 w-fit text-xs rounded-full'>{data.discount}% discount</p>
+                <p className='text-green-600 bg-green-100 px-2 pt-6 w-fit text-xs rounded-full'>{data.discount}% discount</p>
               )
             }
         </div>
