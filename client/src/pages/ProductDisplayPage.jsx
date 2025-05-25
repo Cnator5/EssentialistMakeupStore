@@ -116,7 +116,7 @@ const ProductDisplayPage = () => {
         <div className='bg-white lg:min-h-[65vh] lg:max-h-[65vh] rounded min-h-56 max-h-56 h-full w-full'>
           <img
             src={data.image[image]}
-            className='w-full h-full object-scale-down scale-125'
+            className='w-full h-full object-scale-down scale-100'
             alt={data.name}
           />
         </div>
@@ -177,6 +177,24 @@ const ProductDisplayPage = () => {
         <h2 className='text-lg font-semibold lg:text-3xl'>{data.name}</h2>
         <p className=''>{data.unit}</p>
         <Divider />
+        <div>
+          <p className=''>Bulk Price</p>
+          <div className='flex items-center gap-2 lg:gap-4'>
+            <div className='border border-green-600 px-4 py-2 rounded bg-green-50 w-fit'>
+              <p className='font-semibold text-lg lg:text-xl'>{DisplayPriceInRupees(pricewithDiscount(data.bulkPrice, data.discount))}</p>
+            </div>
+            {
+              data.discount && (
+                <p className='line-through'>{DisplayPriceInRupees(data.price)}</p>
+              )
+            }
+            {
+              data.discount && (
+                <p className="font-bold text-green-600 lg:text-2xl">{data.discount}% <span className='text-base text-black'>Discount</span></p>
+              )
+            }
+          </div>
+        </div>
         <div>
           <p className=''>Price</p>
           <div className='flex items-center gap-2 lg:gap-4'>

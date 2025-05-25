@@ -22,6 +22,7 @@ const EditProductAdmin = ({ close ,data : propsData,fetchProductData}) => {
     subCategory: propsData.subCategory,
     unit: propsData.unit,
     stock: propsData.stock,
+    bulkPrice: propsData.bulkPrice,
     price: propsData.price,
     discount: propsData.discount,
     description: propsData.description,
@@ -134,6 +135,7 @@ const EditProductAdmin = ({ close ,data : propsData,fetchProductData}) => {
           subCategory: [],
           unit: "",
           stock: "",
+          bulkPrice: "",
           price: "",
           discount: "",
           description: "",
@@ -350,6 +352,19 @@ const EditProductAdmin = ({ close ,data : propsData,fetchProductData}) => {
                 />
               </div>
 
+              <div className='grid gap-1'>
+                <label htmlFor='bulkPrice' className='font-medium'>Bulk Price</label>
+                <input
+                  id='bulkPrice'
+                  type='number'
+                  placeholder='Enter product bulkPrice'
+                  name='bulkPrice'
+                  value={data.bulkPrice}
+                  onChange={handleChange}
+                  required
+                  className='bg-blue-50 p-2 outline-none border focus-within:border-primary-200 rounded'
+                />
+              </div>
               <div className='grid gap-1'>
                 <label htmlFor='price' className='font-medium'>Price</label>
                 <input
