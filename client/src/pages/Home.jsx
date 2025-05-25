@@ -32,6 +32,7 @@ const Home = () => {
 
   return (
   <>
+    <section className='bg-white'>     
     <Helmet>
       {/* Primary Title & Description */}
       <title>Best Makeup Store in Cameroon | Essentialist Makeup Store</title>
@@ -96,7 +97,6 @@ const Home = () => {
         `}
       </script>
     </Helmet>
-    <section className='bg-white'>     
       <div className='container mx-auto px-4'>
         <div className={`w-full h-full min-h-48 bg-blue-10 rounded ${!banner && "animate-pulse my-2"}`}>
         {/* <video autoPlay muted loop className='w-full h-full rounded'>

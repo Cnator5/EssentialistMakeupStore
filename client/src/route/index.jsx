@@ -26,6 +26,7 @@ import Cancel from "../pages/Cancel";
 import Brands from '../pages/BrandPage';
 import BrandPage from './../pages/BrandPage';
 import NewArrivalPage from './../pages/NewArrivalPage';
+import ContactUsPage from "../pages/ContactPage";
 
 
 
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
             {
                 path : "new-arrival",
                 element : <NewArrivalPage/>
+            },
+            {
+                path : "contact",
+                element : <ContactUsPage/>
             },
             {
                 path : 'login',

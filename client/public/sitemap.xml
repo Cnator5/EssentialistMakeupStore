@@ -5,11 +5,19 @@
         <changefreq>daily</changefreq>
     </url>
     <url>
+        <loc>https://www.esmakeupstore.com/brands</loc>
+        <changefreq>monthly</changefreq>
+    </url>
+    <url>
+        <loc>https://www.esmakeupstore.com/new-arrival</loc>
+        <changefreq>monthly</changefreq>
+    </url>
+    <url>
         <loc>http://esmakeupstore.com/about</loc>
         <changefreq>monthly</changefreq>
     </url>
     <url>
-        <loc>http://esmakeupstore.com/contact</loc>
+        <loc>https://www.esmakeupstore.com/contact</loc>
         <changefreq>monthly</changefreq>
     </url>
     <url>

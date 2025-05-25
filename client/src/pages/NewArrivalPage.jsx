@@ -1,104 +1,140 @@
-import React from 'react';
-import banner from '../assets/banner.avif';
-import banner_two from '../assets/banner_two.avif';
-import bannerMobile from "../assets/cosmetics-beauty-products-for-make-up-sale-banner-vector-25170220.avif";
-import { useSelector } from 'react-redux';
-import { valideURLConvert } from '../utils/valideURLConvert';
-import { Link, useNavigate } from 'react-router-dom';
+import React from 'react'
+import { Helmet } from 'react-helmet'
 import CategoryWiseProductDisplay from '../components/CategoryWiseProductDisplay';
-// import AdMarquee from './../components/AdMarquee';
-import { Helmet } from 'react-helmet';
+import bannerOGB from '../assets/OG-Shades-Desktop.webp';
 
-const NewArrivalPage = () => {
-  const loadingCategory = useSelector(state => state.product.loadingCategory);
-  const categoryData = useSelector(state => state.product.allCategory);
-  const subCategoryData = useSelector(state => state.product.allSubCategory);
-  const navigate = useNavigate();
+// Use the real category ID for NEW & HOT from your sitemap
+const NEW_HOT_CATEGORY_ID = '6806b355bca41016c4406edb'
+const NEW_CATEGORY_ID = '68055442764e6d332bd162c8'
+const NEW_HOT_CATEGORY_NAME = 'New Makeup Arrivals & Hot Brands in Cameroon'
+const NEW_CATEGORY_NAME = 'New Makeup Arrivals in Cameroon'
 
-  const handleRedirectProductListpage = (id, cat) => {
-    const subcategory = subCategoryData.find(sub => 
-      sub.category.some(c => c._id === id)
-    );
-    const url = `/${valideURLConvert(cat)}-${id}/${valideURLConvert(subcategory.name)}-${subcategory._id}`;
-    navigate(url);
-  };
-
+const NewAndHotPage = () => {
   return (
-  <>
-  <Helmet>
-  <title>New Makeup Products | Discover the Best Makeup Products in Cameroon</title>
-  <meta name="description" content="Explore new selection of authentic makeup products and cosmetics in Cameroon at Essentialist Makeup Store. Find foundations, lipsticks, eyeshadows, and more. Shop top brands, enjoy exclusive deals, and experience free shipping & cash on delivery!" />
-  <meta name="keywords" content="makeup, makeup store, buy makeup online, makeup Cameroon, cosmetics, beauty, lipstick, foundation, eyeshadow, mascara, makeup essentials, EssentialisMakeupStore, beauty products, online makeup shop, best makeup brands Cameroon, makeup deals, beauty shopping" />
+    <div className="min-h-screen bg-gradient-to-b from-white via-pink-50 to-white pb-16">
+      {/* SEO Meta */}
+      <Helmet>
+        <title>
+          New & Hot Makeup Brands in Cameroon | Trending Beauty Products 2025 | Essentialist Makeup Store
+        </title>
+        <meta
+          name="description"
+          content="Explore the latest and hottest makeup brands and beauty products in Cameroon. Shop trending foundations, lipsticks, eyeshadows, and more from NYX, LA Girl, and top brands at Essentialist Makeup Store. New arrivals and must-have cosmetics with fast delivery in FCFA."
+        />
+        <meta
+          name="keywords"
+          content="new makeup Cameroon, trending makeup brands, hot makeup Cameroon, beauty trends 2024, NYX new arrivals, LA Girl new products, best makeup brands Cameroon, Essentialist Makeup Store, Douala makeup shop, FCFA makeup, new beauty Cameroon, hottest makeup deals, buy cosmetics Cameroon, trending foundation Douala, latest lipsticks Cameroon, hot beauty brands Africa"
+        />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://www.esmakeupstore.com/new-arrival" />
 
-  {/* SEO Canonical */}
-  <link rel="canonical" href="https://www.esmakeupstore.com/" />
+        {/* Open Graph / Facebook */}
+        <meta property="og:title" content="New & Hot Makeup Brands in Cameroon | Trending Beauty Products 2024" />
+        <meta property="og:description" content="Discover the latest makeup and hottest beauty brands in Cameroon. Shop new arrivals from NYX, LA Girl, and global brands at Essentialist Makeup Store." />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Essentialist Makeup Store" />
+        <meta property="og:url" content="https://www.esmakeupstore.com/new-arrival" />
+        <meta property="og:image" content="https://www.esmakeupstore.com/assets/staymattebutnotflatpowderfoundationmain.jpg" />
+        <meta property="og:image:alt" content="New & Hot Makeup Cameroon" />
 
-  {/* Favicon & Icons */}
-  <link rel="icon" type="image/avif" href="/icon.avif" />
-  <link rel="apple-touch-icon" href="/icon.png" />
+        {/* Twitter */}
+        <meta name="twitter:title" content="New & Hot Makeup Brands in Cameroon | Trending Beauty Products 2024" />
+        <meta name="twitter:description" content="Shop the latest and hottest makeup brands in Cameroon. Explore trending products from NYX, LA Girl & more at Essentialist Makeup Store." />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content="https://www.esmakeupstore.com/assets/staymattebutnotflatpowderfoundationmain.jpg" />
 
-  {/* PWA / Mobile  */}
-  <meta name="theme-color" content="#faf6f3" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="mobile-web-app-capable" content="yes" />
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {`
+          {
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": "New & Hot Makeup Brands in Cameroon",
+            "url": "https://www.esmakeupstore.com/new-arrival",
+            "description": "Explore the latest and hottest makeup brands and beauty products in Cameroon. Shop trending NYX, LA Girl and more at Essentialist Makeup Store.",
+            "publisher": {
+              "@type": "Organization",
+              "name": "Essentialist Makeup Store"
+            }
+          }
+          `}
+        </script>
+      </Helmet>
 
-  {/* Open Graph (Facebook, Messenger, WhatsApp etc.)  */}
-  <meta property="og:title" content="Shop Makeup Essentials &amp; Cosmetics Online in Cameroon | EssentialisMakeupStore" />
-  <meta property="og:description" content="Get the latest makeup products, cosmetics, and beauty essentials from your favorite brands. Shop lipsticks, eyeshadows, foundations, and more at EssentialisMakeupStore. Free shipping &amp; cash on delivery!" />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="EssentialisMakeupStore" />
-  <meta property="og:url" content="https://www.esmakeupstore.com/" />
-  <meta property="og:image" content="https://www.esmakeupstore.com/icon.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="EssentialisMakeupStore Logo" />
-  <meta property="og:locale" content="en_US" />
-  <meta property="og:locale:alternate" content="fr_CM" />
-
-  <meta name="twitter:title" content="Shop Makeup Essentials &amp; Cosmetics Online in Cameroon | EssentialisMakeupStore" />
-  <meta name="twitter:description" content="Discover a wide range of makeup products and cosmetics at EssentialisMakeupStore. Shop online for the best makeup deals and trending beauty items in Cameroon." />
-  <meta name="twitter:card" content="summary_large_image" />
-
-  <meta property="al:android:package" content="com.fsn.esmakeupstore" />
-  <meta property="al:android:app_name" content="EssentialisMakeupStore: Makeup Shopping App" />
-  <meta property="al:ios:app_name" content="EssentialisMakeupStore – Makeup Shopping" />
-    </Helmet>
-    <section className='bg-white'>
-      <div className='hidden md:block'>
-      <h1 className='text-center text-2xl font-bold text-gray-700 my-4'>New Arrival</h1>
-        </div>
-      
-      <div className='container mx-auto px-4 my-2 grid grid-cols-5 md:grid-cols-5 lg:grid-cols-5 gap-2'>
-        {
-          loadingCategory ? (
-            new Array(12).fill(null).map((_, index) => (
-              <div key={index + "loadingcategory"} className='bg-white rounded p-4 min-h-36 grid gap-2 shadow animate-pulse'>
-                <div className='bg-blue-100 min-h-24 rounded'></div>
-                <div className='bg-blue-100 h-8 rounded'></div>
-              </div>
-            ))
-          ) : (
-            categoryData.map((cat) => (
-              <div
-                key={cat._id + "displayCategory"}
-                className="w-full h-full"
-                onClick={() => handleRedirectProductListpage(cat._id, cat.name)}
-              >
-                <div>
-                  <img src={cat.image} alt={cat.name} className="w-full h-full object-scale-down" />
-                </div>
-                <div className="text-center text-xs sm:text-sm md:text-base font-semibold text-gray-700 mt-2">
-                  {cat.name}
-                </div>
-              </div>
-            ))
-          )
-        }
+      {/* Page Header */}
+      <div className="container mx-auto px-4 py-10 text-center">
+        <h1 className="text-5xl md:text-7xl font-extrabold text-pink-700 tracking-tight mb-4 animate-fade-in">
+            {NEW_HOT_CATEGORY_NAME}
+        </h1>
+        <h2 className="text-xl md:text-2xl text-gray-700 font-bold mb-4">
+          Discover the Latest Makeup Brands and Beauty Trends in Cameroon
+        </h2>
+        <p className="text-pink-500 max-w-2xl mx-auto font-medium leading-relaxed">
+          Shop the newest arrivals and hottest makeup brands in Cameroon at Essentialist Makeup Store. From NYX and LA Girl to international bestsellers, find trending foundations, lipsticks, palettes, and more -- all at unbeatable FCFA prices!
+        </p>
       </div>
-    </section>
-    </>
-  );
-};
 
-export default NewArrivalPage;
+      {/* Product Carousel with improved styling */}
+      <div className="mx-auto max-w-7xl px-4">
+        <CategoryWiseProductDisplay
+          id={NEW_CATEGORY_ID}
+          name={NEW_CATEGORY_NAME}
+        />
+      </div>
+
+      {/* Banner Section */}
+               <img src={bannerOGB} className='w-full flex justify-centeritems-center h-full lg:block mt-4' alt='banner' />
+
+
+
+      {/* SEO Content */}
+
+
+      {/* Product Carousel with improved styling */}
+      <div className="mx-auto max-w-7xl px-4">
+        <CategoryWiseProductDisplay
+          id={NEW_HOT_CATEGORY_ID}
+          name={NEW_HOT_CATEGORY_NAME}
+        />
+      </div>
+
+      {/* SEO Contact Section - Enhanced design */}
+      <section className="max-w-2xl mx-auto bg-gradient-to-br from-pink-100 via-pink-50 to-pink-100 shadow-xl rounded-lg p-6 md:p-10 text-center mt-16 border border-pink-200">
+        <h3 className="text-2xl font-bold text-pink-700 mb-4">
+          Contact Us — Get the Newest Makeup Brands in Cameroon
+        </h3>
+        <p className="text-gray-700 mb-6 leading-relaxed">
+          Have questions about our new arrivals or trending makeup brands? Want to order the hottest beauty products in Cameroon? <br />
+          Connect with our expert team for authentic NYX, LA Girl, and top global brands at the best prices in FCFA.
+        </p>
+        <div className="flex flex-col items-center gap-3 mb-6">
+          <a
+            href="tel:+237677000000"
+            className="font-bold text-pink-800 hover:text-pink-500 transition-colors duration-300 flex items-center gap-2"
+            title="Call Essentialist Makeup Store"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+            Call/WhatsApp: +237 6 77 00 00 00
+          </a>
+          <a
+            href="mailto:info@esmakeupstore.com"
+            className="font-bold text-pink-800 hover:text-pink-500 transition-colors duration-300 flex items-center gap-2"
+            title="Email Essentialist Makeup Store"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            Email: info@esmakeupstore.com
+          </a>
+        </div>
+        <p className="mt-4 text-gray-600 text-sm border-t border-pink-200 pt-4">
+          Shop online or visit us in Douala for the latest makeup trends, new beauty launches, and exclusive deals on the most popular brands in Cameroon.
+        </p>
+      </section>
+    </div>
+  )
+}
+
+export default NewAndHotPage

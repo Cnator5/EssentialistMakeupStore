@@ -75,7 +75,7 @@ const Footer = () => {
             <div className="space-y-2 font-bold">
               <div className="flex items-center text-black">
                 <span className="inline-block mr-2">✉</span>
-                <a href="mailto:info@girlyessentials.com.ng" className="hover:text-pink-500 transition duration-300 text-black">esssmakeup@gmail.com</a>
+                <a href="esssmakeup@gmail.com" className="hover:text-pink-500 transition duration-300 text-black">esssmakeup@gmail.com</a>
               </div>
               <div className="flex items-center text-black">
                 <span className="inline-block mr-2">📱</span>
