@@ -9,13 +9,14 @@ export const createProductController = async(request,response)=>{
             subCategory,
             unit,
             stock,
+            bulkPrice,
             price,
             discount,
             description,
             more_details,
         } = request.body 
 
-        if(!name || !image[0] || !category[0] || !subCategory[0] || !unit || !price || !description ){
+        if(!name || !image[0] || !category[0] || !subCategory[0] || !unit || bulkPrice || !price || !description ){
             return response.status(400).json({
                 message : "Enter required fields",
                 error : true,
@@ -30,6 +31,7 @@ export const createProductController = async(request,response)=>{
             subCategory,
             unit,
             stock,
+            bulkPrice : request.body.bulkPrice || null,
             price,
             discount,
             description,

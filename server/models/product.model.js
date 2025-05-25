@@ -28,6 +28,10 @@ const productSchema = new mongoose.Schema({
         type : Number,
         default : null
     },
+    bulkPrice : {
+        type : Number,
+        default : null
+    },
     price : {
         type : Number,
         default : null

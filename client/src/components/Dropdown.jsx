@@ -49,7 +49,7 @@ const Dropdown = () => {
                         absolute left-0 top-full mt-1
                         w-full max-w-full
                         md:w-[1250px] md:max-w-[1250px]
-                        md:translate-x-[-26.5%]
+                        md:translate-x-[-16.5%]
                         bg-white rounded-xl shadow-xl z-50 overflow-hidden
                         transform origin-top scale-y-100 transition-all duration-200
                     "
@@ -61,7 +61,7 @@ const Dropdown = () => {
                         {loadingCategory ? (
                             <div className="grid grid-cols-2 md:grid-cols-6 gap-6">
                                 {[...Array(12)].map((_, index) => (
-                                    <div key={index} className="animate-pulse">
+                                    <div key={index} className="animate-pulse font-bold">
                                         <div className="h-6 w-2/3 bg-gray-200 rounded mb-3" />
                                         {[...Array(4)].map((_, i) => (
                                             <div key={i} className="h-3 bg-gray-100 rounded w-1/2 mb-2 ml-2" />

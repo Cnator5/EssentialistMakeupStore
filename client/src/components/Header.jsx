@@ -13,7 +13,6 @@ import { useGlobalContext } from '../provider/GlobalProvider';
 import DisplayCartItem from './DisplayCartItem';
 import Dropdown from './Dropdown';
 
-
 import { BsSearch } from 'react-icons/bs';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { HiPhone, HiMail } from 'react-icons/hi';
@@ -33,6 +32,13 @@ const Header = () => {
     const [categoryDropdown, setCategoryDropdown] = useState(null)
     const [isHeaderVisible, setIsHeaderVisible] = useState(true)
     const [prevScrollPos, setPrevScrollPos] = useState(0)
+
+    // SALES & OFFERS dropdown state
+    const [offersDropdownOpen, setOffersDropdownOpen] = useState(false)
+    const offersDropdownRef = useRef(null)
+    // For mobile
+    const [offersDropdownMobileOpen, setOffersDropdownMobileOpen] = useState(false)
+    const offersDropdownMobileRef = useRef(null)
 
     const headerRef = useRef(null)
     const searchBarRef = useRef(null)
@@ -61,10 +67,10 @@ const Header = () => {
         const handleScroll = () => {
             const currentScrollPos = window.scrollY
             const isScrollingUp = prevScrollPos > currentScrollPos
-            
+
             // Make header visible when scrolling up
             setIsHeaderVisible(isScrollingUp)
-            
+
             // Update previous scroll position
             setPrevScrollPos(currentScrollPos)
         }
@@ -90,6 +96,32 @@ const Header = () => {
         }
         return () => document.removeEventListener('mousedown', handler);
     }, [categoryDropdown]);
+
+    // Close SALES & OFFERS dropdown on desktop when clicking away
+    useEffect(() => {
+        const handler = (e) => {
+            if (offersDropdownRef.current && !offersDropdownRef.current.contains(e.target)) {
+                setOffersDropdownOpen(false)
+            }
+        }
+        if (offersDropdownOpen) {
+            document.addEventListener('mousedown', handler)
+        }
+        return () => document.removeEventListener('mousedown', handler)
+    }, [offersDropdownOpen])
+
+    // Close SALES & OFFERS dropdown on mobile when clicking away
+    useEffect(() => {
+        const handler = (e) => {
+            if (offersDropdownMobileRef.current && !offersDropdownMobileRef.current.contains(e.target)) {
+                setOffersDropdownMobileOpen(false)
+            }
+        }
+        if (offersDropdownMobileOpen) {
+            document.addEventListener('mousedown', handler)
+        }
+        return () => document.removeEventListener('mousedown', handler)
+    }, [offersDropdownMobileOpen])
 
     // Define header transition styles
     const headerStyle = {
@@ -243,7 +275,6 @@ const Header = () => {
                         </button>
                     </div>
                 </div>
-              
             </nav>
 
             {/* Desktop Category Menu */}
@@ -259,29 +290,60 @@ const Header = () => {
                             </div>
                         </li>
                         <li>
-                        <li>
                          <Link to="/brands" className="block text-white px-2 py-2 hover:text-purple-400">BRANDS</Link>
                         </li>
-                        </li>
                         <li>
-                             <li>
                          <Link to="/new-arrival" className="block text-white px-2 py-2 hover:text-purple-400">NEW & HOT</Link>
-                        </li>
                         </li>
                         <div className="flex items-center hover:text-purple-400 cursor-pointer">
                             <Link to="/contact">CONTACT US</Link>
                         </div>
+                        {/* SALES & OFFERS DROPDOWN */}
+                        <div 
+                            className="relative flex items-center cursor-pointer"
+                            ref={offersDropdownRef}
+                            onMouseEnter={() => setOffersDropdownOpen(true)}
+                            onMouseLeave={() => setOffersDropdownOpen(false)}
+                        >
+                            <button 
+                                className="flex items-center gap-1 text-white px-2 py-2 hover:text-pink-400 focus:outline-none"
+                                onClick={() => setOffersDropdownOpen((o) => !o)}
+                                type="button"
+                                aria-haspopup="true"
+                                aria-expanded={offersDropdownOpen ? 'true' : 'false'}
+                            >
+                                SALES & OFFERS 
+                                <GoTriangleDown className="ml-1" />
+                            </button>
+                            {offersDropdownOpen && (
+                                <div className="absolute top-full right-0 mt-2 w-40 bg-white text-black rounded shadow-lg z-50">
+                                    <Link 
+                                        to="/offers" 
+                                        className="block px-4 py-2 hover:bg-pink-50 hover:text-pink-700 transition-colors"
+                                        onClick={() => setOffersDropdownOpen(false)}
+                                    >
+                                        Offers
+                                    </Link>
+                                    <Link 
+                                        to="/clearance" 
+                                        className="block px-4 py-2 hover:bg-pink-50 hover:text-pink-700 transition-colors"
+                                        onClick={() => setOffersDropdownOpen(false)}
+                                    >
+                                        Clearance
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+                        {/* END SALES & OFFERS */}
                     </ul>
                 </div>
             </div>
 
             {/* Mobile Slide-out Menu */}
-        <div
-        className={`lg:hidden fixed top-0 left-0 w-full h-screen z-50 bg-opacity-80 transition-transform duration-300 ${
-            mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-        } flex overflow-y-auto bg-black`}
-        >     
-           <div className="w-full bg-black text-white h-full flex flex-col">
+            <div
+                className={`lg:hidden fixed top-0 left-0 w-full h-screen z-50 bg-opacity-80 transition-transform duration-300 ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"} flex overflow-y-auto bg-black`}
+            >     
+                <div className="w-full bg-black text-white h-full flex flex-col">
                     <div className="flex justify-between items-center px-4 py-3 border-b border-gray-100">
                         <Link to="/" onClick={() => setMobileMenuOpen(false)}>
                             <img
@@ -300,29 +362,66 @@ const Header = () => {
                             <RiCloseLine size={30} />
                         </button>
                     </div>
-                  {/* mobile Category Menu */}
-                  <div className="block border-t border-purple-800 bg-black text-white">
-                      <div className="block text-white ">
-                          <ul className="flex flex-col py-2 space-y-2">
-                              <li>
-                                  <Link to="/" className="block text-white px-2 py-2 hover:text-purple-400">HOME</Link>
-                              </li>
-                              <li>
-                              <Dropdown />
-                              </li>
-                              <li>
-                                  <Link to="/brands" className="block text-white px-2 py-2 hover:text-purple-400">Brands</Link>
-                              </li>
-                              <li>
-                                  <Link to="/new-arrival" className="block text-white px-2 py-2 hover:text-purple-400">NEW & HOT</Link>
-                              </li>
-                              <li>
-                                  <Link to="/contact" className="block text-white px-2 py-2 hover:text-purple-400">CONTACT US</Link>
-                              </li>
-                          </ul>
-                      </div>
-                  </div>
-
+                    {/* mobile Category Menu */}
+                    <div className="block border-t border-purple-800 bg-black text-white">
+                        <div className="block text-white ">
+                            <ul className="flex flex-col py-2 space-y-2">
+                                <li>
+                                    <Link to="/" className="block text-white px-2 py-2 hover:text-purple-400" onClick={() => setMobileMenuOpen(false)}>HOME</Link>
+                                </li>
+                                <li>
+                                    <Dropdown />
+                                </li>
+                                <li>
+                                    <Link to="/brands" className="block text-white px-2 py-2 hover:text-purple-400" onClick={() => setMobileMenuOpen(false)}>Brands</Link>
+                                </li>
+                                <li>
+                                    <Link to="/new-arrival" className="block text-white px-2 py-2 hover:text-purple-400" onClick={() => setMobileMenuOpen(false)}>NEW & HOT</Link>
+                                </li>
+                                <li>
+                                    <Link to="/contact" className="block text-white px-2 py-2 hover:text-purple-400" onClick={() => setMobileMenuOpen(false)}>CONTACT US</Link>
+                                </li>
+                                {/* SALES & OFFERS DROPDOWN (mobile) */}
+                                <li ref={offersDropdownMobileRef} className="relative">
+                                    <button
+                                        className="w-full flex items-center justify-between px-2 py-2 text-white hover:text-pink-400 focus:outline-none"
+                                        onClick={() => setOffersDropdownMobileOpen((open) => !open)}
+                                        aria-haspopup="true"
+                                        aria-expanded={offersDropdownMobileOpen ? "true" : "false"}
+                                        type="button"
+                                    >
+                                        SALES & OFFERS
+                                        <GoTriangleDown className={`ml-2 transform transition-transform ${offersDropdownMobileOpen ? 'rotate-180' : ''}`} />
+                                    </button>
+                                    {offersDropdownMobileOpen && (
+                                        <div className="bg-white rounded shadow-lg text-black mt-1 absolute left-0 w-40 z-50">
+                                            <Link
+                                                to="/offers"
+                                                className="block px-4 py-2 hover:bg-pink-50 hover:text-pink-700 transition-colors"
+                                                onClick={() => {
+                                                    setOffersDropdownMobileOpen(false)
+                                                    setMobileMenuOpen(false)
+                                                }}
+                                            >
+                                                Offers
+                                            </Link>
+                                            <Link
+                                                to="/clearance"
+                                                className="block px-4 py-2 hover:bg-pink-50 hover:text-pink-700 transition-colors"
+                                                onClick={() => {
+                                                    setOffersDropdownMobileOpen(false)
+                                                    setMobileMenuOpen(false)
+                                                }}
+                                            >
+                                                Clearance
+                                            </Link>
+                                        </div>
+                                    )}
+                                </li>
+                                {/* END SALES & OFFERS DROPDOWN */}
+                            </ul>
+                        </div>
+                    </div>
                 </div>
                 {/* Click overlay to close */}
                 <div className="flex-1" onClick={() => setMobileMenuOpen(false)} />
