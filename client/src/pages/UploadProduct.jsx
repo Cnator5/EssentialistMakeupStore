@@ -21,7 +21,6 @@ const UploadProduct = () => {
       subCategory : [],
       unit : "",
       stock : "",
-      bulkPrice : "",
       price : "",
       discount : "",
       description : "",
@@ -130,7 +129,6 @@ const UploadProduct = () => {
             subCategory : [],
             unit : "",
             stock : "",
-            bulkPrice : "",
             price : "",
             discount : "",
             description : "",
@@ -345,19 +343,6 @@ const UploadProduct = () => {
                   />
                 </div>
 
-                <div className='grid gap-1'>
-                  <label htmlFor='price' className='font-medium'>Bulk Price</label>
-                  <input 
-                    id='price'
-                    type='number'
-                    placeholder='Enter product bulkprice'
-                    name='price'
-                    value={data.bulkPrice}
-                    onChange={handleChange}
-                    required
-                    className='bg-blue-50 p-2 outline-none border focus-within:border-primary-200 rounded'
-                  />
-                </div>
                 <div className='grid gap-1'>
                   <label htmlFor='price' className='font-medium'>Price</label>
                   <input 
