@@ -73,14 +73,14 @@ const Dropdown = () => {
                             <div className="grid grid-cols-2 md:grid-cols-6 gap-6">
                                 {categoryData.map((category) => (
                                     <div key={category._id} className="break-inside-avoid">
-                                        <div className="font-bold text-black pb-2 mb-3 text-base tracking-wide border-b border-pink-100">
+                                        <div className="font-bold text-black pb-2 mb-3 text-base tracking-wide border-b border-pink-100 uppercase">
                                             {category.name}
                                         </div>
                                         <div className="space-y-0.5">
                                             {getSubcategoriesForCategory(category._id).map((subCat) => (
                                                 <div
                                                     key={subCat._id}
-                                                    className="text-sm text-black rounded-md hover:bg-pink-50 hover:text-pink-400 cursor-pointer"
+                                                    className="text-sm text-black font-semibold md:font-normal rounded-md hover:bg-pink-50 hover:text-pink-400 cursor-pointer"
                                                     onClick={() => handleRedirectProductListpage(category._id, category.name, subCat)}
                                                 >
                                                     {subCat.name}
