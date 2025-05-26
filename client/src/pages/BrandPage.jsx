@@ -174,15 +174,15 @@ const BuildAndBrand = () => {
         </script>
       </Helmet>
       <header className="text-center mb-8">
-        <h1 className="text-4xl md:text-6xl font-extrabold text-pink-600 mb-2 tracking-tight">ESSENTIALIST MAKEUP STORE</h1>
-        <h2 className="text-xl md:text-3xl text-gray-700 font-semibold mb-1">Build & Brand — Makeup Brands Price List</h2>
-        <p className="text-pink-400 font-bold">Discover authentic NYX and LA Girl makeup brands at the best prices in Cameroon!</p>
+        <h1 className="text-4xl md:text-6xl font-extrabold text-pink-500 mb-2 tracking-tight">ESSENTIALIST MAKEUP STORE</h1>
+        <h2 className="text-xl md:text-3xl text-gray-700 font-bold mb-1">Build & Brand — Makeup Brands Price List</h2>
+        <p className="text-pink-500 font-bold">Discover authentic NYX and LA Girl makeup brands at the best prices in Cameroon!</p>
       </header>
 
       <div className="overflow-x-auto rounded-lg border border-pink-200 shadow-lg bg-white">
         <table className="min-w-full text-sm md:text-base">
           <thead>
-            <tr className="bg-pink-100 text-pink-800">
+            <tr className="bg-pink-100 text-black">
               <th className="py-3 px-2 md:px-4 font-bold text-left">Product</th>
               <th className="py-3 px-2 md:px-4 font-bold text-left">Subcategory</th>
               <th className="py-3 px-2 md:px-4 font-bold text-left">Brand</th>
@@ -196,12 +196,12 @@ const BuildAndBrand = () => {
               const clickable = !!found
               return (
                 <tr key={item.product + idx} className={idx % 2 === 0 ? "bg-white" : "bg-pink-50"}>
-                  <td className="py-2 px-2 md:px-4">{item.product}</td>
+                  <td className="py-2 px-2 md:px-4 font-bold md:font-normal">{item.product}</td>
                   <td className="py-2 px-2 md:px-4">
                     {clickable ? (
                       <button
                         onClick={() => handleGoToSubCat(item.genre)}
-                        className="underline text-blue-700 hover:text-pink-500 transition font-medium cursor-pointer bg-transparent border-0 p-0"
+                        className="underline text-blue-700 hover:text-pink-400 transition font-medium cursor-pointer bg-transparent border-0 p-0"
                         style={{ outline: "none" }}
                         type="button"
                       >
@@ -211,9 +211,9 @@ const BuildAndBrand = () => {
                       <span className="text-gray-400">{item.genre}</span>
                     )}
                   </td>
-                  <td className="py-2 px-2 md:px-4">{item.brand}</td>
-                  <td className="py-2 px-2 md:px-4 text-right">{FCFA(item.bulk)}</td>
-                  <td className="py-2 px-2 md:px-4 text-right font-semibold text-pink-600">{FCFA(item.sell)}</td>
+                  <td className="py-2 px-2 md:px-4 text-black font-bold md:font-normal">{item.brand}</td>
+                  <td className="py-2 px-2 md:px-4 text-right font-bold  text-green-500">{FCFA(item.bulk)}</td>
+                  <td className="py-2 px-2 md:px-4 text-right font-bold text-pink-500">{FCFA(item.sell)}</td>
                 </tr>
               )
             })}
@@ -222,22 +222,22 @@ const BuildAndBrand = () => {
       </div>
 
       {/* SEO-Optimized Contact Section */}
-      <section className="mt-12 md:mt-16 bg-pink-100 rounded-lg shadow-lg p-6 md:p-10 max-w-2xl mx-auto text-center">
-        <h3 className="text-2xl font-bold text-pink-700 mb-2">Contact Us — Buy Top Makeup Brands in Cameroon</h3>
+      <section className="mt-12 md:mt-16 bg-pink-100 rounded-lg shadow-lg p-6 md:p-10 max-w-2xl mx-auto text-center font-bold">
+        <h3 className="text-2xl font-bold text-pink-500 mb-2">Contact Us — Buy Top Makeup Brands in Cameroon</h3>
         <p className="text-gray-700 mb-4">
           For orders, business enquiries, or partnership with authentic makeup brands in Cameroon (NYX, LA Girl, and more), reach out to Essentialist Makeup Store. We supply genuine international and Cameroonian makeup brands at the best FCFA prices in Douala and nationwide.
         </p>
         <div className="flex flex-col items-center gap-2">
           <a
             href="tel:+237 655 22 55 69"
-            className="font-semibold text-pink-800 hover:text-pink-500 underline"
+            className="font-bold text-pink-500 hover:text-pink-400 underline"
             title="Call Essentialist Makeup Store"
           >
             Call/WhatsApp: +237 655 22 55 69
           </a>
           <a
             href="mailto:esssmakeup@gmail.com"
-            className="font-semibold text-pink-800 hover:text-pink-500 underline"
+            className="font-bold text-pink-500 hover:text-pink-400 underline"
             title="Email Essentialist Makeup Store"
           >
             Email: info@esmakeupstore.com

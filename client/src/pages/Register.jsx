@@ -156,7 +156,7 @@ const Register = () => {
 
                      <button 
                         disabled={!valideValue || isLoading} 
-                        className={` ${valideValue ? "bg-pink-400 hover:bg-yeelow-400" : "bg-gray-500" }    text-white py-2 rounded font-semibold my-3 tracking-wide`}
+                        className={` ${valideValue ? "bg-pink-400 hover:bg-yeelow-400" : "bg-gray-500" }    text-white py-2 rounded font-bold my-3 tracking-wide`}
                     >
                         {isLoading ? 'Logging...' : 'Register'}
                     </button>
@@ -164,7 +164,7 @@ const Register = () => {
                 </form>
 
                 <p>
-                    Already have account ? <Link to={"/login"} className='font-semibold text-pink-400 hover:text-yellow-400'>Register</Link>
+                    Already have account ? <Link to={"/login"} className='font-bold text-pink-400 hover:text-yellow-400'>Register</Link>
                 </p>
             </div>
         </section>

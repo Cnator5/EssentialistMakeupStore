@@ -73,7 +73,7 @@ const Dropdown = () => {
                             <div className="grid grid-cols-2 md:grid-cols-6 gap-6">
                                 {categoryData.map((category) => (
                                     <div key={category._id} className="break-inside-avoid">
-                                        <div className="font-bold text-dark-50 pb-2 mb-3 text-base tracking-wide border-b border-pink-100">
+                                        <div className="font-bold text-black pb-2 mb-3 text-base tracking-wide border-b border-pink-100">
                                             {category.name}
                                         </div>
                                         <div className="space-y-0.5">

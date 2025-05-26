@@ -67,6 +67,11 @@ const SearchPage = () => {
   return (
     <section className='bg-white'>
       <div className='container mx-auto p-4'>
+        {/* Search bar visible only on small screens */}
+        <div className="block sm:hidden mb-4">
+          <Search />
+        </div>
+
         <p className='font-semibold'>Search Results: {data.length}  </p>
 
         <InfiniteScroll

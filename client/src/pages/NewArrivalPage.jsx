@@ -103,7 +103,7 @@ const NewAndHotPage = () => {
         <h3 className="text-2xl font-bold text-pink-700 mb-4">
           Contact Us — Get the Newest Makeup Brands in Cameroon
         </h3>
-        <p className="text-gray-700 mb-6 leading-relaxed">
+        <p className="text-black mb-6 leading-relaxed">
           Have questions about our new arrivals or trending makeup brands? Want to order the hottest beauty products in Cameroon? <br />
           Connect with our expert team for authentic NYX, LA Girl, and top global brands at the best prices in FCFA.
         </p>
@@ -129,7 +129,7 @@ const NewAndHotPage = () => {
             Email: esssmakeup@gmail.com
           </a>
         </div>
-        <p className="mt-4 text-gray-600 text-sm border-t border-pink-200 pt-4">
+        <p className="mt-4 text-black text-sm border-t border-pink-200 pt-4">
           Shop online or visit us in Douala for the latest makeup trends, new beauty launches, and exclusive deals on the most popular brands in Cameroon.
         </p>
       </section>

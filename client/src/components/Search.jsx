@@ -57,7 +57,7 @@ const Search = () => {
             <div className="flex-shrink-0 flex items-center h-full">
                 {
                     (isMobile && isSearchPage ) ? (
-                        <Link to={"/"} className='flex justify-center items-center h-9 w-9 p-2 m-1 group-focus-within:text-primary-200 bg-white rounded-full shadow-md transition'>
+                        <Link to={"/"} className='flex justify-center items-center h-9 w-9 p-2 m-1 group-focus-within:text-primary-200 bg-white rounded-full shadow-md transition text-black'>
                             <FaArrowLeft size={20}/>
                         </Link>
                     ) :(

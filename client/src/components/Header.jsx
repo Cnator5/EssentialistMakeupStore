@@ -186,11 +186,12 @@ const Header = () => {
                             />
                         </Link>
                     </div>
-                    {/* Always Visible Search (shrinks but doesn't disappear) */}
+                    {/* MOBILE-ONLY: Visible Search Bar */}
+                    {/* Hide on lg and up, show on small screens */}
                     {!(isSearchPage && isMobile) && (
                         <div 
                             ref={searchBarRef} 
-                            className="lg:block flex-1 px-3"
+                            className="flex-1 px-3 lg:hidden block"
                             style={{ 
                                 transition: 'all 0.3s ease',
                                 transform: isHeaderVisible ? 'scale(1)' : 'scale(0.9)',
