@@ -159,7 +159,7 @@ const Home = () => {
           />
         ))
       }
-      <img src={bannero} className='w-full h-80 hidden lg:block' alt='banner' />
+      <img src={bannero} className='w-full  lg:block' alt='banner' />
        <img src={bannerOGB} className='w-full h-full lg:block mt-4' alt='banner' />
     </section>
     </>
