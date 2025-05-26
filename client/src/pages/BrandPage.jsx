@@ -173,7 +173,6 @@ const BuildAndBrand = () => {
           `}
         </script>
       </Helmet>
-
       <header className="text-center mb-8">
         <h1 className="text-4xl md:text-6xl font-extrabold text-pink-600 mb-2 tracking-tight">ESSENTIALIST MAKEUP STORE</h1>
         <h2 className="text-xl md:text-3xl text-gray-700 font-semibold mb-1">Build & Brand — Makeup Brands Price List</h2>
@@ -230,14 +229,14 @@ const BuildAndBrand = () => {
         </p>
         <div className="flex flex-col items-center gap-2">
           <a
-            href="tel:+237677000000"
+            href="tel:+237 655 22 55 69"
             className="font-semibold text-pink-800 hover:text-pink-500 underline"
             title="Call Essentialist Makeup Store"
           >
-            Call/WhatsApp: +237 6 77 00 00 00
+            Call/WhatsApp: +237 655 22 55 69
           </a>
           <a
-            href="mailto:info@esmakeupstore.com"
+            href="mailto:esssmakeup@gmail.com"
             className="font-semibold text-pink-800 hover:text-pink-500 underline"
             title="Email Essentialist Makeup Store"
           >

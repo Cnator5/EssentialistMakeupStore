@@ -87,7 +87,9 @@ app.get('/sitemap.xml', async (req, res) => {
         let urls = [
             `<url><loc>${baseUrl}/</loc><changefreq>daily</changefreq></url>`,
             `<url><loc>${baseUrl}/about</loc><changefreq>monthly</changefreq></url>`,
-            `<url><loc>${baseUrl}/contact</loc><changefreq>monthly</changefreq></url>`
+            `<url><loc>${baseUrl}/contact</loc><changefreq>monthly</changefreq></url>`,
+            `<url><loc>${baseUrl}/new-arrival</loc><changefreq>monthly</changefreq></url>`,
+            `<url><loc>${baseUrl}/brands</loc><changefreq>monthly</changefreq></url>`
         ];
 
         // Categories
