@@ -18,9 +18,7 @@ import orderRouter from './route/order.route.js';
 import ProductModel from './models/product.model.js';
 import CategoryModel from './models/category.model.js';
 import SubCategoryModel from './models/subCategory.model.js';
-import Category from './models/category.model.js';
-import SubCategory from './models/subCategory.model.js';
-import Product from './models/product.model.js';
+import slugify from 'slugify'; // <-- ADD THIS LINE
 
 const app = express();
 
@@ -64,7 +62,6 @@ app.get('/sitemap.xml', async (req, res) => {
             ProductModel.find({ publish: true })
         ]);
 
-        // XML Escape Utility
         function escapeXml(unsafe) {
             return unsafe ? unsafe.replace(/[<>&'"]/g, function (c) {
                 switch (c) {
@@ -76,11 +73,13 @@ app.get('/sitemap.xml', async (req, res) => {
                 }
             }) : '';
         }
-
         function formatDate(date) {
             if (!date) return '';
             const d = (typeof date === 'string') ? new Date(date) : date;
             return d.toISOString().split('T')[0];
+        }
+        function valideURLConvert(name) {
+            return slugify(name, { lower: true, strict: true });
         }
 
         // Static pages
@@ -107,9 +106,9 @@ app.get('/sitemap.xml', async (req, res) => {
             </url>`
         ];
 
-        // Categories
+        // Categories (SEO URL)
         for (const cat of categories) {
-            const catUrl = `${baseUrl}/category/${cat._id}`;
+            const catUrl = `${baseUrl}/${valideURLConvert(cat.name)}-${cat._id}`;
             urls.push(
                 `<url>
                     <loc>${catUrl}</loc>
@@ -120,9 +119,11 @@ app.get('/sitemap.xml', async (req, res) => {
             );
         }
 
-        // SubCategories
+        // SubCategories (SEO URL)
         for (const sub of subCategories) {
-            const subUrl = `${baseUrl}/category/${sub.category[0]}/subcategory/${sub._id}`;
+            const parentCat = categories.find(c => String(c._id) === String(sub.category[0]));
+            if (!parentCat) continue;
+            const subUrl = `${baseUrl}/${valideURLConvert(parentCat.name)}-${parentCat._id}/${valideURLConvert(sub.name)}-${sub._id}`;
             urls.push(
                 `<url>
                     <loc>${subUrl}</loc>
@@ -133,9 +134,17 @@ app.get('/sitemap.xml', async (req, res) => {
             );
         }
 
-        // Products (all images)
+        // Products (SEO URL)
         for (const prod of products) {
-            const prodUrl = `${baseUrl}/product/${prod._id}`;
+            const sub = subCategories.find(s => String(s._id) === String(prod.subCategory[0]));
+            const cat = sub ? categories.find(c => String(c._id) === String(sub.category[0])) : null;
+            let prodUrl;
+            if (cat && sub) {
+                prodUrl = `${baseUrl}/${valideURLConvert(cat.name)}-${cat._id}/${valideURLConvert(sub.name)}-${sub._id}/${valideURLConvert(prod.name)}-${prod._id}`;
+            } else {
+                prodUrl = `${baseUrl}/product/${prod._id}`;
+            }
+
             let imageTags = '';
             if (Array.isArray(prod.image)) {
                 imageTags = prod.image

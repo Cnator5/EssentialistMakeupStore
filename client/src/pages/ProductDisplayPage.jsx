@@ -64,6 +64,14 @@ const ProductDisplayPage = () => {
         : `https://www.esmakeupstore.com/assets/${data.image[0]}`)
       : "https://www.esmakeupstore.com/assets/images (2).avif";
 
+  const { category, subCategory, product } = useParams();
+
+// Extract the IDs (last segment after the last dash)
+const categoryId = category?.split("-").pop();
+const subCategoryId = subCategory?.split("-").pop();
+// const productId = product?.split("-").pop();
+
+
   return (
     <>
       <Helmet>
