@@ -101,55 +101,47 @@ const BuildAndBrand = () => {
     navigate(url)
   }
 
-  return (
+  // --------- SEO Helmet Block ---------
+  const allProductNames = makeupProducts.map(p => p.product).join(', ')
+  const allBrands = Array.from(new Set(makeupProducts.map(p => p.brand))).join(', ')
+  const allGenres = Array.from(new Set(makeupProducts.map(p => p.genre))).join(', ')
+  const siteUrl = "https://www.esmakeupstore.com/brands"
+  const siteName = "Essentialist Makeup Store"
+  const ogImage = "https://www.esmakeupstore.com/assets/staymattebutnotflatpowderfoundationmain.jpg"
+
+ return (
     <div className="bg-gradient-to-b from-pink-50 to-white min-h-screen py-10 px-2 md:px-10">
       <Helmet>
-        {/* SEO: Focus on Makeup Brands, Cameroon, and Shopping */}
-        <title>Top Makeup Brands in Cameroon | NYX, LA Girl & More</title>
-        <meta name="description" content="Discover and shop authentic makeup brands in Cameroon including NYX and LA Girl at Essentialist Makeup Store. Explore a curated selection of foundations, lipsticks, powders, and more from the best global and African makeup brands. Fast delivery, competitive prices in FCFA, and reliable service!" />
-        <meta name="keywords" content="makeup brands, Cameroon makeup, NYX Cameroon, LA Girl makeup, Cameroon beauty brands, buy makeup Cameroon, Cameroonian makeup brands, Douala makeup store, authentic NYX Cameroon, best makeup brands Cameroon, FCFA makeup price, cosmetics Douala, professional makeup Cameroon, beauty brands Africa, Cameroonian cosmetics, Essentialist Makeup Store, trending makeup Cameroon, wholesale makeup Cameroon, FCFA makeup deals, makeup shop Douala, cosmetic brands Cameroon, top makeup brands Cameroon, NYX products Cameroon, LA Girl Douala, FCFA beauty brands" />
+        <title>Authentic Makeup Brands Cameroon | NYX, LA Girl Price List | {siteName}</title>
+        <meta name="description" content={`Discover the best makeup brands in Cameroon: NYX, LA Girl and more. Explore our price list and shop foundations, lipsticks, powders, and authentic beauty products. Fast delivery, best FCFA prices in Douala and nationwide.`} />
+        <meta name="keywords" content={`makeup brands, Cameroon makeup, NYX Cameroon, LA Girl makeup, authentic brands, Douala makeup store, ${allBrands}, ${allGenres}, ${allProductNames}, Essentialist Makeup Store`} />
         <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://www.esmakeupstore.com/brands" />
-
-        {/* Favicons & Mobile */}
-        <link rel="icon" type="image/avif" href="/icon.avif" />
-        <link rel="apple-touch-icon" href="/icon.avif" />
-        <meta name="theme-color" content="#faf6f3" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="mobile-web-app-capable" content="yes" />
-
+        <link rel="canonical" href={siteUrl} />
         {/* Open Graph */}
-        <meta property="og:title" content="Top Makeup Brands in Cameroon | NYX, LA Girl & More | Essentialist Makeup Store" />
-        <meta property="og:description" content="Authentic makeup brands in Cameroon: NYX, LA Girl, and more. Shop the latest beauty products at Essentialist Makeup Store for the best prices in FCFA." />
+        <meta property="og:title" content={`Authentic Makeup Brands Cameroon | Price List | ${siteName}`} />
+        <meta property="og:description" content="Shop NYX, LA Girl & more at Essentialist Makeup Store Cameroon. See prices for foundation, lipstick, powder. Fast delivery, best prices!" />
         <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="Essentialist Makeup Store" />
-        <meta property="og:url" content="https://www.esmakeupstore.com/" />
-        <meta property="og:image" content="https://www.esmakeupstore.com/assets/staymattebutnotflatpowderfoundationmain.jpg" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
+        <meta property="og:site_name" content={siteName} />
+        <meta property="og:url" content={siteUrl} />
+        <meta property="og:image" content={ogImage} />
         <meta property="og:image:alt" content="NYX and LA Girl Makeup Cameroon" />
         <meta property="og:locale" content="en_US" />
-        <meta property="og:locale:alternate" content="fr_CM" />
-
         {/* Twitter Card */}
-        <meta name="twitter:title" content="Top Makeup Brands in Cameroon | NYX, LA Girl & More | Essentialist Makeup Store" />
-        <meta name="twitter:description" content="Shop top makeup brands in Cameroon, including NYX and LA Girl, at Essentialist Makeup Store. Explore authentic cosmetics at the best FCFA prices." />
+        <meta name="twitter:title" content={`Makeup Brands Cameroon | NYX, LA Girl | ${siteName}`} />
+        <meta name="twitter:description" content="Discover and shop NYX, LA Girl, and more makeup brands in Cameroon. Authentic products, best FCFA prices at Essentialist Makeup Store." />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content="https://www.esmakeupstore.com/assets/staymattebutnotflatpowderfoundationmain.jpg" />
-        <meta name="twitter:image:alt" content="Makeup Brands Cameroon" />
-
+        <meta name="twitter:image" content={ogImage} />
+        <meta name="twitter:image:alt" content="Best Makeup Brands Cameroon" />
         {/* Structured Data */}
         <script type="application/ld+json">
-          {`
-          {
+          {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Store",
-            "name": "Essentialist Makeup Store",
-            "url": "https://www.esmakeupstore.com/",
-            "logo": "https://www.esmakeupstore.com/assets/staymattebutnotflatpowderfoundationmain.jpg",
+            "name": siteName,
+            "url": siteUrl,
+            "logo": ogImage,
             "image": [
-              "https://www.esmakeupstore.com/assets/staymattebutnotflatpowderfoundationmain.jpg",
+              ogImage,
               "https://www.esmakeupstore.com/assets/NYX-PMU-Makeup-Lips-Liquid-Lipstick-LIP-LINGERIE-XXL-LXXL28-UNTAMABLE-0800897132187-OpenSwatch.webp",
               "https://www.esmakeupstore.com/assets/800897085421_duochromaticilluminatingpowder_twilighttint_alt2.jpg"
             ],
@@ -161,7 +153,7 @@ const BuildAndBrand = () => {
             },
             "contactPoint": {
               "@type": "ContactPoint",
-              "telephone": "+237 6 77 00 00 00",
+              "telephone": "+237655225569",
               "contactType": "customer support",
               "areaServed": "CM"
             },
@@ -169,8 +161,7 @@ const BuildAndBrand = () => {
               "https://www.facebook.com/esmakeupstore",
               "https://www.instagram.com/esmakeupstore"
             ]
-          }
-          `}
+          })}
         </script>
       </Helmet>
       <header className="text-center mb-8">
@@ -229,14 +220,14 @@ const BuildAndBrand = () => {
         </p>
         <div className="flex flex-col items-center gap-2">
           <a
-            href="tel:+237 655 22 55 69"
+            href="tel:+237655225569"
             className="font-bold text-pink-500 hover:text-pink-400 underline"
             title="Call Essentialist Makeup Store"
           >
             Call/WhatsApp: +237 655 22 55 69
           </a>
           <a
-            href="mailto:esssmakeup@gmail.com"
+            href="mailto:info@esmakeupstore.com"
             className="font-bold text-pink-500 hover:text-pink-400 underline"
             title="Email Essentialist Makeup Store"
           >
