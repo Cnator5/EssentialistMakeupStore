@@ -15,7 +15,7 @@ const NewAndHotPage = () => {
       {/* SEO Meta */}
       <Helmet>
         <title>
-          New & Hot Makeup Brands in Cameroon | Trending Beauty Products 2025 | Essentialist Makeup Store
+          New Makeup Products | Trending Beauty Products
         </title>
         <meta
           name="description"
