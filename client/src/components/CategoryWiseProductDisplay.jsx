@@ -142,7 +142,7 @@ import { Helmet } from 'react-helmet'
 
 const WEBSITE_URL = "https://esmakeupstore.com"
 
-const CategoryWiseProductDisplay = ({ id, name }) => {
+const CategoryWiseProductDisplay = ({ id, name, repeatIndex = 0 }) => {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(false)
   const containerRef = useRef()
@@ -257,6 +257,7 @@ const CategoryWiseProductDisplay = ({ id, name }) => {
             <CardProduct
               data={p}
               key={p._id + 'CategorywiseProductDisplay' + index}
+              repeatIndex={repeatIndex}
             />
           ))}
         </div>
