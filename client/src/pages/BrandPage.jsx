@@ -105,7 +105,7 @@ const BuildAndBrand = () => {
     <div className="bg-gradient-to-b from-pink-50 to-white min-h-screen py-10 px-2 md:px-10">
       <Helmet>
         {/* SEO: Focus on Makeup Brands, Cameroon, and Shopping */}
-        <title>Top Makeup Brands in Cameroon | NYX, LA Girl & More | Essentialist Makeup Store</title>
+        <title>Top Makeup Brands in Cameroon | NYX, LA Girl & More</title>
         <meta name="description" content="Discover and shop authentic makeup brands in Cameroon including NYX and LA Girl at Essentialist Makeup Store. Explore a curated selection of foundations, lipsticks, powders, and more from the best global and African makeup brands. Fast delivery, competitive prices in FCFA, and reliable service!" />
         <meta name="keywords" content="makeup brands, Cameroon makeup, NYX Cameroon, LA Girl makeup, Cameroon beauty brands, buy makeup Cameroon, Cameroonian makeup brands, Douala makeup store, authentic NYX Cameroon, best makeup brands Cameroon, FCFA makeup price, cosmetics Douala, professional makeup Cameroon, beauty brands Africa, Cameroonian cosmetics, Essentialist Makeup Store, trending makeup Cameroon, wholesale makeup Cameroon, FCFA makeup deals, makeup shop Douala, cosmetic brands Cameroon, top makeup brands Cameroon, NYX products Cameroon, LA Girl Douala, FCFA beauty brands" />
         <meta name="robots" content="index, follow" />

@@ -15,7 +15,9 @@ import productRouter from './route/product.route.js';
 import cartRouter from './route/cart.route.js';
 import addressRouter from './route/address.route.js';
 import orderRouter from './route/order.route.js';
-
+import ProductModel from './models/product.model.js';
+import CategoryModel from './models/category.model.js';
+import SubCategoryModel from './models/subCategory.model.js';
 import Category from './models/category.model.js';
 import SubCategory from './models/subCategory.model.js';
 import Product from './models/product.model.js';
@@ -53,19 +55,18 @@ app.use('/api/order', orderRouter);
 // ---- SITEMAP ROUTE ----
 app.get('/sitemap.xml', async (req, res) => {
     try {
-        // Set your base URL
         const baseUrl = process.env.FRONTEND_URL?.replace(/\/$/, '') || 'http://localhost:5173';
 
-        // Fetch all categories, subcategories, and products
+        // Fetch all categories, subcategories, and products (only published)
         const [categories, subCategories, products] = await Promise.all([
-            Category.find(),
-            SubCategory.find(),
-            Product.find()
+            CategoryModel.find(),
+            SubCategoryModel.find(),
+            ProductModel.find({ publish: true })
         ]);
 
-        // Helper to encode XML special chars
+        // XML Escape Utility
         function escapeXml(unsafe) {
-            return unsafe.replace(/[<>&'"]/g, function (c) {
+            return unsafe ? unsafe.replace(/[<>&'"]/g, function (c) {
                 switch (c) {
                     case '<': return '&lt;';
                     case '>': return '&gt;';
@@ -73,60 +74,90 @@ app.get('/sitemap.xml', async (req, res) => {
                     case '\'': return '&apos;';
                     case '"': return '&quot;';
                 }
-            });
+            }) : '';
         }
 
-        // Helper to format date for <lastmod>
         function formatDate(date) {
             if (!date) return '';
             const d = (typeof date === 'string') ? new Date(date) : date;
             return d.toISOString().split('T')[0];
         }
 
-        // Start with static pages (add more as needed)
+        // Static pages
         let urls = [
-            `<url><loc>${baseUrl}/</loc><changefreq>daily</changefreq></url>`,
-            `<url><loc>${baseUrl}/about</loc><changefreq>monthly</changefreq></url>`,
-            `<url><loc>${baseUrl}/contact</loc><changefreq>monthly</changefreq></url>`,
-            `<url><loc>${baseUrl}/new-arrival</loc><changefreq>monthly</changefreq></url>`,
-            `<url><loc>${baseUrl}/brands</loc><changefreq>monthly</changefreq></url>`
+            `<url>
+                <loc>${baseUrl}/</loc>
+                <changefreq>daily</changefreq>
+            </url>`,
+            `<url>
+                <loc>${baseUrl}/about</loc>
+                <changefreq>monthly</changefreq>
+            </url>`,
+            `<url>
+                <loc>${baseUrl}/contact</loc>
+                <changefreq>monthly</changefreq>
+            </url>`,
+            `<url>
+                <loc>${baseUrl}/new-arrival</loc>
+                <changefreq>monthly</changefreq>
+            </url>`,
+            `<url>
+                <loc>${baseUrl}/brands</loc>
+                <changefreq>monthly</changefreq>
+            </url>`
         ];
 
         // Categories
         for (const cat of categories) {
+            const catUrl = `${baseUrl}/category/${cat._id}`;
             urls.push(
                 `<url>
-                    <loc>${baseUrl}/category/${escapeXml(cat._id.toString())}</loc>
+                    <loc>${catUrl}</loc>
                     ${cat.updatedAt ? `<lastmod>${formatDate(cat.updatedAt)}</lastmod>` : ''}
                     <changefreq>weekly</changefreq>
-                </url>`
-            );
-        }
-        // SubCategories
-        for (const sub of subCategories) {
-            urls.push(
-                `<url>
-                    <loc>${baseUrl}/category/${escapeXml(sub.category.toString())}/subcategory/${escapeXml(sub._id.toString())}</loc>
-                    ${sub.updatedAt ? `<lastmod>${formatDate(sub.updatedAt)}</lastmod>` : ''}
-                    <changefreq>weekly</changefreq>
-                </url>`
-            );
-        }
-        // Products (use slug if available, else _id)
-        for (const prod of products) {
-            const slug = prod.slug ? escapeXml(prod.slug) : escapeXml(prod._id.toString());
-            urls.push(
-                `<url>
-                    <loc>${baseUrl}/product/${slug}</loc>
-                    ${prod.updatedAt ? `<lastmod>${formatDate(prod.updatedAt)}</lastmod>` : ''}
-                    <changefreq>weekly</changefreq>
+                    ${cat.image ? `<image:image><image:loc>${escapeXml(cat.image)}</image:loc></image:image>` : ''}
                 </url>`
             );
         }
 
-        // Create XML
+        // SubCategories
+        for (const sub of subCategories) {
+            const subUrl = `${baseUrl}/category/${sub.category[0]}/subcategory/${sub._id}`;
+            urls.push(
+                `<url>
+                    <loc>${subUrl}</loc>
+                    ${sub.updatedAt ? `<lastmod>${formatDate(sub.updatedAt)}</lastmod>` : ''}
+                    <changefreq>weekly</changefreq>
+                    ${sub.image ? `<image:image><image:loc>${escapeXml(sub.image)}</image:loc></image:image>` : ''}
+                </url>`
+            );
+        }
+
+        // Products (all images)
+        for (const prod of products) {
+            const prodUrl = `${baseUrl}/product/${prod._id}`;
+            let imageTags = '';
+            if (Array.isArray(prod.image)) {
+                imageTags = prod.image
+                    .filter(img => !!img)
+                    .map(imgUrl => `<image:image><image:loc>${escapeXml(imgUrl)}</image:loc></image:image>`)
+                    .join('\n');
+            }
+            urls.push(
+                `<url>
+                    <loc>${prodUrl}</loc>
+                    ${prod.updatedAt ? `<lastmod>${formatDate(prod.updatedAt)}</lastmod>` : ''}
+                    <changefreq>weekly</changefreq>
+                    ${imageTags}
+                </url>`
+            );
+        }
+
+        // Final XML
         const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset 
+    xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+    xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${urls.join('\n')}
 </urlset>`;
 
