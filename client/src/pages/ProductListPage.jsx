@@ -235,7 +235,7 @@ const ProductListPage = () => {
   const pageDescription = `Discover the best of ${subCategoryName} at Essentialist Makeup Store. Shop quality makeup essentials in the ${subCategoryName} category.`
   const pageKeywords = `${subCategoryName}, beauty, cosmetics, makeup, ${subCategoryName} products, face makeup, eye makeup, lipsticks, foundations, concealers, blush, bronzer, highlighter, mascara, eyeliner, eyeshadow, makeup brushes, makeup tools, setting spray, primer, makeup remover, cruelty-free makeup, waterproof makeup, vegan makeup, makeup kits, contour, makeup trends, affordable makeup, professional makeup, makeup palette, skin care, glowing skin, natural makeup, glam makeup, long lasting makeup, matte lipstick, liquid foundation, makeup tutorial, bridal makeup, makeup sale, makeup deals, makeup online Cameroon`
   const canonicalUrl = `https://www.esmakeupstore.com/${valideURLConvert(subCategoryName)}-${subCategoryId}`
-  const ogImage = "https://www.esmakeupstore.com/assets/logo.jpg"
+  const ogImage = "https://www.esmakeupstore.com/assets/icon.avif"
 
   return (
     <>
@@ -303,7 +303,7 @@ const ProductListPage = () => {
             </div>
             <div>
               <div className='min-h-[80vh] max-h-[80vh] overflow-y-auto relative'>
-                <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 p-4 gap-4'>
+                <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 p-4 gap-4 '>
                   {
                     data.map((p, index) => {
                       return (
