@@ -13,7 +13,7 @@ import image3 from '../assets/Wide_Assortment.avif';
 import { pricewithDiscount } from '../utils/PriceWithDiscount';
 import AddToCartButton from '../components/AddToCartButton';
 import { valideURLConvert } from '../utils/valideURLConvert';
-import { Helmet } from 'react-helmet';
+import { Helmet } from "react-helmet-async";
 
 const ProductDisplayPage = () => {
   const params = useParams();

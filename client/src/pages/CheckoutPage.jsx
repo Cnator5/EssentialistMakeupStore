@@ -189,7 +189,22 @@ const CheckoutPage = () => {
   // Helper to get selected address email/phone
   const selectedAddress = addressList[selectAddress] || {}
 
+  // --- New: Notify if no address on order attempt ---
+  const requireAddress = () => {
+    if (!addressList.length) {
+      toast.error("Please add an address before proceeding with your order.")
+      setOpenAddress(true)
+      return false
+    }
+    if (!selectedAddress?._id) {
+      toast.error("Select your address before placing your order.")
+      return false
+    }
+    return true
+  }
+
   const handleCashOnDelivery = async () => {
+    if (!requireAddress()) return
     try {
       setLoadingBtn(prev => ({ ...prev, cod: true }))
       const response = await Axios({
@@ -221,6 +236,7 @@ const CheckoutPage = () => {
   }
 
   const handleOnlinePayment = async () => {
+    if (!requireAddress()) return
     try {
       setLoadingBtn(prev => ({ ...prev, online: true }))
       toast.loading("Loading...")
@@ -253,16 +269,25 @@ const CheckoutPage = () => {
   }
 
   return (
-    <section className='bg-blue-50'>
+    <section className='bg-blue-50 min-h-screen'>
       <div className='container mx-auto p-4 flex flex-col lg:flex-row w-full gap-5 justify-between'>
         <div className='w-full'>
+          {/* --- Notification if no address exists --- */}
+          {!addressList.length && (
+            <div className="mb-3 p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 font-semibold flex items-center rounded">
+              <svg className="w-6 h-6 mr-2 text-yellow-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0Z"/>
+              </svg>
+              Please add an address to continue with your order.
+            </div>
+          )}
           {/* address */}
           <h3 className='text-lg font-semibold'>Choose your address</h3>
           <div className='bg-white p-2 grid gap-4'>
             {
               addressList.map((address, index) => (
                 <label key={address._id || index} htmlFor={"address" + index} className={!address.status && "hidden"}>
-                  <div className='border rounded p-3 flex gap-3 hover:bg-blue-50'>
+                  <div className={`border rounded p-3 flex gap-3 hover:bg-blue-50 ${selectAddress === index ? 'ring-2 ring-pink-400' : ''}`}>
                     <div>
                       <input
                         id={"address" + index}
@@ -275,7 +300,7 @@ const CheckoutPage = () => {
                       />
                     </div>
                     <div>
-                      <p>{address.name}</p>
+                      <p className="font-bold">{address.name}</p>
                       <p>{address.customer_email}</p>
                       <p>{address.address_line}</p>
                       <p>{address.city}</p>
@@ -287,8 +312,23 @@ const CheckoutPage = () => {
                 </label>
               ))
             }
-            <div onClick={() => setOpenAddress(true)} className='h-16 bg-blue-50 border-2 border-dashed flex justify-center items-center cursor-pointer'>
-              Click to add your address
+            {/* --- Attention-grabbing Add Address box --- */}
+            <div
+              onClick={() => setOpenAddress(true)}
+              className={`h-16 bg-blue-50 border-2 border-dashed flex justify-center items-center cursor-pointer rounded transition duration-300
+                ${!addressList.length ? 'animate-pulse border-yellow-500 bg-yellow-50' : 'hover:border-pink-400'}
+              `}
+              tabIndex={0}
+              role="button"
+              aria-label="Click to add address"
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setOpenAddress(true) }}
+            >
+              <svg className="w-6 h-6 mr-2 text-pink-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/>
+              </svg>
+              <span className="font-bold text-pink-600 text-base">
+                {addressList.length === 0 ? "You must add an address before ordering. Click here!" : "Click to add your address"}
+              </span>
             </div>
           </div>
         </div>
@@ -319,19 +359,25 @@ const CheckoutPage = () => {
             </div>
           </div>
           <div className='w-full flex flex-col gap-4'>
+
+            {/* --- Disable order buttons if no address --- */}
             <button
-              className='py-2 px-4 bg-pink-400 hover:bg-yellow-400 rounded text-white font-semibold flex items-center justify-center disabled:opacity-60'
+              className={`py-2 px-4 bg-pink-400 hover:bg-yellow-400 rounded text-white font-semibold flex items-center justify-center disabled:opacity-60
+                ${(!addressList.length || !selectedAddress?._id) ? 'cursor-not-allowed' : ''}
+              `}
               onClick={handleOnlinePayment}
-              disabled={loadingBtn.online || loadingBtn.cod}
+              disabled={loadingBtn.online || loadingBtn.cod || !addressList.length || !selectedAddress?._id}
             >
               {loadingBtn.online
                 ? <span className='flex items-center'><span className="loader mr-2"></span>Processing...</span>
                 : "Online Payment"}
             </button>
             <button
-              className='py-2 px-4 border-2 border-pink-400 font-semibold text-black-600 hover:bg-yellow-400 hover:border-yellow-400 hover:text-white flex items-center justify-center disabled:opacity-60'
+              className={`py-2 px-4 border-2 border-pink-400 font-semibold text-black-600 hover:bg-yellow-400 hover:border-yellow-400 hover:text-white flex items-center justify-center disabled:opacity-60
+                ${(!addressList.length || !selectedAddress?._id) ? 'cursor-not-allowed' : ''}
+              `}
               onClick={handleCashOnDelivery}
-              disabled={loadingBtn.cod || loadingBtn.online}
+              disabled={loadingBtn.cod || loadingBtn.online || !addressList.length || !selectedAddress?._id}
             >
               {loadingBtn.cod
                 ? <span className='flex items-center'><span className="loader mr-2"></span>Processing...</span>
