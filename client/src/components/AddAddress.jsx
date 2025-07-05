@@ -18,6 +18,8 @@ const AddAddress = ({close}) => {
             const response = await Axios({
                 ...SummaryApi.createAddress,
                 data : {
+                    name : data.name,
+                    customer_email : data.email,
                     address_line :data.addressline,
                     city : data.city,
                     state : data.state,
@@ -52,7 +54,25 @@ const AddAddress = ({close}) => {
             </div>
             <form className='mt-4 grid gap-4' onSubmit={handleSubmit(onSubmit)}>
                 <div className='grid gap-1'>
-                    <label htmlFor='addressline'>Address Line :</label>
+                    <label htmlFor='addressline'>Name :</label>
+                    <input
+                        type='text'
+                        id='name' 
+                        className='border bg-blue-50 p-2 rounded'
+                        {...register("name",{required : true})}
+                    />
+                </div>
+                <div className='grid gap-1'>
+                    <label htmlFor='addressline'>Email :</label>
+                    <input
+                        type='text'
+                        id='email' 
+                        className='border bg-blue-50 p-2 rounded'
+                        {...register("email",{required : true})}
+                    />
+                </div>
+                <div className='grid gap-1'>
+                    <label htmlFor='addressline'>Address Line/Quarter :</label>
                     <input
                         type='text'
                         id='addressline' 

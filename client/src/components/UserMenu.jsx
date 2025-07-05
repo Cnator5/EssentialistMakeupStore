@@ -43,7 +43,7 @@ const UserMenu = ({close}) => {
    }
   return (
     <div>
-        <div className='font-semibold'>My Account</div>
+        <div className='font-bold'>My Account</div>
         <div className='text-sm flex items-center gap-2'>
           <span className='max-w-52 text-ellipsis line-clamp-1'>{user.name || user.mobile} <span className='text-medium text-red-600'>{user.role === "ADMIN" ? "(Admin)" : "" }</span></span>
           <Link onClick={handleClose} to={"/dashboard/profile"} className='hover:text-primary-200'>
@@ -53,7 +53,7 @@ const UserMenu = ({close}) => {
 
         <Divider/>
 
-        <div className='text-sm grid gap-1'>
+        <div className='text-sm font-semibold sm:font-bold grid gap-1'>
             {
               isAdmin(user.role) && (
                 <Link onClick={handleClose} to={"/dashboard/category"} className='px-2 hover:bg-orange-200 py-1'>Category</Link>

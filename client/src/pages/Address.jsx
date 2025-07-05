@@ -49,6 +49,8 @@ const Address = () => {
                   return(
                       <div className={`border rounded p-3 flex gap-3 bg-white ${!address.status && 'hidden'}`}>
                           <div className='w-full'>
+                            <p>{address.name}</p>
+                            <p>{address.customer_email}</p>
                             <p>{address.address_line}</p>
                             <p>{address.city}</p>
                             <p>{address.state}</p>

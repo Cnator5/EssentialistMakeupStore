@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { useGlobalContext } from '../provider/GlobalProvider'
-import Axios from '../utils/Axios'
-import SummaryApi from '../common/SummaryApi'
 import toast from 'react-hot-toast'
 import AxiosToastError from '../utils/AxiosToastError'
 import Loading from './Loading'
 import { useSelector } from 'react-redux'
 import { FaMinus, FaPlus } from "react-icons/fa6";
+import { isLoggedIn } from '../utils/guestCartUtils'
 
 const AddToCartButton = ({ data }) => {
-    const { fetchCartItem, updateCartItem, deleteCartItem } = useGlobalContext()
+    const { fetchCartItem, updateCartItem, deleteCartItem, addToCart } = useGlobalContext()
     const [loading, setLoading] = useState(false)
     const cartItem = useSelector(state => state.cartItem.cart)
     const [isAvailableCart, setIsAvailableCart] = useState(false)
     const [qty, setQty] = useState(0)
-    const [cartItemDetails,setCartItemsDetails] = useState()
+    const [cartItemDetails, setCartItemsDetails] = useState()
 
     const handleADDTocart = async (e) => {
         e.preventDefault()
@@ -22,28 +21,18 @@ const AddToCartButton = ({ data }) => {
 
         try {
             setLoading(true)
-
-            const response = await Axios({
-                ...SummaryApi.addTocart,
-                data: {
-                    productId: data?._id
-                }
-            })
-
-            const { data: responseData } = response
-
-            if (responseData.success) {
-                toast.success(responseData.message)
-                if (fetchCartItem) {
-                    fetchCartItem()
-                }
+            
+            // Using the more generic addToCart function that handles both guest and logged in users
+            const response = await addToCart(data, 1)
+            
+            if (response.success) {
+                // fetchCartItem will be called inside addToCart
             }
         } catch (error) {
             AxiosToastError(error)
         } finally {
             setLoading(false)
         }
-
     }
 
     //checking this item in cart or not
@@ -56,16 +45,15 @@ const AddToCartButton = ({ data }) => {
         setCartItemsDetails(product)
     }, [data, cartItem])
 
-
     const increaseQty = async(e) => {
         e.preventDefault()
         e.stopPropagation()
     
-       const response = await  updateCartItem(cartItemDetails?._id,qty+1)
+        const response = await updateCartItem(cartItemDetails?._id, qty+1)
         
-       if(response.success){
-        toast.success("Item added")
-       }
+        if(response.success){
+            toast.success("Item added")
+        }
     }
 
     const decreaseQty = async(e) => {
@@ -73,14 +61,15 @@ const AddToCartButton = ({ data }) => {
         e.stopPropagation()
         if(qty === 1){
             deleteCartItem(cartItemDetails?._id)
-        }else{
-            const response = await updateCartItem(cartItemDetails?._id,qty-1)
+        } else {
+            const response = await updateCartItem(cartItemDetails?._id, qty-1)
 
             if(response.success){
                 toast.success("Item remove")
             }
         }
     }
+    
     return (
         <div className='w-full max-w-[150px]'>
             {
@@ -98,7 +87,6 @@ const AddToCartButton = ({ data }) => {
                     </button>
                 )
             }
-
         </div>
     )
 }

@@ -7,6 +7,8 @@ export const addAddressController = async(request,response)=>{
         const { address_line , city, state, pincode, country,mobile } = request.body
 
         const createAddress = new AddressModel({
+            name : request.body.name || "",
+            customer_email : request.body.customer_email || "",
             address_line,
             city,
             state,
@@ -66,6 +68,8 @@ export const updateAddressController = async(request,response)=>{
         const { _id, address_line,city,state,country,pincode, mobile } = request.body 
 
         const updateAddress = await AddressModel.updateOne({ _id : _id, userId : userId },{
+            name : request.body.name || "",
+            customer_email : request.body.customer_email || "",
             address_line,
             city,
             state,

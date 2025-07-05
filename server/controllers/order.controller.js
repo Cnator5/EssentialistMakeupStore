@@ -3,49 +3,53 @@ import CartProductModel from "../models/cartproduct.model.js";
 import OrderModel from "../models/order.model.js";
 import UserModel from "../models/user.model.js";
 import mongoose from "mongoose";
+import { sendOrderNotificationToAdmin } from "../utils/mail.js"; // ADD THIS IMPORT
 
- export async function CashOnDeliveryOrderController(request,response){
-    try {
-        const userId = request.userId // auth middleware 
-        const { list_items, totalAmt, addressId,subTotalAmt } = request.body 
+export async function CashOnDeliveryOrderController(request, response) {
+  try {
+    const userId = request.userId;
+    const { list_items, totalAmt, addressId, subTotalAmt, email, phone } = request.body;
 
-        const payload = list_items.map(el => {
-            return({
-                userId : userId,
-                orderId : `ORD-${new mongoose.Types.ObjectId()}`,
-                productId : el.productId._id, 
-                product_details : {
-                    name : el.productId.name,
-                    image : el.productId.image
-                } ,
-                paymentId : "",
-                payment_status : "CASH ON DELIVERY",
-                delivery_address : addressId ,
-                subTotalAmt  : subTotalAmt,
-                totalAmt  :  totalAmt,
-            })
-        })
+    const payload = list_items.map(el => ({
+      userId,
+      orderId: `ORD-${new mongoose.Types.ObjectId()}`,
+      productId: el.productId._id,
+      product_details: {
+        name: el.productId.name,
+        image: el.productId.image
+      },
+      paymentId: "",
+      payment_status: "CASH ON DELIVERY",
+      delivery_address: addressId,
+      subTotalAmt,
+      totalAmt,
+    }));
 
-        const generatedOrder = await OrderModel.insertMany(payload)
+    const generatedOrder = await OrderModel.insertMany(payload);
 
-        ///remove from the cart
-        const removeCartItems = await CartProductModel.deleteMany({ userId : userId })
-        const updateInUser = await UserModel.updateOne({ _id : userId }, { shopping_cart : []})
+    // Populate delivery address for all orders
+    const populatedOrders = await OrderModel.find({ _id: { $in: generatedOrder.map(o => o._id) } }).populate("delivery_address");
 
-        return response.json({
-            message : "Order successfully",
-            error : false,
-            success : true,
-            data : generatedOrder
-        })
+    await CartProductModel.deleteMany({ userId });
+    await UserModel.updateOne({ _id: userId }, { shopping_cart: [] });
 
-    } catch (error) {
-        return response.status(500).json({
-            message : error.message || error ,
-            error : true,
-            success : false
-        })
-    }
+    // Send notification to admin with address included
+    await sendOrderNotificationToAdmin(populatedOrders);
+
+    return response.json({
+      message: "Order placed successfully",
+      error: false,
+      success: true,
+      data: generatedOrder
+    });
+
+  } catch (error) {
+    return response.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false
+    });
+  }
 }
 
 // calculate the price with discount
@@ -62,7 +66,11 @@ export async function paymentController(request,response){
         const userId = request.userId // auth middleware 
         const { list_items, totalAmt, addressId,subTotalAmt } = request.body 
 
+        // const user = await UserModel.findById(userId)
         const user = await UserModel.findById(userId)
+  .populate('shopping_cart')
+  .populate('orderHistory')
+  .populate('address_details');
 
         const line_items  = list_items.map(item =>{
             return{
@@ -209,3 +217,5 @@ export async function getOrderDetailsController(request,response){
         })
     }
 }
+
+

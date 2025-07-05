@@ -103,81 +103,309 @@ export async function verifyEmailController(request,response){
     }
 }
 
-//login controller
-export async function loginController(request,response){
+// Helper: Merge guest cart into user's cart
+async function mergeGuestCart(userId, guestCart) {
+    if (!guestCart || !Array.isArray(guestCart)) return;
+
+    for (const item of guestCart) {
+        if (!item.productId) continue;
+        const exists = await CartProductModel.findOne({
+            userId,
+            productId: item.productId,
+        });
+        if (!exists) {
+            await new CartProductModel({
+                quantity: item.quantity || 1,
+                userId,
+                productId: item.productId,
+            }).save();
+
+            await UserModel.updateOne(
+                { _id: userId },
+                { $addToSet: { shopping_cart: item.productId } }
+            );
+        }
+    }
+}
+
+// Helper: Merge guest address into user's address_book
+async function mergeGuestAddresses(userId, guestAddresses) {
+    if (!guestAddresses || !Array.isArray(guestAddresses)) return;
+
+    for (const address of guestAddresses) {
+        // Up to you: Check for duplicate addresses by fields (e.g. phone, street, etc)
+        const exists = await AddressModel.findOne({
+            userId,
+            street: address.street,
+            city: address.city,
+            // ...other unique fields
+        });
+        if (!exists) {
+            const newAddr = await new AddressModel({
+                ...address,
+                userId,
+            }).save();
+
+            await UserModel.updateOne(
+                { _id: userId },
+                { $addToSet: { address_details: newAddr._id } }
+            );
+        }
+    }
+}
+
+export async function loginController(request, response) {
     try {
-        const { email , password } = request.body
+        const { email, password, guestCart, guestAddresses } = request.body;
 
-
-        if(!email || !password){
+        if (!email || !password) {
             return response.status(400).json({
-                message : "provide email, password",
-                error : true,
-                success : false
-            })
+                message: "Provide email and password",
+                error: true,
+                success: false
+            });
         }
 
-        const user = await UserModel.findOne({ email })
-
-        if(!user){
+        const user = await UserModel.findOne({ email });
+        if (!user) {
             return response.status(400).json({
-                message : "User not registered",
-                error : true,
-                success : false
-            })
+                message: "User not registered",
+                error: true,
+                success: false
+            });
+        }
+        if (user.status !== "Active") {
+            return response.status(400).json({
+                message: "Contact Admin",
+                error: true,
+                success: false
+            });
         }
 
-        if(user.status !== "Active"){
+        const checkPassword = await bcryptjs.compare(password, user.password);
+        if (!checkPassword) {
             return response.status(400).json({
-                message : "Contact Admin",
-                error : true,
-                success : false
-            })
+                message: "Check your password",
+                error: true,
+                success: false
+            });
         }
 
-        const checkPassword = await bcryptjs.compare(password,user.password)
+        // Merge guest cart and address before generating tokens
+        await mergeGuestCart(user._id, guestCart);
+        await mergeGuestAddresses(user._id, guestAddresses);
 
-        if(!checkPassword){
-            return response.status(400).json({
-                message : "Check your password",
-                error : true,
-                success : false
-            })
-        }
+        // update last login
+        await UserModel.findByIdAndUpdate(user._id, {
+            last_login_date: new Date()
+        });
 
-        const accesstoken = await generatedAccessToken(user._id) //
-        const refreshToken = await genertedRefreshToken(user._id)
+        // Generate tokens
+        const accesstoken = await generatedAccessToken(user._id);
+        const refreshToken = await genertedRefreshToken(user._id);
 
-        const updateUser = await UserModel.findByIdAndUpdate(user?._id,{
-            last_login_date : new Date()
-        })
-
+        // Set cookies
         const cookiesOption = {
-            httpOnly : true,
-            secure : true,
-            sameSite : "None"
-        }
-        response.cookie('accessToken',accesstoken,cookiesOption)
-        response.cookie('refreshToken',refreshToken,cookiesOption)
+            httpOnly: true,
+            secure: true,
+            sameSite: "None"
+        };
+        response.cookie('accessToken', accesstoken, cookiesOption);
+        response.cookie('refreshToken', refreshToken, cookiesOption);
 
         return response.json({
-            message : "Login successfully",
-            error : false,
-            success : true,
-            data : {
+            message: "Login successfully",
+            error: false,
+            success: true,
+            data: {
                 accesstoken,
                 refreshToken
             }
-        })
+        });
 
     } catch (error) {
         return response.status(500).json({
-            message : error.message || error,
-            error : true,
-            success : false
-        })
+            message: error.message || error,
+            error: true,
+            success: false
+        });
     }
 }
+
+//login controller
+// export async function loginController(request,response){
+//     try {
+//         const { email , password } = request.body
+
+
+//         if(!email || !password){
+//             return response.status(400).json({
+//                 message : "provide email, password",
+//                 error : true,
+//                 success : false
+//             })
+//         }
+
+//         const user = await UserModel.findOne({ email })
+
+//         if(!user){
+//             return response.status(400).json({
+//                 message : "User not registered",
+//                 error : true,
+//                 success : false
+//             })
+//         }
+
+//         if(user.status !== "Active"){
+//             return response.status(400).json({
+//                 message : "Contact Admin",
+//                 error : true,
+//                 success : false
+//             })
+//         }
+
+//         const checkPassword = await bcryptjs.compare(password,user.password)
+
+//         if(!checkPassword){
+//             return response.status(400).json({
+//                 message : "Check your password",
+//                 error : true,
+//                 success : false
+//             })
+//         }
+
+//         const accesstoken = await generatedAccessToken(user._id) //
+//         const refreshToken = await genertedRefreshToken(user._id)
+
+//         const updateUser = await UserModel.findByIdAndUpdate(user?._id,{
+//             last_login_date : new Date()
+//         })
+
+//         const cookiesOption = {
+//             httpOnly : true,
+//             secure : true,
+//             sameSite : "None"
+//         }
+//         response.cookie('accessToken',accesstoken,cookiesOption)
+//         response.cookie('refreshToken',refreshToken,cookiesOption)
+
+//         return response.json({
+//             message : "Login successfully",
+//             error : false,
+//             success : true,
+//             data : {
+//                 accesstoken,
+//                 refreshToken
+//             }
+//         })
+
+//     } catch (error) {
+//         return response.status(500).json({
+//             message : error.message || error,
+//             error : true,
+//             success : false
+//         })
+//     }
+// }
+
+// export async function loginController(request, response) {
+//     try {
+//         const { email, password, guestCart } = request.body;
+
+//         if (!email || !password) {
+//             return response.status(400).json({
+//                 message: "provide email, password",
+//                 error: true,
+//                 success: false
+//             });
+//         }
+
+//         const user = await UserModel.findOne({ email });
+
+//         if (!user) {
+//             return response.status(400).json({
+//                 message: "User not registered",
+//                 error: true,
+//                 success: false
+//             });
+//         }
+
+//         if (user.status !== "Active") {
+//             return response.status(400).json({
+//                 message: "Contact Admin",
+//                 error: true,
+//                 success: false
+//             });
+//         }
+
+//         const checkPassword = await bcryptjs.compare(password, user.password);
+
+//         if (!checkPassword) {
+//             return response.status(400).json({
+//                 message: "Check your password",
+//                 error: true,
+//                 success: false
+//             });
+//         }
+
+//         const accesstoken = await generatedAccessToken(user._id); //
+//         const refreshToken = await genertedRefreshToken(user._id);
+
+//         const updateUser = await UserModel.findByIdAndUpdate(user?._id, {
+//             last_login_date: new Date()
+//         });
+
+//         // After successful login, merge guest cart if exists
+//         if (guestCart && Array.isArray(guestCart)) {
+//             for (let item of guestCart) {
+//                 const checkItemCart = await CartProductModel.findOne({
+//                     userId: user._id,
+//                     productId: item.productId
+//                 });
+
+//                 if (!checkItemCart) {
+//                     const cartItem = new CartProductModel({
+//                         quantity: item.quantity,
+//                         userId: user._id,
+//                         productId: item.productId
+//                     });
+//                     await cartItem.save();
+
+//                     await UserModel.updateOne({ _id: user._id }, {
+//                         $push: {
+//                             shopping_cart: item.productId
+//                         }
+//                     });
+//                 }
+//             }
+//         }
+
+//         const cookiesOption = {
+//             httpOnly: true,
+//             secure: true,
+//             sameSite: "None"
+//         };
+//         response.cookie('accessToken', accesstoken, cookiesOption);
+//         response.cookie('refreshToken', refreshToken, cookiesOption);
+
+//         return response.json({
+//             message: "Login successfully",
+//             error: false,
+//             success: true,
+//             data: {
+//                 accesstoken,
+//                 refreshToken
+//             }
+//         });
+
+//     } catch (error) {
+//         return response.status(500).json({
+//             message: error.message || error,
+//             error: true,
+//             success: false
+//         });
+//     }
+// }
 
 //logout controller
 export async function logoutController(request,response){

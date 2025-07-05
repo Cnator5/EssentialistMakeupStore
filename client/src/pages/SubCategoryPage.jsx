@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Helmet } from 'react-helmet'
 import UploadSubCategoryModel from '../components/UploadSubCategoryModel'
 import AxiosToastError from '../utils/AxiosToastError'
 import Axios from '../utils/Axios'
@@ -79,7 +80,7 @@ const SubCategoryPage = () => {
             {
               row.original.category.map((c,index)=>{
                 return(
-                  <p key={c._id+"table"} className='shadow-md px-1 inline-block'>{c.name}</p>
+                  <p key={`${c._id}-table-${index}`} className='shadow-md px-1 inline-block'>{c.name}</p>
                 )
               })
             }
@@ -131,7 +132,7 @@ const SubCategoryPage = () => {
   }
   return (
     <section className=''>
-        <div className='p-2   bg-white shadow-md flex items-center justify-between'>
+        <div className='p-2 bg-white shadow-md flex items-center justify-between'>
             <h2 className='font-semibold'>Sub Category</h2>
             <button onClick={()=>setOpenAddSubCategory(true)} className='text-sm border border-primary-200 hover:bg-primary-200 px-3 py-1 rounded'>Add Sub Category</button>
         </div>

@@ -158,7 +158,7 @@
 
 
 import React, { useEffect, useState } from 'react'
-import { Helmet } from 'react-helmet'
+import { Helmet } from "react-helmet-async";
 import Axios from '../utils/Axios'
 import SummaryApi from '../common/SummaryApi'
 import { Link, useParams } from 'react-router-dom'

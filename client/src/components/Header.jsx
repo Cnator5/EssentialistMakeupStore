@@ -205,7 +205,7 @@ const Header = () => {
                         {/* Account */}
                         {user?._id ? (
                             <div className="relative">
-                                <div onClick={() => setOpenUserMenu(prev => !prev)} className="flex select-none items-center gap-1 cursor-pointer text-semibold text-lg">
+                                <div onClick={() => setOpenUserMenu(prev => !prev)} className="flex select-none items-center gap-1 cursor-pointer text-bold text-lg">
                                     <span>Account</span>
                                     {openUserMenu
                                         ? <GoTriangleUp size={22} />
