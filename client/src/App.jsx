@@ -16,7 +16,6 @@ import { FaCartShopping } from "react-icons/fa6";
 import CartMobileLink from './components/CartMobile';
 import Modal from './components/Modal';
 import Login from './pages/Login';
-import { HelmetProvider } from 'react-helmet-async';
 
 function App() {
   const dispatch = useDispatch()
@@ -86,7 +85,6 @@ function App() {
 
 
   return (
-    <HelmetProvider>
     <GlobalProvider> 
       <Header/>
       <main className='min-h-[78vh]'>
@@ -105,7 +103,6 @@ function App() {
         )
       }
     </GlobalProvider>
-    </HelmetProvider>
   )
 }
 

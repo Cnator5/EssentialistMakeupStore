@@ -2,7 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { valideURLConvert } from '../utils/valideURLConvert'
-import { Helmet } from "react-helmet-async";
+import { Helmet } from 'react-helmet'
 
 const makeupProducts = [
   { product: "Total control drop", genre: "foundation", brand: "NYX", bulk: 9000, sell: 13000 },

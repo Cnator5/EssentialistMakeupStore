@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 import { valideURLConvert } from '../utils/valideURLConvert';
 import { useNavigate } from 'react-router-dom';
 import CategoryWiseProductDisplay from '../components/CategoryWiseProductDisplay';
-import { Helmet } from "react-helmet-async";
+import { Helmet } from 'react-helmet';
 
 const Home = () => {
   const loadingCategory = useSelector(state => state.product.loadingCategory);
