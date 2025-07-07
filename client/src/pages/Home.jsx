@@ -136,12 +136,12 @@ const Home = () => {
           <div className={`w-full h-full min-h-48 bg-blue-10 rounded ${!banner && "animate-pulse my-2"}`}>
             <img src={bannern} className='w-full h-full hidden lg:block mt-2' alt='Beautiful model with makeup' />
             <img src={bannerMobile} className='w-full h-full lg:hidden' alt='Cosmetics sale banner' />
-            <div className="font-bold text-[60px] md:text-[60px] text-center">
+            <div className="font-bold text-[40px] md:text-[60px] text-center">
               <h1>Shop by Category</h1>
             </div>
           </div>
         </div>
-        <div className='container mx-auto px-4 my-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-5 gap-2 cursor-pointer justify-center items-center'>
+        <div className='container mx-auto px-8 my-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-5 gap-2 cursor-pointer justify-center items-center'>
           {
             loadingCategory ? (
               new Array(12).fill(null).map((_, index) => (

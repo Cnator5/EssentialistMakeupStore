@@ -86,7 +86,6 @@ function App() {
 
 
   return (
-    <HelmetProvider>
     <GlobalProvider> 
       <Header/>
       <main className='min-h-[78vh]'>
@@ -105,7 +104,6 @@ function App() {
         )
       }
     </GlobalProvider>
-    </HelmetProvider>
   )
 }
 

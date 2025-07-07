@@ -90,7 +90,7 @@ const CategoryWiseProductDisplay = ({ id, name }) => {
       {/* Product Cards */}
       <div className='relative flex items-center cursor-pointer'>
         <div
-          className='  grid grid-cols-1 sm:grid-cols-2 md:flex
+          className='  grid grid-cols-2 sm:grid-cols-2 md:flex
     justify-items-center
     gap-4 md:gap-6 lg:gap-8
     container mx-auto px-4
