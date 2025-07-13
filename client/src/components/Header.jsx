@@ -191,7 +191,7 @@ const Header = () => {
                     {!(isSearchPage && isMobile) && (
                         <div 
                             ref={searchBarRef} 
-                            className="flex-1 px-3 lg:hidden block"
+                            className="flex-1 px-3  block"
                             style={{ 
                                 transition: 'all 0.3s ease',
                                 transform: isHeaderVisible ? 'scale(1)' : 'scale(0.9)',

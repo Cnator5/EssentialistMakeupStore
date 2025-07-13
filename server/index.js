@@ -53,7 +53,7 @@ app.use('/api/order', orderRouter);
 // ---- SITEMAP ROUTE ----
 app.get('/sitemap.xml', async (req, res) => {
     try {
-        const baseUrl = process.env.FRONTEND_URL?.replace(/\/$/, '') || 'http://localhost:5173';
+        const baseUrl = process.env.FRONTEND_URL?.replace(/\/$/, '') || 'https://www.esmakeupstore.com';
 
         // Fetch all categories, subcategories, and products (only published)
         const [categories, subCategories, products] = await Promise.all([
