@@ -54,9 +54,20 @@ app.use('/api/order', orderRouter);
 // Register routes
 app.use('/payments', paymentRoutes);
 
-app.get('/', (req, res) => {
+
+app.get('/mtn', (req, res) => {
   res.send('PayUnit MTN Payment API');
 });
+app.get('/orange', (req, res) => {
+  res.send('PayUnit ORANGE Payment API');
+});
+app.get('/payunit', (req, res) => {
+  res.send('PayUnit Payment API');
+});
+app.get('/payunit/return', (req, res) => {
+  res.send('PayUnit Return URL');
+});
+
 
 // ---- SITEMAP ROUTE ----
 app.get('/sitemap.xml', async (req, res) => {

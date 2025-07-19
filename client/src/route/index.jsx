@@ -178,6 +178,7 @@ import Cancel from "../pages/Cancel";
 import BrandPage from '../pages/BrandPage';
 import NewArrivalPage from '../pages/NewArrivalPage';
 import ContactUsPage from "../pages/ContactPage";
+import PaymentReturn from "../pages/PaymentReturn";
 
 const router = createBrowserRouter([
     {
@@ -227,6 +228,10 @@ const router = createBrowserRouter([
             {
                 path: "user",
                 element: <UserMenuMobile />
+            },
+            {
+                path: "return",
+                element: <PaymentReturn />
             },
             {
                 path: "dashboard",
