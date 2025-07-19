@@ -19,6 +19,7 @@ import ProductModel from './models/product.model.js';
 import CategoryModel from './models/category.model.js';
 import SubCategoryModel from './models/subCategory.model.js';
 import slugify from 'slugify'; // <-- ADD THIS LINE
+import paymentRoutes from './route/payments.js'; // Import your payment routes
 
 const app = express();
 
@@ -49,6 +50,13 @@ app.use('/api/product', productRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/address', addressRouter);
 app.use('/api/order', orderRouter);
+
+// Register routes
+app.use('/payments', paymentRoutes);
+
+app.get('/', (req, res) => {
+  res.send('PayUnit MTN Payment API');
+});
 
 // ---- SITEMAP ROUTE ----
 app.get('/sitemap.xml', async (req, res) => {
