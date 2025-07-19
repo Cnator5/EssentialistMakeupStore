@@ -2,6 +2,7 @@ import React from 'react'
 import { Helmet } from "react-helmet-async";
 import CategoryWiseProductDisplay from '../components/CategoryWiseProductDisplay';
 import bannerOGB from '../assets/OG-Shades-Desktop.webp';
+import { useEffect } from 'react';
 
 // Use the real category ID for NEW & HOT from your sitemap
 const NEW_HOT_CATEGORY_ID = '6806b355bca41016c4406edb'
@@ -9,13 +10,19 @@ const NEW_CATEGORY_ID = '68055442764e6d332bd162c8'
 const NEW_HOT_CATEGORY_NAME = 'New Makeup Arrivals & Hot Brands in Cameroon'
 const NEW_CATEGORY_NAME = 'New Makeup Arrivals in Cameroon'
 
+
+
 const NewAndHotPage = () => {
+  useEffect(() => {
+    const year = new Date().getFullYear();
+    document.title = `NYX & L.A. Girl: Best New Makeup of ${year} | Trending Beauty Essentials`;
+  }, []);
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-pink-50 to-white pb-16">
       {/* SEO Meta */}
       <Helmet>
         <title>
-          New Makeup Products | Trending Beauty Products
+          NYX & L.A. Girl: Best New Makeup of <script>document.write(new Date().getFullYear())</script> | Trending Beauty Essentials
         </title>
         <meta
           name="description"

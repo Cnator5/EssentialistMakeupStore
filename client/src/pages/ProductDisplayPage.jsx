@@ -75,7 +75,7 @@ const subCategoryId = subCategory?.split("-").pop();
   return (
     <>
       <Helmet>
-        <title>{`${data.name} Makeup Essentials & Makeup in Cameroon | Essentialist Makeup Store`}</title>
+        <title>{`${data.name}`}</title>
         <meta name="description" content={data.description} />
         <meta
           name="keywords"

@@ -141,7 +141,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <div className='container mx-auto px-8 my-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-5 gap-2 cursor-pointer justify-center items-center'>
+        <div className='container mx-auto px-8 my-2 grid grid-cols-5 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-5 gap-2 cursor-pointer justify-center items-center'>
           {
             loadingCategory ? (
               new Array(12).fill(null).map((_, index) => (
