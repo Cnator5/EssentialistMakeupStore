@@ -103,7 +103,7 @@ const Login = () => {
         >
           <div className="mb-8 text-center">
             <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800 mb-2">Welcome Back</h1>
-            <p className="text-gray-500">Sign in to continue your beauty experience</p>
+            <p className="text-black">Sign in to continue your beauty experience</p>
           </div>
 
           <form className="space-y-7" onSubmit={handleSubmit} autoComplete="on">
@@ -114,7 +114,7 @@ const Login = () => {
               <input
                 type="email"
                 id="email"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-300 focus:border-pink-400 bg-gray-50 transition-all"
+                className="w-full p-3 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-300 focus:border-pink-400 bg-gray-50 transition-all"
                 name="email"
                 value={data.email}
                 onChange={handleChange}
@@ -126,7 +126,7 @@ const Login = () => {
 
             <div>
               <div className="flex justify-between items-center">
-                <label htmlFor="password" className="text-sm font-medium text-gray-700">
+                <label htmlFor="password" className="text-sm font-medium text-black">
                   Password
                 </label>
                 <Link
@@ -140,7 +140,7 @@ const Login = () => {
                 <input
                   type={showPassword ? "text" : "password"}
                   id="password"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-300 focus:border-pink-400 bg-gray-50 pr-12 transition-all"
+                  className="w-full p-3 border focus:text-black text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-300 focus:border-pink-400 bg-gray-50 pr-12 transition-all"
                   name="password"
                   value={data.password}
                   onChange={handleChange}
@@ -200,7 +200,7 @@ const Login = () => {
             </button>
           </div> */}
 
-          <p className="mt-7 text-center text-sm text-gray-600">
+          <p className="mt-7 text-center text-sm text-black">
             Don&apos;t have an account?{' '}
             <Link to="/register" className="font-semibold text-pink-500 hover:text-pink-600 transition-colors">
               Create an account

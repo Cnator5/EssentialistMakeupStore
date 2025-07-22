@@ -3,43 +3,117 @@ import CartProductModel from "../models/cartproduct.model.js";
 import OrderModel from "../models/order.model.js";
 import UserModel from "../models/user.model.js";
 import mongoose from "mongoose";
-import { sendOrderNotificationToAdmin } from "../utils/mail.js"; // ADD THIS IMPORT
+import { sendOrderNotificationToAdmin } from "../utils/mail.js";
+import AddressModel from "../models/address.model.js";
+
 
 export async function CashOnDeliveryOrderController(request, response) {
   try {
     const userId = request.userId;
-    const { list_items, totalAmt, addressId, subTotalAmt, email, phone } = request.body;
+    const { list_items, totalAmt, addressId, subTotalAmt } = request.body;
 
-    const payload = list_items.map(el => ({
-      userId,
-      orderId: `ORD-${new mongoose.Types.ObjectId()}`,
+    // Fetch the selected address object
+    const addressObj = await AddressModel.findById(addressId).lean();
+
+    const orderId = `ORD-${new mongoose.Types.ObjectId()}`;
+    const products = list_items.map(el => ({
       productId: el.productId._id,
       product_details: {
         name: el.productId.name,
         image: el.productId.image
       },
+      quantity: el.quantity,
+      price: el.productId.price
+    }));
+
+    const orderPayload = {
+      userId,
+      orderId,
+      products,
       paymentId: "",
       payment_status: "CASH ON DELIVERY",
       delivery_address: addressId,
+      contact_info: {
+        name: addressObj?.name || "",
+        customer_email: addressObj?.customer_email || "",
+        mobile: addressObj?.mobile || ""
+      },
       subTotalAmt,
       totalAmt,
-    }));
+      is_guest: false
+    };
 
-    const generatedOrder = await OrderModel.insertMany(payload);
+    const generatedOrder = await OrderModel.create(orderPayload);
 
-    // Populate delivery address for all orders
-    const populatedOrders = await OrderModel.find({ _id: { $in: generatedOrder.map(o => o._id) } }).populate("delivery_address");
+    // Populate delivery address for order (optional for email)
+    const populatedOrder = await OrderModel.findById(generatedOrder._id).populate("delivery_address");
 
     await CartProductModel.deleteMany({ userId });
     await UserModel.updateOne({ _id: userId }, { shopping_cart: [] });
 
     // Send notification to admin with address included
-    await sendOrderNotificationToAdmin(populatedOrders);
+    await sendOrderNotificationToAdmin([populatedOrder]);
 
     return response.json({
       message: "Order placed successfully",
       error: false,
       success: true,
+      data: generatedOrder
+    });
+
+  } catch (error) {
+    return response.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false
+    });
+  }
+}
+
+// Guest user order creation
+// Updated order.controller.js with guest order support - fix for duplicate orderId
+export async function GuestCashOnDeliveryOrderController(request, response) {
+  try {
+    const { list_items, totalAmt, subTotalAmt, isGuestOrder, ...addressData } = request.body;
+
+    const guestOrderId = `GUEST-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+
+    const products = list_items.map(el => ({
+      productId: el.productId._id,
+      product_details: {
+        name: el.productId.name,
+        image: el.productId.image
+      },
+      quantity: el.quantity,
+      price: el.productId.price
+    }));
+
+    const orderPayload = {
+      orderId: guestOrderId,
+      products,
+      paymentId: "",
+      payment_status: "CASH ON DELIVERY",
+      delivery_address: addressData, // Store full address object
+      contact_info: {
+        name: addressData.name,
+        customer_email: addressData.customer_email,
+        mobile: addressData.mobile
+      },
+      subTotalAmt,
+      totalAmt,
+      is_guest: true
+    };
+
+    const generatedOrder = await OrderModel.create(orderPayload);
+
+    // Send notification to admin
+    await sendOrderNotificationToAdmin([generatedOrder]);
+
+    return response.json({
+      message: "Guest order placed successfully",
+      error: false,
+      success: true,
+      orderId: guestOrderId,
       data: generatedOrder
     });
 
@@ -217,4 +291,3 @@ export async function getOrderDetailsController(request,response){
         })
     }
 }
-

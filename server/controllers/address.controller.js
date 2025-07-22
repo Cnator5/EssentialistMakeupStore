@@ -1,43 +1,47 @@
 import AddressModel from "../models/address.model.js";
 import UserModel from "../models/user.model.js"; 
 
-export const addAddressController = async(request,response)=>{
+
+export const addAddressController = async(request, response) => {
     try {
-        const userId = request.userId // middleware
-        const { address_line , city, state, pincode, country,mobile } = request.body
+        // If not logged in, userId will be undefined or null
+        const userId = request.userId; // undefined for guests
+        const { name, customer_email, address_line, city, state, country, pincode, mobile } = request.body;
 
         const createAddress = new AddressModel({
-            name : request.body.name || "",
-            customer_email : request.body.customer_email || "",
+            name,
+            customer_email,
             address_line,
             city,
             state,
             country,
             pincode,
             mobile,
-            userId : userId 
-        })
-        const saveAddress = await createAddress.save()
+            userId: userId || undefined // only assign if present
+        });
 
-        const addUserAddressId = await UserModel.findByIdAndUpdate(userId,{
-            $push : {
-                address_details : saveAddress._id
-            }
-        })
+        const saveAddress = await createAddress.save();
+
+        // Only link address to user if logged in
+        if (userId) {
+            await UserModel.findByIdAndUpdate(userId, {
+                $push: { address_details: saveAddress._id }
+            });
+        }
 
         return response.json({
-            message : "Address Created Successfully",
-            error : false,
-            success : true,
-            data : saveAddress
-        })
+            message: "Address Created Successfully",
+            error: false,
+            success: true,
+            data: saveAddress
+        });
 
     } catch (error) {
         return response.status(500).json({
-            message : error.message || error,
-            error : true,
-            success : false
-        })
+            message: error.message || error,
+            error: true,
+            success: false
+        });
     }
 }
 

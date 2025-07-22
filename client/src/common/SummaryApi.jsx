@@ -145,6 +145,10 @@ const SummaryApi = {
         url : "/api/order/cash-on-delivery",
         method : 'post'
     },
+    GuestCashOnDeliveryOrder : {
+        url : "/api/order/guest-cod",
+        method : 'post'
+    },
     payment_url : {
         url : "/api/order/checkout",
         method : 'post'

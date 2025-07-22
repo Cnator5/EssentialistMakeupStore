@@ -1,3 +1,4 @@
+// Updated mail.js with guest order notification support
 import nodemailer from "nodemailer";
 import AddressModel from "../models/address.model.js";
 
@@ -10,17 +11,12 @@ export const transporter = nodemailer.createTransport({
   }
 });
 
-/**
- * Sends order notification emails to admin for each order in orderArray
- * @param {Array<Object>} orderArray - Array of order objects
- */
+
 export async function sendOrderNotificationToAdmin(orderArray) {
   for (const order of orderArray) {
-    // ---------- Fetch Address ----------
+    // Fetch Address (as before)
     let addressObj = order.delivery_address;
     let addressText = "N/A";
-
-    // If delivery_address is a string (ObjectId) or only has _id, fetch from DB
     if (addressObj) {
       if (
         typeof addressObj === "string" ||
@@ -44,55 +40,43 @@ Mobile: ${addressObj.mobile || ""}
       }
     }
 
-    // ---------- Customer Info ----------
+    // Customer Info
     const customerName =
       addressObj?.name ||
       order.contact_info?.name ||
       "N/A";
     const customerEmail = order.contact_info?.customer_email || addressObj?.customer_email || "N/A";
-    const customerPhone = order.contact_info?.phone || addressObj?.mobile || "N/A";
+    const customerPhone = order.contact_info?.mobile || addressObj?.mobile || "N/A";
 
-    // ---------- Order Info ----------
-    const {
-      orderId,
-      product_details,
-      subTotalAmt,
-      discountAmt,
-      shippingAmt,
-      totalAmt,
-      paymentMethod,
-      paymentStatus,
-      deliveryStatus,
-      createdAt,
-      updatedAt,
-    } = order;
-
-    // ---------- Product Info ----------
-    let productName = "N/A";
-    let productImages = "No images available";
-    if (product_details) {
-      productName = product_details.name || "N/A";
-      if (Array.isArray(product_details.image)) {
-        productImages = product_details.image.join(", ");
-      } else if (typeof product_details.image === "string") {
-        productImages = product_details.image;
-      }
+    // Compose products list (NEW)
+    let productsText = "";
+    if (Array.isArray(order.products) && order.products.length > 0) {
+      productsText = order.products.map((prod, idx) => 
+        `#${idx+1}
+  Product: ${prod.product_details.name}
+  Qty: ${prod.quantity}
+  Price: ${prod.price}
+  Images: ${Array.isArray(prod.product_details.image) ? prod.product_details.image.join(", ") : prod.product_details.image}
+      `.trim()
+      ).join("\n\n");
+    } else {
+      productsText = "N/A";
     }
 
-    // ---------- Email Content ----------
-    const subject = `New Order: ${orderId}`;
+    const subject = `${order.is_guest ? '[GUEST] ' : ''}New Order: ${order.orderId}`;
     const text = `
-Order ID: ${orderId}
-Product: ${productName}
-Image: ${productImages}
-Total: ${subTotalAmt}
+Order ID: ${order.orderId}
+Products:
+${productsText}
+Total: ${order.subTotalAmt}
 Customer Name: ${customerName}
 Customer Email: ${customerEmail}
 Customer Phone: ${customerPhone}
 Customer Address: ${addressText}
+${order.is_guest ? 'GUEST ORDER: Yes' : ''}
     `.trim();
 
-    // ---------- Send Email ----------
+    // Send Email
     await transporter.sendMail({
       from: `"${customerName}" <${process.env.ADMIN_EMAIL}>`,
       to: process.env.ADMIN_RECEIVE_EMAIL,
