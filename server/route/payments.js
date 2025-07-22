@@ -106,6 +106,49 @@ router.post('/orange', async (req, res) => {
   }
 });
 
+
+// Guest MTN Mobile Money
+router.post('/guest-mtn', async (req, res) => {
+  try {
+    // Accepts all body fields guest might send
+    const { amount, phone, order_id, email, name } = req.body;
+    // Initiate payment via Payunit
+    const payment = await client.collections.initiatePayment({
+      total_amount: amount,
+      currency: 'XAF',
+      transaction_id: order_id,
+      return_url: 'https://esmakeupstore.com/return',
+      notify_url: 'https://esmakeupstore.com/webhook',
+      payment_country: 'CM',
+      pay_with: 'CM_MTNMOMO',
+      custom_fields: { order_id, customer_type: 'guest' },
+    });
+    res.json({ payment_url: payment.transaction_url });
+  } catch (err) {
+    res.status(500).json({ error: 'Payment initiation failed' });
+  }
+});
+
+// Guest Orange Money
+router.post('/guest-orange', async (req, res) => {
+  try {
+    const { amount, phone, order_id, email, name } = req.body;
+    const payment = await client.collections.initiatePayment({
+      total_amount: amount,
+      currency: 'XAF',
+      transaction_id: order_id,
+      return_url: 'https://esmakeupstore.com/return',
+      notify_url: 'https://esmakeupstore.com/webhook',
+      payment_country: 'CM',
+      pay_with: 'CM_ORANGE',
+      custom_fields: { order_id, customer_type: 'guest' },
+    });
+    res.json({ payment_url: payment.transaction_url });
+  } catch (err) {
+    res.status(500).json({ error: 'Payment initiation failed' });
+  }
+});
+
 // Transaction Status
 router.get('/status/:transactionId', async (req, res) => {
   try {
