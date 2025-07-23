@@ -81,6 +81,7 @@ const Home = () => {
 
   return (
     <>
+    <meta name="msvalidate.01" content="1D7D3FCABB171743A8EB32440530AC76" />
       <Helmet>
         <title>{dynamicTitle}</title>
         <meta name="description" content={dynamicDescription} />
