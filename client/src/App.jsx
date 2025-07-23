@@ -16,7 +16,7 @@ import { FaCartShopping } from "react-icons/fa6";
 import CartMobileLink from './components/CartMobile';
 import Modal from './components/Modal';
 import Login from './pages/Login';
-import { HelmetProvider } from 'react-helmet-async';
+
 // import { AuthProvider } from './context/AuthContext';
 
 function App() {
@@ -87,7 +87,7 @@ function App() {
 
 
   return (
-    <HelmetProvider>
+   
      {/* <AuthProvider> */}
     <GlobalProvider>
       <Header/>
@@ -108,7 +108,7 @@ function App() {
       }
     </GlobalProvider>
       {/* </AuthProvider> */}
-    </HelmetProvider>
+
   )
 }
 
