@@ -25,8 +25,8 @@ const Home = () => {
     .join(', ');
 
   const dynamicTitle = topCategoryNames
-    ? `Shop ${topCategoryNames} & More | EssentialisMakeupStore`
-    : 'Makeup: Beauty & Personal Care - EssentialisMakeupStore';
+    ? `Shop ${topCategoryNames} & More`
+    : 'Makeup: Beauty & Personal Care';
 
   const dynamicDescription = topCategoryNames
     ? `Discover the best in ${topCategoryNames} and more. Authentic makeup, cosmetics, and beauty essentials in Cameroon at EssentialisMakeupStore.`

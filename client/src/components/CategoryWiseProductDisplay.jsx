@@ -70,7 +70,7 @@ const CategoryWiseProductDisplay = ({ id, name }) => {
   return (
     <div>
      <Helmet>
-        <title>{name} | Makeup Products</title>
+        <title>{name}</title>
         <meta name="description" content={`Browse our selection of high-quality ${name} makeup products.`} />
         <meta name="keywords" content={`${name}, makeup, cosmetics, beauty, products`} />
       </Helmet>
