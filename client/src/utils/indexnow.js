@@ -1,0 +1,101 @@
+// src/utils/indexNow.js
+export async function submitBulkToIndexNow() {
+  const urlList = [
+  "https://www.esmakeupstore.com/",
+  "https://www.esmakeupstore.com/about",
+  "https://www.esmakeupstore.com/contact",
+  "https://www.esmakeupstore.com/new-arrival",
+  "https://www.esmakeupstore.com/brands",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299",
+  "https://www.esmakeupstore.com/eye-makeup-68055442764e6d332bd162c8",
+  "https://www.esmakeupstore.com/lip-makeup-6806b355bca41016c4406edb",
+  "https://www.esmakeupstore.com/blush-makeup-683394b5e4a011b9b5865ad0",
+  "https://www.esmakeupstore.com/foundation-makeup-68344c5d3f5474dcd03e0753",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/face-primer-680553c5764e6d332bd162c2",
+  "https://www.esmakeupstore.com/eye-makeup-68055442764e6d332bd162c8/eyeliner-680554de764e6d332bd162f3",
+  "https://www.esmakeupstore.com/lip-makeup-6806b355bca41016c4406edb/lipstick-6806ba02bca41016c4406fa0",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/concealer-6806c684bca41016c440701c",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/foundation-6806c72abca41016c440702a",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/compact-6806c76abca41016c440702e",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/contour-6806c7a5bca41016c4407032",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/loose-powder-6806c7fabca41016c4407036",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/tinted-moisturizer-6806c85abca41016c440703a",
+  "https://www.esmakeupstore.com/eye-makeup-68055442764e6d332bd162c8/kajal-6806c94bbca41016c4407076",
+  "https://www.esmakeupstore.com/eye-makeup-68055442764e6d332bd162c8/mascara-68078c85bca41016c4407588",
+  "https://www.esmakeupstore.com/lip-makeup-6806b355bca41016c4406edb/liquid-lipstick-6808ba4bd61d997618c9a809",
+  "https://www.esmakeupstore.com/eye-makeup-68055442764e6d332bd162c8/eye-shadow-6808fac0d61d997618c9abd6",
+  "https://www.esmakeupstore.com/lip-makeup-6806b355bca41016c4406edb/lip-crayon-681920859e1c9b273a48a09c",
+  "https://www.esmakeupstore.com/lip-makeup-6806b355bca41016c4406edb/lip-gloss-681921099e1c9b273a48a0b6",
+  "https://www.esmakeupstore.com/lip-makeup-6806b355bca41016c4406edb/lip-liner-6819215f9e1c9b273a48a0ba",
+  "https://www.esmakeupstore.com/lip-makeup-6806b355bca41016c4406edb/lip-plumper-681921a09e1c9b273a48a0be",
+  "https://www.esmakeupstore.com/lip-makeup-6806b355bca41016c4406edb/lip-tint-681921f29e1c9b273a48a0d0",
+  "https://www.esmakeupstore.com/eye-makeup-68055442764e6d332bd162c8/eye-brow-enhancers-68192e789e1c9b273a48a108",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/total-control-drop-foundation-682b89064d22a2bf839f6fa8",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/powder-foundation-68322f0764d72c3a8f531bbc",
+  "https://www.esmakeupstore.com/eye-makeup-68055442764e6d332bd162c8/eye-brow-cake-powder-6832336ee1f06493c6738d98",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/bronzy-683239a95247169fee818f99",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/highlighters-and-luminizers-68326107ad3c362a575353e7",
+  "https://www.esmakeupstore.com/lip-makeup-6806b355bca41016c4406edb/lip-cream-6832ee6feac2bef97c54882d",
+  "https://www.esmakeupstore.com/lip-makeup-6806b355bca41016c4406edb/lipeye-liner-pencil-3-in-1-68337acb6e352fdd6a8034b7",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/liquid-foundation-68337bac7435b8a0a884a7f4",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/stick-foundation-68337cc01c2f524355d4ed90",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/matte-bronzer-68337d871c2f524355d4ed9d",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/dark-circle-concealer-68337f4a6e352fdd6a8034d3",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/liquid-highlighter-68338c9663dd0ab705d75200",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/illuminator-68338fd4dc8d6588a8f80930",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/high-definition-blush-6833930163dd0ab705d75236",
+  "https://www.esmakeupstore.com/blush-makeup-683394b5e4a011b9b5865ad0/all-blush-6833963293c0a92c8e769d20",
+  "https://www.esmakeupstore.com/lip-makeup-6806b355bca41016c4406edb/lip-lacquer-6834240f4743a53c13f20308",
+  "https://www.esmakeupstore.com/lip-makeup-6806b355bca41016c4406edb/matte-lip-sticks-683425c57d9df2f3db8cb2f8",
+  "https://www.esmakeupstore.com/eye-makeup-68055442764e6d332bd162c8/eye-shadow-palette-683429664c507b316566ee13",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/bronzy-powder-68345327f78c045cbfac0c3a",
+  "https://www.esmakeupstore.com/lip-makeup-6806b355bca41016c4406edb/lip-cream-pallette-6834587ee6658ea6bc18330a",
+  "https://www.esmakeupstore.com/lip-makeup-6806b355bca41016c4406edb/lip-gloss-681921099e1c9b273a48a0b6/duo-chromatic-illuminating-powder-6831ccc8c0c2ebc2246abee1",
+  "https://www.esmakeupstore.com/eye-makeup-68055442764e6d332bd162c8/mascara-68078c85bca41016c4407588/worth-the-hype-volumizing-and-lengthening-mascara-6831d20a29361bedb252f0f4",
+  "https://www.esmakeupstore.com/eye-makeup-68055442764e6d332bd162c8/eyeliner-680554de764e6d332bd162f3/la-girl-glide-eye-liner-pencil-351-very-black-6831d48e46fe00dd6c9e836d",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/powder-foundation-68322f0764d72c3a8f531bbc/stay-matte-but-not-flat-powder-foundation-6832303c4b5cd28eb829bcad",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/foundation-6806c72abca41016c440702a/nyx-professional-makeup-stay-matte-but-not-flat-liquid-foundation-ivory-118-ounce-683231fda35e6630b5dcdc0c",
+  "https://www.esmakeupstore.com/eye-makeup-68055442764e6d332bd162c8/eye-brow-cake-powder-6832336ee1f06493c6738d98/nyx-professional-makeup-eyebrow-cake-powder-blackgray-683234ce308cc86035e2c624",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/foundation-6806c72abca41016c440702a/nyx-nyx-mineral-foundation-stick-msf09-caramel-68323792aa1c99871d874dde",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/bronzy-683239a95247169fee818f99/matte-bronzer-68323ab1308cc86035e2c63a",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/foundation-6806c72abca41016c440702a/nyx-professional-makeup-born-to-glow-liquid-illuminator-liquid-shimmer-makeup-highlighter-foundation-base-vegan-formula-shade-pure-gold-68323c25aa1c99871d874dfb",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/highlighters-and-luminizers-68326107ad3c362a575353e7/nyx-professional-makeup-away-we-glow-liquid-highlighter-golden-hour-022-fluid-ounce-683260e7ad3c362a575353e3",
+  "https://www.esmakeupstore.com/lip-makeup-6806b355bca41016c4406edb/liquid-lipstick-6808ba4bd61d997618c9a809/lip-lingerie-xxl-matte-liquid-lipstick-6832746794b23d7bce190111",
+  "https://www.esmakeupstore.com/lip-makeup-6806b355bca41016c4406edb/lip-cream-6832ee6feac2bef97c54882d/nyx-professional-makeup-liquid-suede-cream-lipstick-downtown-beauty-walnut-brown-6832efb533275196a3004bd1",
+  "https://www.esmakeupstore.com/lip-makeup-6806b355bca41016c4406edb/lip-liner-6819215f9e1c9b273a48a0ba/nyx-line-and-load-two-in-one-lippie-6832f65abef660d5991d13e3",
+  "https://www.esmakeupstore.com/eye-makeup-68055442764e6d332bd162c8/eye-shadow-6808fac0d61d997618c9abd6/nyx-professional-makeup-glitter-goals-liquid-eyeshadow-various-shades-6832f948bef660d5991d13f6",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/dark-circle-concealer-68337f4a6e352fdd6a8034d3/nyx-professional-makeup-dark-circle-concealer-deep-68338b1863dd0ab705d751ca",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/illuminator-68338fd4dc8d6588a8f80930/nyx-a-bit-jelly-gel-illuminator-opalescent-6833911863dd0ab705d75232",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/high-definition-blush-6833930163dd0ab705d75236/nyx-professional-makeup-high-definition-blush-amber-016-ounce-hdb11-6833939663dd0ab705d75247",
+  "https://www.esmakeupstore.com/blush-makeup-683394b5e4a011b9b5865ad0/all-blush-6833963293c0a92c8e769d20/nyx-cosmetics-baked-blush-pink-fetish-683395fdb72dd7764122f499",
+  "https://www.esmakeupstore.com/blush-makeup-683394b5e4a011b9b5865ad0/all-blush-6833963293c0a92c8e769d20/sweet-cheeks-soft-cheek-tint-cream-blush-683397aea4b726225299753b",
+  "https://www.esmakeupstore.com/lip-makeup-6806b355bca41016c4406edb/lip-lacquer-6834240f4743a53c13f20308/slip-tease-full-color-lip-lacquer-6834249a28d670958afb465e",
+  "https://www.esmakeupstore.com/lip-makeup-6806b355bca41016c4406edb/matte-lip-sticks-683425c57d9df2f3db8cb2f8/nyx-professional-makeup-soft-matte-lip-cream-lightweight-liquid-lipstick-cairo-matte-pure-nude-683426b94ab7fc299cc87554",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/foundation-6806c72abca41016c440702a/nyx-cosmetics-high-definition-studio-photogenic-foundation-hdf101-nude-683428c2086cde4ab7705f00",
+  "https://www.esmakeupstore.com/eye-makeup-68055442764e6d332bd162c8/eye-shadow-palette-683429664c507b316566ee13/the-smoky-fume-shadow-palettenyx-cosmeticstss01-68342a204c507b316566ee1f",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/foundation-6806c72abca41016c440702a/total-control-pro-drop-foundation-68344c1e3f5474dcd03e0750",
+  "https://www.esmakeupstore.com/face-makeup-68055310764e6d332bd16299/bronzy-powder-68345327f78c045cbfac0c3a/nyx-cosmetics-tango-with-bronzing-powder-tribal-odyssey-683453eef78c045cbfac0c4e",
+  "https://www.esmakeupstore.com/eye-makeup-68055442764e6d332bd162c8/eye-shadow-palette-683429664c507b316566ee13/ultimate-edit-petite-shadow-palette-683455b993bdbae560b5f479",
+  "https://www.esmakeupstore.com/eye-makeup-68055442764e6d332bd162c8/eye-shadow-6808fac0d61d997618c9abd6/nyx-cosmetics-love-in-rio-3-pan-eyeshadow-palette-no-tan-lines-allowed-6834579793bdbae560b5f48d",
+  "https://www.esmakeupstore.com/lip-makeup-6806b355bca41016c4406edb/lip-cream-pallette-6834587ee6658ea6bc18330a/nyx-professional-makeup-pro-lip-cream-palette-the-pinks-0317-ounce-6834593750f8e1fc84405f2e"
+];
+
+  const payload = {
+    host: "www.esmakeupstore.com",
+    key: "be1ca4afe49842e29f9fcb46c96f89a9", // Your actual IndexNow key
+    keyLocation: "https://www.esmakeupstore.com/be1ca4afe49842e29f9fcb46c96f89a9.txt",
+    urlList,
+  };
+
+  const res = await fetch("https://api.indexnow.org/indexnow", {
+    method: "POST",
+    headers: { "Content-Type": "application/json; charset=utf-8" },
+    body: JSON.stringify(payload),
+  });
+
+  if (res.ok) {
+    alert("URLs submitted to IndexNow successfully!");
+  } else {
+    alert("Failed to submit. Please check your key and try again.");
+  }
+}
