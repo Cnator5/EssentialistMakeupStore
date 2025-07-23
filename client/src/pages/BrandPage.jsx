@@ -112,7 +112,7 @@ const BuildAndBrand = () => {
  return (
     <div className="bg-gradient-to-b from-pink-50 to-white min-h-screen py-10 px-2 md:px-10">
       <Helmet>
-        <title>Authentic Makeup Brands Cameroon | NYX, LA Girl Price List | {siteName}</title>
+        <title>Authentic Makeup Brands | NYX, LA Girl Price List | {siteName}</title>
         <meta name="description" content={`Discover the best makeup brands in Cameroon: NYX, LA Girl and more. Explore our price list and shop foundations, lipsticks, powders, and authentic beauty products. Fast delivery, best FCFA prices in Douala and nationwide.`} />
         <meta name="keywords" content={`makeup brands, Cameroon makeup, NYX Cameroon, LA Girl makeup, authentic brands, Douala makeup store, ${allBrands}, ${allGenres}, ${allProductNames}, Essentialist Makeup Store`} />
         <meta name="robots" content="index, follow" />

@@ -69,6 +69,11 @@ const CategoryWiseProductDisplay = ({ id, name }) => {
 
   return (
     <div>
+     <Helmet>
+        <title>{name} | Makeup Products</title>
+        <meta name="description" content={`Browse our selection of high-quality ${name} makeup products.`} />
+        <meta name="keywords" content={`${name}, makeup, cosmetics, beauty, products`} />
+      </Helmet>
       {/* Flex container for the name and "See All" */}
       <div className='container mx-auto px-4 flex items-center justify-between   p-10 '>
         {/* Centered name */}
