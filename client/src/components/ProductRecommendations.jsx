@@ -146,7 +146,7 @@ return (
             Related Products
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-2 md:flex
-                        gap-4 sm:gap-6 md:gap-10
+                        gap-4 sm:gap-6 md:gap-10 space-x-16
                         container mx-auto 
                         overflow-x-auto scrollbar-none scroll-smooth">
             {relatedProducts.map((product) => (
@@ -165,7 +165,7 @@ return (
             Your Browsing History
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-2 md:flex
-                        gap-4 sm:gap-6 md:gap-10
+                        gap-4 sm:gap-6 md:gap-10 space-x-16
                         container mx-auto 
                         overflow-x-auto scrollbar-none scroll-smooth">
             {displayHistory.map((product) => (
