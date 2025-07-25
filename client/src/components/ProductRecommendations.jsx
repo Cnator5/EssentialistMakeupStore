@@ -144,9 +144,9 @@ const ProductRecommendations = ({ currentProductId, currentProductData }) => {
           <h2 className="text-2xl font-semibold text-black mb-4">
             Related Products
           </h2>
-          <div className=" grid grid-cols-2 sm:grid-cols-2 md:flex
+          <div className=" grid space-x-24  grid-cols-2  md:flex
     justify-items-center
-    gap-4 md:gap-6 lg:gap-8
+    gap-24 md:gap-10
     container mx-auto px-4
     overflow-x-scroll scrollbar-none scroll-smooth">
             {relatedProducts.map((product) => (
@@ -164,9 +164,9 @@ const ProductRecommendations = ({ currentProductId, currentProductData }) => {
           <h2 className="text-2xl font-semibold text-black mb-4">
             Your Browsing History
           </h2>
-          <div className=" grid grid-cols-2 sm:grid-cols-2 md:flex
+          <div className=" grid space-x-24 grid-cols-2 sm:grid-cols-2 md:flex
     justify-items-center
-    gap-4 md:gap-6 lg:gap-8
+    gap-8 md:gap-6
     container mx-auto px-4
     overflow-x-scroll scrollbar-none scroll-smooth">
             {displayHistory.map((product) => (
