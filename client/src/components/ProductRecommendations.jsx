@@ -144,7 +144,7 @@ const ProductRecommendations = ({ currentProductId, currentProductData }) => {
           <h2 className="text-2xl font-semibold text-black mb-4">
             Related Products
           </h2>
-          <div className="flex space-x-24 overflow-x-auto pb-4 scrollbar-none">
+          <div className="flex space-x-20 overflow-x-auto pb-4 scrollbar-none">
             {relatedProducts.map((product) => (
               <div key={`related-${product._id}`} className="flex-shrink-0 w-52">
                 <CardProduct data={product} onClick={() => handleClickProduct(product)} />
@@ -160,7 +160,7 @@ const ProductRecommendations = ({ currentProductId, currentProductData }) => {
           <h2 className="text-2xl font-semibold text-black mb-4">
             Your Browsing History
           </h2>
-          <div className="flex space-x-24 overflow-x-auto pb-4 scrollbar-none">
+          <div className="flex space-x-20 overflow-x-auto pb-4 scrollbar-none">
             {displayHistory.map((product) => (
               <div key={`history-${product._id}`} className="flex-shrink-0 w-52">
                 <CardProduct data={product} onClick={() => handleClickProduct(product)} />
