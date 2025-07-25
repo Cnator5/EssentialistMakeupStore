@@ -137,48 +137,48 @@ const ProductRecommendations = ({ currentProductId, currentProductData }) => {
 
   // On Product Detail Page: Show Related Products then Browsing History.
 return (
+  <section className="products-showcase bg-white py-8 rounded-lg shadow-sm">
     <div className="container mx-auto px-4 space-y-12">
       {/* Related Products Section */}
       {relatedProducts.length > 0 && (
-        <section className="border-t pt-8">
-          <h2 className="text-2xl font-semibold text-black mb-4">
+        <div className="border-t pt-8">
+          <h2 className="text-2xl font-semibold text-black mb-6">
             Related Products
           </h2>
-          <div className=" grid space-x-16  grid-cols-2  md:flex
-    justify-items-center
-    gap-24 md:gap-10
-    container mx-auto 
-    overflow-x-scroll scrollbar-none scroll-smooth">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:flex
+                        gap-4 sm:gap-6 md:gap-10
+                        container mx-auto 
+                        overflow-x-auto scrollbar-none scroll-smooth">
             {relatedProducts.map((product) => (
-              <div key={`related-${product._id}`} className="flex-shrink-0 w-52">
+              <div key={`related-${product._id}`} className="flex-shrink-0 w-full sm:w-auto md:w-52">
                 <CardProduct data={product} onClick={() => handleClickProduct(product)} />
               </div>
             ))}
           </div>
-        </section>
+        </div>
       )}
 
       {/* Browsing History Section */}
       {displayHistory.length > 0 && (
-        <section className="border-t pt-8">
-          <h2 className="text-2xl font-semibold text-black mb-4">
+        <div className="border-t pt-8">
+          <h2 className="text-2xl font-semibold text-black mb-6">
             Your Browsing History
           </h2>
-          <div className=" grid space-x-16  grid-cols-2  md:flex
-    justify-items-center
-    gap-24 md:gap-10
-    container mx-auto 
-    overflow-x-scroll scrollbar-none scroll-smooth">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:flex
+                        gap-4 sm:gap-6 md:gap-10
+                        container mx-auto 
+                        overflow-x-auto scrollbar-none scroll-smooth">
             {displayHistory.map((product) => (
-              <div key={`history-${product._id}`} className="flex-shrink-0 w-52">
+              <div key={`history-${product._id}`} className="flex-shrink-0 w-full sm:w-auto md:w-52">
                 <CardProduct data={product} onClick={() => handleClickProduct(product)} />
               </div>
             ))}
           </div>
-        </section>
+        </div>
       )}
     </div>
-  );
+  </section>
+);
 };
 
 export default ProductRecommendations;
