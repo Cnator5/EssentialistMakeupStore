@@ -136,7 +136,7 @@ const ProductRecommendations = ({ currentProductId, currentProductData }) => {
   }
 
   // On Product Detail Page: Show Related Products then Browsing History.
-  return (
+return (
     <div className="container mx-auto px-4 space-y-12">
       {/* Related Products Section */}
       {relatedProducts.length > 0 && (
@@ -144,10 +144,10 @@ const ProductRecommendations = ({ currentProductId, currentProductData }) => {
           <h2 className="text-2xl font-semibold text-black mb-4">
             Related Products
           </h2>
-          <div className=" grid space-x-24  grid-cols-2  md:flex
+          <div className=" grid space-x-16  grid-cols-2  md:flex
     justify-items-center
     gap-24 md:gap-10
-    container mx-auto px-4
+    container mx-auto 
     overflow-x-scroll scrollbar-none scroll-smooth">
             {relatedProducts.map((product) => (
               <div key={`related-${product._id}`} className="flex-shrink-0 w-52">
@@ -164,10 +164,10 @@ const ProductRecommendations = ({ currentProductId, currentProductData }) => {
           <h2 className="text-2xl font-semibold text-black mb-4">
             Your Browsing History
           </h2>
-          <div className=" grid space-x-24 grid-cols-2 sm:grid-cols-2 md:flex
+          <div className=" grid space-x-16  grid-cols-2  md:flex
     justify-items-center
-    gap-8 md:gap-6
-    container mx-auto px-4
+    gap-24 md:gap-10
+    container mx-auto 
     overflow-x-scroll scrollbar-none scroll-smooth">
             {displayHistory.map((product) => (
               <div key={`history-${product._id}`} className="flex-shrink-0 w-52">
