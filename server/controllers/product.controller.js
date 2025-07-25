@@ -180,28 +180,28 @@ export const getProductByCategoryAndSubCategory  = async(request,response)=>{
     }
 }
 
-export const getProductDetails = async(request,response)=>{
-    try {
-        const { productId } = request.body 
+// export const getProductDetails = async(request,response)=>{
+//     try {
+//         const { productId } = request.body 
 
-        const product = await ProductModel.findOne({ _id : productId })
+//         const product = await ProductModel.findOne({ _id : productId })
 
 
-        return response.json({
-            message : "product details",
-            data : product,
-            error : false,
-            success : true
-        })
+//         return response.json({
+//             message : "product details",
+//             data : product,
+//             error : false,
+//             success : true
+//         })
 
-    } catch (error) {
-        return response.status(500).json({
-            message : error.message || error,
-            error : true,
-            success : false
-        })
-    }
-}
+//     } catch (error) {
+//         return response.status(500).json({
+//             message : error.message || error,
+//             error : true,
+//             success : false
+//         })
+//     }
+// }
 
 //update product
 export const updateProductDetails = async(request,response)=>{
@@ -302,6 +302,72 @@ export const searchProduct = async(request,response)=>{
             limit : limit 
         })
 
+
+    } catch (error) {
+        return response.status(500).json({
+            message : error.message || error,
+            error : true,
+            success : false
+        })
+    }
+};
+
+// Add this new function to your product.controller.js file
+
+export const getProductsByIds = async (request, response) => {
+    try {
+        const { ids } = request.body;
+
+        if (!ids || !Array.isArray(ids) || ids.length === 0) {
+            return response.status(400).json({
+                message: "An array of product IDs is required.",
+                error: true,
+                success: false
+            });
+        }
+
+        // Find all products where the _id is in the provided array
+        const products = await ProductModel.find({
+            '_id': { $in: ids }
+        }).populate('category subCategory');
+
+        return response.json({
+            message: "Products fetched successfully by IDs",
+            data: products,
+            error: false,
+            success: true
+        });
+
+    } catch (error) {
+        return response.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        });
+    }
+};
+
+export const getProductDetails = async(request,response)=>{
+    try {
+        const { productId } = request.body 
+
+        // THE FIX IS HERE: Add .populate() to get the full category/subcategory objects
+        const product = await ProductModel.findOne({ _id : productId }).populate('category subCategory')
+
+        if (!product) {
+            return response.status(404).json({
+                message: "Product not found",
+                error: true,
+                success: false
+            })
+        }
+
+        return response.json({
+            message : "product details",
+            data : product,
+            error : false,
+            success : true
+        })
 
     } catch (error) {
         return response.status(500).json({

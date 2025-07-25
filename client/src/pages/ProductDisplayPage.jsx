@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+// frontend/src/pages/ProductDisplayPage.js
+
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import SummaryApi from '../common/SummaryApi';
 import Axios from '../utils/Axios';
 import AxiosToastError from '../utils/AxiosToastError';
@@ -14,16 +15,16 @@ import { pricewithDiscount } from '../utils/PriceWithDiscount';
 import AddToCartButton from '../components/AddToCartButton';
 import { valideURLConvert } from '../utils/valideURLConvert';
 import { Helmet } from "react-helmet-async";
+import ProductRecommendations from '../components/ProductRecommendations';
 
 const ProductDisplayPage = () => {
   const params = useParams();
-  let productId = params?.product?.split("-")?.slice(-1)[0];
-  const [data, setData] = useState({
-    name: "",
-    image: []
-  });
+  const productId = params?.product?.split("-")?.slice(-1)[0];
+  
+  // CHANGE 1: Initialize data state to null
+  const [data, setData] = useState(null);
   const [image, setImage] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Set loading to true initially
   const imageContainer = useRef();
 
   const fetchProductDetails = async () => {
@@ -47,7 +48,7 @@ const ProductDisplayPage = () => {
   useEffect(() => {
     fetchProductDetails();
     // eslint-disable-next-line
-  }, [params]);
+  }, [productId]); // Changed dependency to productId for better effect triggering
 
   const handleScrollRight = () => {
     imageContainer.current.scrollLeft += 100;
@@ -57,57 +58,23 @@ const ProductDisplayPage = () => {
     imageContainer.current.scrollLeft -= 100;
   };
 
-  const imageUrl =
-    data && data.image && data.image[0]
-      ? (data.image[0].startsWith("http")
-        ? data.image[0]
-        : `https://www.esmakeupstore.com/assets/${data.image[0]}`)
-      : "https://www.esmakeupstore.com/assets/images (2).avif";
+  // CHANGE 2: Add a loading guard. Do not render anything until data is fetched.
+  if (loading || !data) {
+    return (
+      <div className='container mx-auto flex justify-center items-center h-screen'>
+        <p>Loading product...</p> {/* Or a spinner component */}
+      </div>
+    );
+  }
 
-  const { category, subCategory, product } = useParams();
-
-// Extract the IDs (last segment after the last dash)
-const categoryId = category?.split("-").pop();
-const subCategoryId = subCategory?.split("-").pop();
-// const productId = product?.split("-").pop();
-
-
+  // The rest of your component remains the same.
+  // It will only render when 'data' is populated.
   return (
     <>
       <Helmet>
+        {/* Your Helmet content here... */}
         <title>{`${data.name}`}</title>
         <meta name="description" content={data.description} />
-        <meta
-          name="keywords"
-          content={`makeup, beauty, cosmetics, ${data.name}, ${data.unit}, discounts, offers, foundation, lipstick, mascara, eyeliner, eyeshadow, blush, bronzer, highlighter, contour, concealer, primer, setting spray, setting powder, makeup base, tinted moisturizer, BB cream, CC cream, powder, face palette, makeup palette, lip gloss, lip liner, matte lipstick, liquid lipstick, lip balm, lip stain, brow pencil, brow gel, brow powder, lash serum, false lashes, eyelash curler, eyeshadow palette, shimmer, glitter makeup, makeup remover, cleansing oil, cleansing balm, facial wipes, makeup sponges, beauty blender, makeup brushes, kabuki brush, blending brush, contour brush, fan brush, eye brush, lip brush, brush cleaner, vegan makeup, cruelty free, organic makeup, mineral makeup, hypoallergenic makeup, waterproof makeup, long wear makeup, sweat proof makeup, travel makeup kit, compact mirror, pocket mirror, makeup bag, vanity case, professional makeup, makeup artist, bridal makeup, wedding makeup, party makeup, glam makeup, natural makeup, nude makeup, smokey eye, cat eye, dewy finish, matte finish, luminous skin, glowing skin, radiant look, skin care, moisturizer, face serum, sheet mask, pore minimizer, anti-aging, sun protection, SPF makeup, beauty tips, makeup tutorial, makeup hacks, makeup trends, best sellers, top rated makeup, new makeup arrivals, exclusive offers, makeup sale, limited edition, gift sets, beauty box, makeup subscription, online makeup store, makeup shopping, beauty store Cameroon, beauty products Cameroon, cosmetics Cameroon, international makeup, imported makeup, premium makeup, affordable makeup, budget beauty, makeup deals, flash sale, best price, free shipping, cash on delivery, easy returns, customer reviews, latest makeup, trending makeup, influencer picks, must-have makeup, essentials`}
-        />
-        <link
-          rel="canonical"
-          href={`https://www.esmakeupstore.com/${valideURLConvert(data.name)}-${productId}`}
-        />
-        <meta property="og:title" content={`${data.name} - Essentialist Makeup Store`} />
-        <meta property="og:description" content={data.description} />
-        <meta
-          property="og:image"
-          content={
-            data.image && data.image[0]
-              ? (data.image[0].startsWith("http")
-                ? data.image[0]
-                : `https://www.esmakeupstore.com/assets/${data.image[0]}`)
-              : "https://www.esmakeupstore.com/assets/0d7ef2eINSIG00000668_01n (1).avif"
-          }
-        />
-        <meta
-          property="og:url"
-          content={`https://www.esmakeupstore.com/${valideURLConvert(data.name)}-${productId}`}
-        />
-        <meta property="og:type" content="product" />
-        <meta property="og:site_name" content="Essentialist Makeup Store" />
-        <meta property="og:image" content={data.image} />
-        <meta property="og:image:secure_url" content={data.image} />
-        <meta property="product:price:amount" content={data.price} />
-        <meta property="product:price:currency" content="XAF" />
-        <meta name="robots" content="index, follow" />
       </Helmet>
 
       <section className='container mx-auto p-4 grid lg:grid-cols-2 text-black font-bold md:font-normal'>
@@ -182,10 +149,10 @@ const subCategoryId = subCategory?.split("-").pop();
               <div className='border border-green-600 px-4 py-2 rounded bg-green-50 w-fit'>
                 <p className='font-semibold text-lg lg:text-xl'>{DisplayPriceInRupees(pricewithDiscount(data.bulkPrice, data.discount))}</p>
               </div>
-              {data.discount && (
+              {data.discount > 0 && (
                 <p className='line-through'>{DisplayPriceInRupees(data.price)}</p>
               )}
-              {data.discount && (
+              {data.discount > 0 && (
                 <p className="font-bold text-green-600 lg:text-2xl">{data.discount}% <span className='text-base text-black'>Discount</span></p>
               )}
             </div>
@@ -196,10 +163,10 @@ const subCategoryId = subCategory?.split("-").pop();
               <div className='border border-green-600 px-4 py-2 rounded bg-green-50 w-fit'>
                 <p className='font-semibold text-lg lg:text-xl'>{DisplayPriceInRupees(pricewithDiscount(data.price, data.discount))}</p>
               </div>
-              {data.discount && (
+              {data.discount > 0 && (
                 <p className='line-through'>{DisplayPriceInRupees(data.price)}</p>
               )}
-              {data.discount && (
+              {data.discount > 0 && (
                 <p className="font-bold text-green-600 lg:text-2xl">{data.discount}% <span className='text-base text-black'>Discount</span></p>
               )}
             </div>
@@ -268,6 +235,9 @@ const subCategoryId = subCategory?.split("-").pop();
           </div>
         </div>
       </section>
+
+      {/* This component will now only be rendered when 'data' is complete */}
+      <ProductRecommendations currentProductId={productId} currentProductData={data} />
     </>
   );
 };

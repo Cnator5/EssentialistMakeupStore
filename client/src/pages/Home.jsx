@@ -11,6 +11,7 @@ import { valideURLConvert } from '../utils/valideURLConvert';
 import { useNavigate } from 'react-router-dom';
 import CategoryWiseProductDisplay from '../components/CategoryWiseProductDisplay';
 import { Helmet } from "react-helmet-async";
+import ProductRecommendations from '../components/ProductRecommendations';
 
 const Home = () => {
   const loadingCategory = useSelector(state => state.product.loadingCategory);
@@ -133,6 +134,7 @@ const Home = () => {
       </Helmet>
 
       <section className='bg-white'>
+      <ProductRecommendations  />
         <div className='container mx-auto px-4'>
           <div className={`w-full h-full min-h-48 bg-blue-10 rounded ${!banner && "animate-pulse my-2"}`}>
             <img src={bannern} className='w-full h-full hidden lg:block mt-2' alt='Beautiful model with makeup' />
