@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { FaCloudUploadAlt } from "react-icons/fa";
 import uploadImage from '../utils/UploadImage';
 import Loading from '../components/Loading';
@@ -12,6 +12,8 @@ import SummaryApi from '../common/SummaryApi';
 import AxiosToastError from '../utils/AxiosToastError';
 import successAlert from '../utils/SuccessAlert';
 import { useEffect } from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const EditProductAdmin = ({ close ,data : propsData,fetchProductData}) => {
   const [data, setData] = useState({
@@ -37,6 +39,66 @@ const EditProductAdmin = ({ close ,data : propsData,fetchProductData}) => {
 
   const [openAddField, setOpenAddField] = useState(false)
   const [fieldName, setFieldName] = useState("")
+ const multipleFileInputRef = useRef(null);
+
+  // Quill editor modules and formats
+  const modules = {
+    toolbar: [
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+      ['link', 'image'],
+      ['clean']
+    ],
+  };
+  
+  const formats = [
+    'header',
+    'bold', 'italic', 'underline', 'strike',
+    'list', 'bullet',
+    'link', 'image'
+  ];
+
+    // Handle Quill editor change
+  const handleQuillChange = (content) => {
+    setData((prev) => {
+      return {
+        ...prev,
+        description: content
+      }
+    })
+  }
+
+   // Multiple image upload
+    const handleMultipleUploadImages = async (e) => {
+      const files = e.target.files;
+      
+      if (!files || files.length === 0) {
+        return;
+      }
+      
+      setImageLoading(true);
+      const newImages = [...data.image];
+      
+      // Process each file
+      for (let i = 0; i < files.length; i++) {
+        try {
+          const response = await uploadImage(files[i]);
+          const { data: ImageResponse } = response;
+          const imageUrl = ImageResponse.data.url;
+          newImages.push(imageUrl);
+        } catch (error) {
+          console.error("Error uploading image:", error);
+        }
+      }
+      
+      setData((prev) => ({
+        ...prev,
+        image: newImages
+      }));
+      
+      setImageLoading(false);
+    };
 
 
   const handleChange = (e) => {
@@ -175,7 +237,7 @@ const EditProductAdmin = ({ close ,data : propsData,fetchProductData}) => {
                   className='bg-blue-50 p-2 outline-none border focus-within:border-primary-200 rounded'
                 />
               </div>
-              <div className='grid gap-1'>
+              {/* <div className='grid gap-1'>
                 <label htmlFor='description' className='font-medium'>Description</label>
                 <textarea
                   id='description'
@@ -189,11 +251,25 @@ const EditProductAdmin = ({ close ,data : propsData,fetchProductData}) => {
                   rows={3}
                   className='bg-blue-50 p-2 outline-none border focus-within:border-primary-200 rounded resize-none'
                 />
-              </div>
+              </div> */}
+               <div className='grid gap-1'>
+            <label htmlFor='description' className='font-medium'>Description</label>
+            <div className="bg-blue-50 border rounded">
+              <ReactQuill
+                theme="snow"
+                value={data.description}
+                onChange={handleQuillChange}
+                modules={modules}
+                formats={formats}
+                placeholder="Enter product description"
+                className="quill-editor"
+              />
+            </div>
+          </div>
               <div>
                 <p className='font-medium'>Image</p>
                 <div>
-                  <label htmlFor='productImage' className='bg-blue-50 h-24 border rounded flex justify-center items-center cursor-pointer'>
+                 {/*  <label htmlFor='productImage' className='bg-blue-50 h-24 border rounded flex justify-center items-center cursor-pointer'>
                     <div className='text-center flex justify-center items-center flex-col'>
                       {
                         imageLoading ? <Loading /> : (
@@ -211,7 +287,32 @@ const EditProductAdmin = ({ close ,data : propsData,fetchProductData}) => {
                       accept='image/*'
                       onChange={handleUploadImage}
                     />
-                  </label>
+                  </label> */}
+                   {/* Multiple image upload option */}
+                                <label 
+                                  htmlFor='multipleProductImages' 
+                                  className='bg-blue-50 h-24 border rounded flex justify-center items-center cursor-pointer'
+                                >
+                                  <div className='text-center flex justify-center items-center flex-col'>
+                                    {
+                                      imageLoading ? <Loading /> : (
+                                        <>
+                                          <FaCloudUploadAlt size={35} />
+                                          <p>Upload Multiple Images</p>
+                                        </>
+                                      )
+                                    }
+                                  </div>
+                                  <input
+                                    type='file'
+                                    id='multipleProductImages'
+                                    className='hidden'
+                                    accept='image/*'
+                                    multiple
+                                    ref={multipleFileInputRef}
+                                    onChange={handleMultipleUploadImages}
+                                  />
+                                </label>
                   {/**display uploded image*/}
                   <div className='flex flex-wrap gap-4'>
                     {

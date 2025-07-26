@@ -159,7 +159,7 @@ const Product = () => {
                 <a href={productUrl} className="hover:underline">
                   <h2 className='text-lg font-semibold'>{item.name}</h2>
                 </a>
-                <p className='text-gray-700 text-sm'>{desc}</p>
+                <p className='text-red-500 text-sm'>{desc}</p>
               </div>
             )
           })}

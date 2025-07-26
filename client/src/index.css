@@ -38,3 +38,266 @@ body{
   background: #e5e7eb;
   border-radius: 6px;
 }
+
+/* Custom styles for Quill editor */
+.quill-editor {
+  height: 200px;
+  margin-bottom: 30px;
+}
+
+.ql-container {
+  min-height: 150px;
+  border-bottom-left-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+  background: #EFF6FF;
+}
+
+.ql-toolbar {
+  background: white;
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+}
+
+.quill-html-content p {
+  margin-block: 0.5em;
+  line-height: 1.6;
+}
+
+.quill-html-content h1, .quill-html-content h2, .quill-html-content h3 {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  font-weight: bold;
+}
+.quill-html-content ul, .quill-html-content ol {
+  margin-left: 1.5em;
+  margin-bottom: 1em;
+}
+.quill-html-content p {
+  margin-bottom: 0.75em;
+}
+
+/* Styling for rendered Quill content */
+[dangerouslySetInnerHTML] p {
+  margin-bottom: 0.75em;
+  line-height: 1.6;
+}
+
+[dangerouslySetInnerHTML] h1 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  line-height: 1.6;
+}
+
+[dangerouslySetInnerHTML] h2 {
+  font-size: 1.3em;
+  font-weight: bold;
+  margin-top: 0.8em;
+  margin-bottom: 0.5em;
+  line-height: 1.6;
+}
+
+[dangerouslySetInnerHTML] h3 {
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 0.8em;
+  margin-bottom: 0.5em;
+  line-height: 1.6;
+}
+
+[dangerouslySetInnerHTML] ul, 
+[dangerouslySetInnerHTML] ol {
+  padding-left: 1.5em;
+  margin-bottom: 1em;
+  line-height: 1.6;
+}
+
+[dangerouslySetInnerHTML] li {
+  margin-bottom: 0.25em;
+  line-height: 1.6;
+}
+
+[dangerouslySetInnerHTML] strong {
+  font-weight: bold;
+}
+
+/* Enhanced styling for rendered Quill content */
+[dangerouslySetInnerHTML] {
+  line-height: 1.6;
+}
+
+/* Paragraph spacing */
+[dangerouslySetInnerHTML] p {
+  margin-bottom: 1em;
+  line-height: 1.6;
+}
+
+/* Lists styling */
+[dangerouslySetInnerHTML] ul, 
+[dangerouslySetInnerHTML] ol {
+  padding-left: 2em;
+  margin-bottom: 1em;
+  list-style-position: outside;
+}
+
+[dangerouslySetInnerHTML] li {
+  margin-bottom: 0.5em;
+}
+
+/* Headers */
+[dangerouslySetInnerHTML] h1 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+/* Bold text */
+[dangerouslySetInnerHTML] strong {
+  font-weight: bold;
+}
+
+/* Table-like displays for structured data */
+[dangerouslySetInnerHTML] p:has(strong) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  align-items: baseline;
+}
+
+/* Preserve whitespace in certain contexts */
+[dangerouslySetInnerHTML] pre {
+  white-space: pre-wrap;
+}
+
+/* Spacing after lists */
+[dangerouslySetInnerHTML] ul + p,
+[dangerouslySetInnerHTML] ol + p {
+  margin-top: 1em;
+}
+
+.controls {
+  display: flex;
+  border: 1px solid #ccc;
+  border-top: 0;
+  padding: 10px;
+}
+
+.controls-right {
+  margin-left: auto;
+}
+
+.state {
+  margin: 10px 0;
+  font-family: monospace;
+}
+
+.state-title {
+  color: #999;
+  text-transform: uppercase;
+}
+
+
+/* ========================================================================== */
+/* ==                  STYLES FOR REACT-QUILL EDITOR                       == */
+/* ========================================================================== */
+/* These styles apply to the editor component in EditProductAdmin.js */
+
+.quill-editor .ql-toolbar {
+  background: white;
+  border: 1px solid #ccc;
+  border-bottom: 0;
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+}
+
+.quill-editor .ql-container {
+  border: 1px solid #ccc;
+  min-height: 150px;
+  border-bottom-left-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+  background: #EFF6FF;
+}
+
+.quill-editor .ql-editor {
+  min-height: 150px;
+  padding: 1rem;
+  line-height: 1.6;
+}
+
+
+/* ========================================================================== */
+/* ==         STYLES FOR RENDERED HTML ON PRODUCT DETAIL PAGE              == */
+/* ========================================================================== */
+/* 
+  These styles will be applied to the container with the class 'product-description-content'
+  in your ProductDisplayPage.js component. This ensures the saved HTML is displayed correctly.
+*/
+
+.product-description-content {
+  line-height: 1.6;
+  text-align: left; /* Use 'left' for better readability of lists */
+}
+
+/* 
+  Handle paragraphs created by Quill.
+  - The key-value pairs (Color, Brand, etc.) will have a small gap.
+  - Empty paragraphs (<p><br></p>) will be collapsed to prevent extra spacing.
+*/
+.product-description-content p {
+  margin-top: 0;
+  margin-bottom: 0.5em; /* Creates a small, consistent gap between lines */
+}
+
+/* This is the crucial fix: Collapse the empty paragraphs Quill adds */
+.product-description-content p:has(br:only-child) {
+  margin-bottom: 0;
+}
+.product-description-content p:empty {
+  margin-bottom: 0;
+}
+
+
+/* 
+  Handle headings like "About this item".
+  Add significant space *above* the heading to separate it from the attribute list.
+*/
+.product-description-content h1,
+.product-description-content h2,
+.product-description-content h3 {
+  font-weight: bold;
+  line-height: 1.3;
+  margin-top: 1.5em; /* This creates the visual separation */
+  margin-bottom: 0.75em;
+}
+
+.product-description-content h1 { font-size: 1.25em; }
+.product-description-content h2 { font-size: 1.15em; }
+.product-description-content h3 { font-size: 1.05em; }
+
+
+/* 
+  Handle bulleted and numbered lists.
+  Also add space above them to create separation.
+*/
+.product-description-content ul,
+.product-description-content ol {
+  margin-top: 1.5em;
+  margin-bottom: 1em;
+  padding-left: 1.5em; /* Indent the list */
+}
+
+.product-description-content li {
+  margin-bottom: 0.5em; /* Space between each list item */
+}
+
+/* Ensure bold text is rendered correctly */
+.product-description-content strong {
+  font-weight: bold;
+}
+
+/* Remove margin from the very last element to prevent extra space at the end */
+.product-description-content > *:last-child {
+  margin-bottom: 0;
+}
