@@ -261,7 +261,7 @@ const CardProduct = ({data}) => {
                 <div className='flex items-center justify-between mt-auto'>
                     <div className='flex flex-col'>
                         <div className='font-bold text-gray-900'>
-                            {DisplayPriceInRupees(pricewithDiscount(data.price, data.discount))}
+                            {DisplayPriceInRupees(pricewithDiscount(data.bulkPrice, data.discount))}
                         </div>
                         
                         {Boolean(data.discount) && (
