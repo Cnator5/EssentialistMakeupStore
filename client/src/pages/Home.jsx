@@ -216,73 +216,75 @@ import { useNavigate } from 'react-router-dom';
 import CategoryWiseProductDisplay from '../components/CategoryWiseProductDisplay';
 import { Helmet } from "react-helmet-async";
 import ProductRecommendations from '../components/ProductRecommendations';
+// import TikTokGallery from '../components/TikTokGallery';
+import TikTokGallery from './../components/TikTokGallery';
 
 // TikTok-style videos (local mp4 files)
-const tiktokVideos = [
-  '/public/Download (2).mp4',
-  '/public/Download (1).mp4',
-  '/public/Download.mp4',
-  '/public/Download (3).mp4',
-  '/public/Download (4).mp4',
-  '/public/essentialist-video.mp4',
-];
+// const tiktokVideos = [
+//   '/public/Download (2).mp4',
+//   '/public/Download (1).mp4',
+//   '/public/Download.mp4',
+//   '/public/Download (3).mp4',
+//   '/public/Download (4).mp4',
+//   '/public/essentialist-video.mp4',
+// ];
 
 // TikTokGallery component for displaying videos in grid
-const TikTokGallery = ({ videos }) => (
-  <section className="my-16">
-    <h2 className="text-center text-3xl md:text-4xl font-extrabold mb-8 text-gray-800 tracking-tight">
-      Watch Some Of Our Makeup Samples
-    </h2>
-    <div
-      className="
-        grid gap-8
-        grid-cols-1
-        sm:grid-cols-2
-        lg:grid-cols-3
-        max-w-7xl
-        mx-auto
-        px-2
-      "
-    >
-      {videos.map((url, i) => (
-        <div
-          key={url}
-          className="
-            bg-white
-            rounded-2xl
-            overflow-hidden
-            shadow-lg
-            flex
-            flex-col
-            items-center
-            aspect-[9/16]
-            border border-gray-100
-            transition-transform
-            hover:scale-[1.025]
-            hover:shadow-2xl
-          "
-          style={{
-            minHeight: "350px",
-            background: "linear-gradient(130deg,#f8fafc 0%, #fff 100%)"
-          }}
-        >
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="w-full h-full object-cover bg-gray-100"
-            style={{ aspectRatio: "9 / 16", maxHeight: "100%" }}
-            aria-label={`Makeup video demo ${i + 1}`}
-          >
-            <source src={url} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        </div>
-      ))}
-    </div>
-  </section>
-);
+// const TikTokGallery = ({ videos }) => (
+//   <section className="my-16">
+//     <h2 className="text-center text-3xl md:text-4xl font-extrabold mb-8 text-gray-800 tracking-tight">
+//       Watch Some Of Our Makeup Samples
+//     </h2>
+//     <div
+//       className="
+//         grid gap-8
+//         grid-cols-1
+//         sm:grid-cols-2
+//         lg:grid-cols-3
+//         max-w-7xl
+//         mx-auto
+//         px-2
+//       "
+//     >
+//       {videos.map((url, i) => (
+//         <div
+//           key={url}
+//           className="
+//             bg-white
+//             rounded-2xl
+//             overflow-hidden
+//             shadow-lg
+//             flex
+//             flex-col
+//             items-center
+//             aspect-[9/16]
+//             border border-gray-100
+//             transition-transform
+//             hover:scale-[1.025]
+//             hover:shadow-2xl
+//           "
+//           style={{
+//             minHeight: "350px",
+//             background: "linear-gradient(130deg,#f8fafc 0%, #fff 100%)"
+//           }}
+//         >
+//           <video
+//             autoPlay
+//             muted
+//             loop
+//             playsInline
+//             className="w-full h-full object-cover bg-gray-100"
+//             style={{ aspectRatio: "9 / 16", maxHeight: "100%" }}
+//             aria-label={`Makeup video demo ${i + 1}`}
+//           >
+//             <source src={url} type="video/mp4" />
+//             Your browser does not support the video tag.
+//           </video>
+//         </div>
+//       ))}
+//     </div>
+//   </section>
+// );
 
 const Home = () => {
   const loadingCategory = useSelector(state => state.product.loadingCategory);
@@ -464,7 +466,8 @@ const Home = () => {
         </div>
 
         {/* TikTok Video Gallery */}
-        <TikTokGallery videos={tiktokVideos} />
+        {/* <TikTokGallery videos={tiktokVideos} /> */}
+        <TikTokGallery />
 
         {/* WhatsApp Floating Button */}
         <a
