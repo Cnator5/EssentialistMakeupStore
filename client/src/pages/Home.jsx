@@ -474,7 +474,7 @@ const Home = () => {
           href="https://wa.me/237655225569"
           target="_blank"
           rel="noopener noreferrer"
-          className="fixed z-50 bottom-6 right-6 flex items-center justify-center w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 shadow-lg transition-colors"
+          className="fixed z-50 bottom-16 right-2 md:bottom-6 md:right-6 flex items-center justify-center w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 shadow-lg transition-colors"
           style={{ boxShadow: '0 4px 16px rgba(37, 211, 102, 0.3)' }}
           aria-label="Contact us on WhatsApp"
         >

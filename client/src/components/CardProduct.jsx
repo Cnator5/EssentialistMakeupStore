@@ -207,7 +207,7 @@ const CardProduct = ({data}) => {
     return (
         <Link 
             to={url} 
-            className='relative flex flex-col border overflow-hidden transition-all duration-300 ease-in-out py-3 lg:p-4 rounded-lg cursor-pointer bg-white shadow-sm hover:shadow-md'
+            className='relative flex flex-col border border-gray-200 overflow-hidden transition-all duration-300 ease-in-out py-3 lg:p-4 rounded-lg cursor-pointer bg-white shadow-sm hover:shadow-md'
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             style={{
