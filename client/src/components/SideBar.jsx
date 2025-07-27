@@ -38,8 +38,8 @@ const SideBar = ({ isMobile = false, onNavigate = () => {} }) => {
     : "bg-gray-50 px-6 py-2";
 
   const subcategoryItemClasses = isMobile
-    ? "text-sm text-black py-2 px-3 rounded hover:bg-pink-600 hover:text-white cursor-pointer transition-colors block"
-    : "text-sm text-gray-600 py-1 px-2 rounded hover:bg-pink-100 hover:text-pink-600 cursor-pointer transition-colors";
+    ? "text-sm text-black py-2 px-3 font-bold rounded hover:bg-pink-600 hover:text-white cursor-pointer transition-colors block"
+    : "text-sm text-black py-1 px-2 rounded hover:bg-pink-100 hover:text-pink-600 cursor-pointer transition-colors";
 
   return (
     <aside className={baseClasses}>
@@ -61,7 +61,7 @@ const SideBar = ({ isMobile = false, onNavigate = () => {} }) => {
             return (
               <div key={category._id} className="overflow-hidden">
                 <div className={categoryItemClasses}>
-                  <span className={`font-medium ${isMobile ? 'text-black' : 'text-gray-800'}`}>
+                  <span className={`font-bold ${isMobile ? 'text-black' : 'text-black'}`}>
                     {category.name}
                   </span>
                 </div>

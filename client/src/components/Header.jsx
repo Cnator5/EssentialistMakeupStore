@@ -815,7 +815,7 @@ const Header = () => {
                     </div>
 
                     {/* mobile Category Menu */}
-                    <div className="block bg-white text-black">
+                    <div className="block bg-white text-black font-bold">
                         <div className="block text-black ">
                             <ul className="flex flex-col ">
                                 <li>
