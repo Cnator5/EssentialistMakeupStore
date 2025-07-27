@@ -75,7 +75,7 @@ const CategoryWiseProductDisplay = ({ id, name }) => {
         <meta name="keywords" content={`${name}, makeup, cosmetics, beauty, products`} />
       </Helmet>
       {/* Flex container for the name and "See All" */}
-      <div className='container mx-auto px-4 flex items-center justify-between   p-10 '>
+      <div className='container mx-auto px-2 flex items-center justify-between   p-2 '>
         {/* Centered name */}
         <div className='flex-1 flex justify-center'>
           <h1 className='font-bold text-[40px] md:text-[60px] text-center'>
