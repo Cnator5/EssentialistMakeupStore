@@ -146,10 +146,12 @@ import { FaCartShopping } from "react-icons/fa6";
 import CartMobileLink from './components/CartMobile';
 import Modal from './components/Modal';
 import Login from './pages/Login';
-import Sidebar from './components/Sidebar';
 import useMobile from './hooks/useMobile';
 // import { HelmetProvider } from 'react-helmet-async';
 // import { AuthProvider } from './context/AuthContext';
+import SideBar from './components/SideBar';
+
+
 
 
 function App() {
@@ -231,7 +233,7 @@ function App() {
           <div className="flex flex-col md:flex-row gap-6">
             {showSidebar && (
               <div className="w-full md:w-1/4 lg:w-1/5">
-                <Sidebar />
+                <SideBar />
               </div>
             )}
             <div className={`w-full ${showSidebar ? 'md:w-3/4 lg:w-4/5' : 'w-full'}`}>

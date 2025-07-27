@@ -455,12 +455,12 @@ import { DisplayPriceInRupees } from '../utils/DisplayPriceInRupees';
 import { useGlobalContext } from '../provider/GlobalProvider';
 import DisplayCartItem from './DisplayCartItem';
 import Dropdown from './Dropdown';
-import Sidebar from './Sidebar';
 
 import { BsSearch } from 'react-icons/bs';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { HiPhone, HiMail } from 'react-icons/hi';
 import { RiMenu3Line, RiCloseLine, RiArrowDropDownLine } from 'react-icons/ri';
+import SideBar from './SideBar';
 
 const Header = () => {
     const [isMobile] = useMobile()
@@ -878,7 +878,7 @@ const Header = () => {
                     {/* Mobile Sidebar - Categories */}
                     {showSidebar && (
                         <div className="border-b border-purple-800">
-                            <Sidebar isMobile={true} onNavigate={handleMobileMenuNavigate} />
+                            <SideBar isMobile={true} onNavigate={handleMobileMenuNavigate} />
                         </div>
                     )}
 
