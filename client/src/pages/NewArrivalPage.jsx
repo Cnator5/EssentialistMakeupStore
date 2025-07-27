@@ -22,7 +22,7 @@ const NewAndHotPage = () => {
       {/* SEO Meta */}
       <Helmet>
         <title>
-          NYX & L.A. Girl: Best New Makeup of <script>document.write(new Date().getFullYear())</script> | Trending Beauty Essentials
+          {`NYX & L.A. Girl: Best New Makeup of ${new Date().getFullYear()} | Trending Beauty Essentials`}
         </title>
         <meta
           name="description"
