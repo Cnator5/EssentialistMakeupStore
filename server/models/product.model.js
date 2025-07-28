@@ -44,6 +44,10 @@ const productSchema = new mongoose.Schema({
         type : String,
         default : ""
     },
+    specifications : {
+        type: String,
+        default : ""
+    },
     more_details : {
         type : Object,
         default : {}

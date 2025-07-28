@@ -229,8 +229,8 @@ function App() {
     <GlobalProvider>
       <Header/>
       <main className='min-h-[78vh]'>
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex flex-col md:flex-row gap-6">
+        <div className="container mx-auto py-1">
+          <div className="flex flex-col md:flex-row gap-4">
             {showSidebar && (
               <div className="w-full md:w-1/4 lg:w-1/5">
                 <SideBar />

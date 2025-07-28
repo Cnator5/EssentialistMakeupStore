@@ -13,10 +13,12 @@ export const createProductController = async(request,response)=>{
             price,
             discount,
             description,
+            specifications,
             more_details,
         } = request.body 
 
-        if(!name || !image[0] || !category[0] || !subCategory[0] || !unit || bulkPrice || !price || !description ){
+        // if(!name || !image[0] || !category[0] || !subCategory[0] || !unit || bulkPrice || !price || !description ){
+        if(!name || !image[0] || !category[0] || !subCategory[0] || !bulkPrice || !price || !description ){
             return response.status(400).json({
                 message : "Enter required fields",
                 error : true,
@@ -35,6 +37,7 @@ export const createProductController = async(request,response)=>{
             price,
             discount,
             description,
+            specifications,
             more_details,
         })
         const saveProduct = await product.save()

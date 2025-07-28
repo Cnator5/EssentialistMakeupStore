@@ -158,6 +158,7 @@ const Product = () => {
                 </a>
                 <a href={productUrl} className="hover:underline">
                   <h2 className='text-lg font-semibold'>{item.name}</h2>
+                  <p className='text-sm'>{item.specifications}</p>
                 </a>
                 <p className='text-red-500 text-sm'>{desc}</p>
               </div>
