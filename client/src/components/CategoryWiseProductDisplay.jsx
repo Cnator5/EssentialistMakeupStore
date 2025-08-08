@@ -134,6 +134,3 @@ const CategoryWiseProductDisplay = ({ id, name }) => {
 }
 
 export default CategoryWiseProductDisplay
-
-
-
