@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import CategoryWiseProductDisplay from '../components/CategoryWiseProductDisplay';
 import { Helmet } from "react-helmet-async";
 import ProductRecommendations from '../components/ProductRecommendations';
+// import TikTokGallery from '../components/TikTokGallery';
 import TikTokGallery from './../components/TikTokGallery';
 
 const Home = () => {

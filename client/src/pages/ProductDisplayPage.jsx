@@ -629,7 +629,7 @@ const ProductDisplayPage = () => {
         <meta name="description" content={data.description} />
       </Helmet>
 
-      <section className='container mx-auto p-4 grid lg:grid-cols-2 text-black font-bold md:font-normal'>
+      <section className='bg-white container mx-auto p-4 grid lg:grid-cols-2 text-black font-bold md:font-normal'>
         {/* LEFT: Images & Description */}
         <div>
           <div className='bg-white lg:min-h-[65vh] lg:max-h-[65vh] rounded min-h-56 max-h-56 h-full w-full'>

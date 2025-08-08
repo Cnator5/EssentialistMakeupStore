@@ -6,14 +6,23 @@ import orange from '../assets/orange.png';
 import stripe from '../assets/stipe.png';
 import google_play from '../assets/google_play.png';
 import app_store from '../assets/app_store.jpeg';
+import Globe from './Globe';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
   return (
-    <footer className="bg-white text-black font-bold md:font-normal mt-10">
-      <div className="bg-black border-b border-gray-800">
+    <footer className="relative bg-white text-black font-bold md:font-normal mt-10 overflow-hidden">
+      {/* Biggle Globe absolutely at the bottom of the footer */}
+      <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 w-full flex justify-center z-0"
+        style={{minHeight:320}}>
+        <div className="relative w-full max-w-[900px] aspect-square opacity-60">
+          <Globe className="!static w-full h-full" />
+        </div>
+      </div>
+      <div className="bg-black border-b border-gray-800 relative z-10">
         <div className="flex flex-wrap justify-between px-2 sm:px-4 md:px-8"
           style={{ minHeight: 0 }}>
+          {/* ...rest of your top black bar code... */}
           <div className="flex items-center flex-shrink-0 space-x-2 sm:space-x-3 mb-2 sm:mb-0 min-w-[160px] w-[49%] sm:w-auto">
             <div className="min-w-8 sm:min-w-14">
               <svg className="w-8 h-8 sm:w-14 sm:h-14" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -65,7 +74,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      <div className="px-2 sm:px-4 md:px-8 py-6 sm:py-10 md:py-12 text-black">
+      <div className="px-2 sm:px-4 md:px-8 py-6 sm:py-10 md:py-12 text-black relative z-10">
         <div className="flex flex-wrap md:grid md:grid-cols-4 gap-4 sm:gap-6 md:gap-10">
           <div className="flex-[1_1_220px] min-w-[180px] max-w-full mb-4 md:mb-0">
             <h2 className="text-black uppercase font-bold mb-4 sm:mb-6 relative after:content-[''] after:absolute after:left-0 after:-bottom-3 after:h-0.5 after:w-10 sm:after:w-12 after:bg-gray-700 text-base sm:text-lg">ABOUT US</h2>
@@ -172,7 +181,7 @@ const Footer = () => {
             </p>
           </div>
         </div>
-        <div className="mt-6 sm:mt-10 text-center text-xs sm:text-sm text-gray-700">
+        <div className="mt-6 sm:mt-10 text-center text-xs sm:text-sm text-gray-700 relative z-10">
           &copy; {currentYear} EssentialistMakeupStore. All rights reserved.
         </div>
       </div>
