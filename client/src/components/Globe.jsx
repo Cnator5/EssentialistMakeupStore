@@ -34,7 +34,7 @@ const GLOBE_CONFIG = {
 
 export function Globe({ className, config }) {
   let phi = 0
-  let width = 0
+  const widthRef = useRef(0)
   const canvasRef = useRef(null)
   const pointerInteracting = useRef(null)
   const pointerInteractionMovement = useRef(0)
@@ -59,31 +59,42 @@ export function Globe({ className, config }) {
     (state) => {
       if (!pointerInteracting.current) phi += 0.005
       state.phi = phi + r
-      state.width = width * 2
-      state.height = width * 2
+      state.width = widthRef.current * 2
+      state.height = widthRef.current * 2
     },
     [r]
   )
 
-  const onResize = () => {
+  const onResize = useCallback(() => {
     if (canvasRef.current) {
-      width = canvasRef.current.offsetWidth
+      widthRef.current = canvasRef.current.offsetWidth
     }
-  }
+  }, [])
 
   useEffect(() => {
-    window.addEventListener("resize", onResize)
+    if (!canvasRef.current) return
+
     onResize()
 
     const globe = createGlobe(canvasRef.current, {
       ...(config || GLOBE_CONFIG),
-      width: width * 2,
-      height: width * 2,
+      width: widthRef.current * 2,
+      height: widthRef.current * 2,
       onRender,
     })
 
-    setTimeout(() => (canvasRef.current.style.opacity = "1"))
-    return () => globe.destroy()
+    setTimeout(() => {
+      if (canvasRef.current) {
+        canvasRef.current.style.opacity = "1"
+      }
+    })
+
+    window.addEventListener("resize", onResize)
+
+    return () => {
+      window.removeEventListener("resize", onResize)
+      globe.destroy()
+    }
     // eslint-disable-next-line
   }, [])
 

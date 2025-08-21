@@ -12,17 +12,13 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
   return (
     <footer className="relative bg-white text-black font-bold md:font-normal mt-10 overflow-hidden">
-      {/* Biggle Globe absolutely at the bottom of the footer */}
-      <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 w-full flex justify-center z-0"
-        style={{minHeight:320}}>
-        <div className="relative w-full max-w-[900px] aspect-square opacity-60">
+      <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 w-full flex justify-center z-0 min-h-[200px]">
+        <div className="relative w-[90vw] max-w-[900px] min-w-[220px] min-h-[220px] aspect-square opacity-60">
           <Globe className="!static w-full h-full" />
         </div>
       </div>
       <div className="bg-black border-b border-gray-800 relative z-10">
-        <div className="flex flex-wrap justify-between px-2 sm:px-4 md:px-8"
-          style={{ minHeight: 0 }}>
-          {/* ...rest of your top black bar code... */}
+        <div className="flex flex-wrap justify-between px-2 sm:px-4 md:px-8" style={{ minHeight: 0 }}>
           <div className="flex items-center flex-shrink-0 space-x-2 sm:space-x-3 mb-2 sm:mb-0 min-w-[160px] w-[49%] sm:w-auto">
             <div className="min-w-8 sm:min-w-14">
               <svg className="w-8 h-8 sm:w-14 sm:h-14" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
