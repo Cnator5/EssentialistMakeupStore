@@ -22,12 +22,13 @@ import slugify from 'slugify'; // <-- ADD THIS LINE
 import paymentRoutes from './route/payments.js'; // Import your payment routes
 import fetch from 'node-fetch';
 import { Parser } from 'xml2js';
+import adminRouter from './route/admin.routes.js';
 
 const app = express();
 
 app.use(cors({
     credentials: true,
-    origin: [process.env.FRONTEND_URL, 'http://localhost:3000'],
+    origin: [process.env.FRONTEND_URL],
 }));
 app.use(express.json());
 app.use(cookieParser());
@@ -52,6 +53,9 @@ app.use('/api/product', productRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/address', addressRouter);
 app.use('/api/order', orderRouter);
+
+//dashboard
+app.use('/api/admin', adminRouter);
 
 // Register routes
 app.use('/payments', paymentRoutes);
