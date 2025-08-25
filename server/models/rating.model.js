@@ -1,18 +1,17 @@
-// models/rating.model.js
 import mongoose from "mongoose";
 
-const ratingSchema = new mongoose.Schema(
+const RatingSchema = new mongoose.Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "user", required: true },
-    product: { type: mongoose.Schema.Types.ObjectId, ref: "product", required: true, index: true },
-    // allow half-stars: 0.5 increments from 0.5 to 5
+    product: { type: mongoose.Schema.Types.ObjectId, ref: "Product", index: true, required: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null, index: true },
+    anonId: { type: String, default: null, index: true },
     value: { type: Number, required: true, min: 0.5, max: 5 },
   },
   { timestamps: true }
 );
 
-// One rating per user per product
-ratingSchema.index({ user: 1, product: 1 }, { unique: true });
+RatingSchema.index({ product: 1, user: 1 }, { unique: true, partialFilterExpression: { user: { $type: "objectId" } } });
+RatingSchema.index({ product: 1, anonId: 1 }, { unique: true, partialFilterExpression: { anonId: { $type: "string" } } });
 
-const RatingModel = mongoose.model("rating", ratingSchema);
+const RatingModel = mongoose.models.Rating || mongoose.model("Rating", RatingSchema);
 export default RatingModel;

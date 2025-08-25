@@ -2,6 +2,7 @@
 import { Router } from "express";
 import auth from "../middleware/auth.js";
 import { deleteMyRating, getRatingsForProduct, upsertRating } from "../controllers/rating.controller.js";
+import optionalAuth from '../middleware/optionalAuth.js';
 
 const ratingRouter = Router();
 
@@ -9,9 +10,10 @@ const ratingRouter = Router();
 ratingRouter.get("/:productId", getRatingsForProduct);
 
 // Create/update requires auth
-ratingRouter.post("/", auth, upsertRating);
+ratingRouter.post("/", optionalAuth, upsertRating);
 
 // Delete my rating requires auth
-ratingRouter.delete("/:productId", auth, deleteMyRating);
+ratingRouter.delete("/:productId", optionalAuth, deleteMyRating);
+
 
 export default ratingRouter;
