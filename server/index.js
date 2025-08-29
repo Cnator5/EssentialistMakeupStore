@@ -30,7 +30,7 @@ const app = express();
 
 app.use(cors({
     credentials: true,
-    origin: [process.env.FRONTEND_URL, "http://localhost:3000"],
+    origin: [process.env.FRONTEND_URL, "http://localhost:3000", "http://localhost:5173"],
 }));
 app.use(express.json());
 app.use(cookieParser());
@@ -83,131 +83,319 @@ app.get('/payunit/return', (req, res) => {
 
 
 // ---- SITEMAP ROUTE ----
+// app.get('/sitemap.xml', async (req, res) => {
+//     try {
+//         const baseUrl = process.env.FRONTEND_URL?.replace(/\/$/, '') || 'https://www.esmakeupstore.com';
+
+//         // Fetch all categories, subcategories, and products (only published)
+//         const [categories, subCategories, products] = await Promise.all([
+//             CategoryModel.find(),
+//             SubCategoryModel.find(),
+//             ProductModel.find({ publish: true })
+//         ]);
+
+//         function escapeXml(unsafe) {
+//             return unsafe ? unsafe.replace(/[<>&'"]/g, function (c) {
+//                 switch (c) {
+//                     case '<': return '&lt;';
+//                     case '>': return '&gt;';
+//                     case '&': return '&amp;';
+//                     case '\'': return '&apos;';
+//                     case '"': return '&quot;';
+//                 }
+//             }) : '';
+//         }
+//         function formatDate(date) {
+//             if (!date) return '';
+//             const d = (typeof date === 'string') ? new Date(date) : date;
+//             return d.toISOString().split('T')[0];
+//         }
+//         function valideURLConvert(name) {
+//             return slugify(name, { lower: true, strict: true });
+//         }
+
+//         // Static pages
+//         let urls = [
+//             `<url>
+//                 <loc>${baseUrl}/</loc>
+//                 <changefreq>daily</changefreq>
+//             </url>`,
+//             `<url>
+//                 <loc>${baseUrl}/about</loc>
+//                 <changefreq>monthly</changefreq>
+//             </url>`,
+//             `<url>
+//                 <loc>${baseUrl}/contact</loc>
+//                 <changefreq>monthly</changefreq>
+//             </url>`,
+//             `<url>
+//                 <loc>${baseUrl}/new-arrival</loc>
+//                 <changefreq>monthly</changefreq>
+//             </url>`,
+//             `<url>
+//                 <loc>${baseUrl}/brands</loc>
+//                 <changefreq>monthly</changefreq>
+//             </url>`
+//         ];
+
+//         // Categories (SEO URL)
+//         for (const cat of categories) {
+//             const catUrl = `${baseUrl}/${valideURLConvert(cat.name)}-${cat._id}`;
+//             urls.push(
+//                 `<url>
+//                     <loc>${catUrl}</loc>
+//                     ${cat.updatedAt ? `<lastmod>${formatDate(cat.updatedAt)}</lastmod>` : ''}
+//                     <changefreq>weekly</changefreq>
+//                     ${cat.image ? `<image:image><image:loc>${escapeXml(cat.image)}</image:loc></image:image>` : ''}
+//                 </url>`
+//             );
+//         }
+
+//         // SubCategories (SEO URL)
+//         for (const sub of subCategories) {
+//             const parentCat = categories.find(c => String(c._id) === String(sub.category[0]));
+//             if (!parentCat) continue;
+//             const subUrl = `${baseUrl}/${valideURLConvert(parentCat.name)}-${parentCat._id}/${valideURLConvert(sub.name)}-${sub._id}`;
+//             urls.push(
+//                 `<url>
+//                     <loc>${subUrl}</loc>
+//                     ${sub.updatedAt ? `<lastmod>${formatDate(sub.updatedAt)}</lastmod>` : ''}
+//                     <changefreq>weekly</changefreq>
+//                     ${sub.image ? `<image:image><image:loc>${escapeXml(sub.image)}</image:loc></image:image>` : ''}
+//                 </url>`
+//             );
+//         }
+
+//         // Products (SEO URL)
+//         for (const prod of products) {
+//             const sub = subCategories.find(s => String(s._id) === String(prod.subCategory[0]));
+//             const cat = sub ? categories.find(c => String(c._id) === String(sub.category[0])) : null;
+//             let prodUrl;
+//             if (cat && sub) {
+//                 prodUrl = `${baseUrl}/${valideURLConvert(cat.name)}-${cat._id}/${valideURLConvert(sub.name)}-${sub._id}/${valideURLConvert(prod.name)}-${prod._id}`;
+//             } else {
+//                 prodUrl = `${baseUrl}/product/${prod._id}`;
+//             }
+
+//             let imageTags = '';
+//             if (Array.isArray(prod.image)) {
+//                 imageTags = prod.image
+//                     .filter(img => !!img)
+//                     .map(imgUrl => `<image:image><image:loc>${escapeXml(imgUrl)}</image:loc></image:image>`)
+//                     .join('\n');
+//             }
+//             urls.push(
+//                 `<url>
+//                     <loc>${prodUrl}</loc>
+//                     ${prod.updatedAt ? `<lastmod>${formatDate(prod.updatedAt)}</lastmod>` : ''}
+//                     <changefreq>weekly</changefreq>
+//                     ${imageTags}
+//                 </url>`
+//             );
+//         }
+
+//         // Final XML
+//         const xml = `<?xml version="1.0" encoding="UTF-8"?>
+// <urlset 
+//     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+//     xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+// ${urls.join('\n')}
+// </urlset>`;
+
+//         res.header('Content-Type', 'application/xml');
+//         res.send(xml);
+//     } catch (error) {
+//         console.error('Sitemap error:', error);
+//         res.status(500).send('Could not generate sitemap');
+//     }
+// });
+// // ---- END SITEMAP ROUTE ----
+
+
 app.get('/sitemap.xml', async (req, res) => {
-    try {
-        const baseUrl = process.env.FRONTEND_URL?.replace(/\/$/, '') || 'https://www.esmakeupstore.com';
+  try {
+    const baseUrl =
+      process.env.FRONTEND_URL?.replace(/\/$/, '') ||
+      'https://www.esmakeupstore.com';
 
-        // Fetch all categories, subcategories, and products (only published)
-        const [categories, subCategories, products] = await Promise.all([
-            CategoryModel.find(),
-            SubCategoryModel.find(),
-            ProductModel.find({ publish: true })
-        ]);
+    // Fetch all categories, subcategories, and products (only published)
+    const [categories, subCategories, products] = await Promise.all([
+      CategoryModel.find(),
+      SubCategoryModel.find(),
+      ProductModel.find({ publish: true }),
+    ]);
 
-        function escapeXml(unsafe) {
-            return unsafe ? unsafe.replace(/[<>&'"]/g, function (c) {
-                switch (c) {
-                    case '<': return '&lt;';
-                    case '>': return '&gt;';
-                    case '&': return '&amp;';
-                    case '\'': return '&apos;';
-                    case '"': return '&quot;';
-                }
-            }) : '';
-        }
-        function formatDate(date) {
-            if (!date) return '';
-            const d = (typeof date === 'string') ? new Date(date) : date;
-            return d.toISOString().split('T')[0];
-        }
-        function valideURLConvert(name) {
-            return slugify(name, { lower: true, strict: true });
-        }
-
-        // Static pages
-        let urls = [
-            `<url>
-                <loc>${baseUrl}/</loc>
-                <changefreq>daily</changefreq>
-            </url>`,
-            `<url>
-                <loc>${baseUrl}/about</loc>
-                <changefreq>monthly</changefreq>
-            </url>`,
-            `<url>
-                <loc>${baseUrl}/contact</loc>
-                <changefreq>monthly</changefreq>
-            </url>`,
-            `<url>
-                <loc>${baseUrl}/new-arrival</loc>
-                <changefreq>monthly</changefreq>
-            </url>`,
-            `<url>
-                <loc>${baseUrl}/brands</loc>
-                <changefreq>monthly</changefreq>
-            </url>`
-        ];
-
-        // Categories (SEO URL)
-        for (const cat of categories) {
-            const catUrl = `${baseUrl}/${valideURLConvert(cat.name)}-${cat._id}`;
-            urls.push(
-                `<url>
-                    <loc>${catUrl}</loc>
-                    ${cat.updatedAt ? `<lastmod>${formatDate(cat.updatedAt)}</lastmod>` : ''}
-                    <changefreq>weekly</changefreq>
-                    ${cat.image ? `<image:image><image:loc>${escapeXml(cat.image)}</image:loc></image:image>` : ''}
-                </url>`
-            );
-        }
-
-        // SubCategories (SEO URL)
-        for (const sub of subCategories) {
-            const parentCat = categories.find(c => String(c._id) === String(sub.category[0]));
-            if (!parentCat) continue;
-            const subUrl = `${baseUrl}/${valideURLConvert(parentCat.name)}-${parentCat._id}/${valideURLConvert(sub.name)}-${sub._id}`;
-            urls.push(
-                `<url>
-                    <loc>${subUrl}</loc>
-                    ${sub.updatedAt ? `<lastmod>${formatDate(sub.updatedAt)}</lastmod>` : ''}
-                    <changefreq>weekly</changefreq>
-                    ${sub.image ? `<image:image><image:loc>${escapeXml(sub.image)}</image:loc></image:image>` : ''}
-                </url>`
-            );
-        }
-
-        // Products (SEO URL)
-        for (const prod of products) {
-            const sub = subCategories.find(s => String(s._id) === String(prod.subCategory[0]));
-            const cat = sub ? categories.find(c => String(c._id) === String(sub.category[0])) : null;
-            let prodUrl;
-            if (cat && sub) {
-                prodUrl = `${baseUrl}/${valideURLConvert(cat.name)}-${cat._id}/${valideURLConvert(sub.name)}-${sub._id}/${valideURLConvert(prod.name)}-${prod._id}`;
-            } else {
-                prodUrl = `${baseUrl}/product/${prod._id}`;
+    function escapeXml(unsafe) {
+      return unsafe
+        ? unsafe.replace(/[<>&'"]/g, function (c) {
+            switch (c) {
+              case '<':
+                return '&lt;';
+              case '>':
+                return '&gt;';
+              case '&':
+                return '&amp;';
+              case "'":
+                return '&apos;';
+              case '"':
+                return '&quot;';
             }
+          })
+        : '';
+    }
 
-            let imageTags = '';
-            if (Array.isArray(prod.image)) {
-                imageTags = prod.image
-                    .filter(img => !!img)
-                    .map(imgUrl => `<image:image><image:loc>${escapeXml(imgUrl)}</image:loc></image:image>`)
-                    .join('\n');
-            }
-            urls.push(
-                `<url>
-                    <loc>${prodUrl}</loc>
-                    ${prod.updatedAt ? `<lastmod>${formatDate(prod.updatedAt)}</lastmod>` : ''}
-                    <changefreq>weekly</changefreq>
-                    ${imageTags}
-                </url>`
-            );
+    function formatDate(date) {
+      if (!date) return '';
+      const d = typeof date === 'string' ? new Date(date) : date;
+      return d.toISOString().split('T')[0];
+    }
+
+    function slugifyName(name) {
+      return slugify(name || '', { lower: true, strict: true });
+    }
+
+    const urls = [];
+
+    // Static pages
+    urls.push(
+      `<url>
+        <loc>${baseUrl}/</loc>
+        <changefreq>daily</changefreq>
+      </url>`,
+      `<url>
+        <loc>${baseUrl}/about</loc>
+        <changefreq>monthly</changefreq>
+      </url>`,
+      `<url>
+        <loc>${baseUrl}/contact</loc>
+        <changefreq>monthly</changefreq>
+      </url>`,
+      `<url>
+        <loc>${baseUrl}/new-arrival</loc>
+        <changefreq>monthly</changefreq>
+      </url>`,
+      `<url>
+        <loc>${baseUrl}/brands</loc>
+        <changefreq>monthly</changefreq>
+      </url>`
+    );
+
+    // Build quick lookup maps by ID (for relationships), but do NOT use IDs in URLs
+    const catById = new Map(categories.map((c) => [String(c._id), c]));
+    const subById = new Map(subCategories.map((s) => [String(s._id), s]));
+
+    // Dedup helper (avoid duplicate <loc> entries)
+    const locSet = new Set();
+    const pushUrl = (entry) => {
+      // Extract <loc>...</loc> to dedupe by URL
+      const locMatch = entry.match(/<loc>(.*?)<\/loc>/);
+      const loc = locMatch ? locMatch[1] : null;
+      if (loc && !locSet.has(loc)) {
+        locSet.add(loc);
+        urls.push(entry);
+      }
+    };
+
+    // Categories (SEO URL without IDs)
+    for (const cat of categories) {
+      const catSlug = slugifyName(cat.name);
+      if (!catSlug) continue;
+
+      const catUrl = `${baseUrl}/${catSlug}`;
+      pushUrl(
+        `<url>
+          <loc>${catUrl}</loc>
+          ${cat.updatedAt ? `<lastmod>${formatDate(cat.updatedAt)}</lastmod>` : ''}
+          <changefreq>weekly</changefreq>
+          ${cat.image ? `<image:image><image:loc>${escapeXml(cat.image)}</image:loc></image:image>` : ''}
+        </url>`
+      );
+    }
+
+    // Subcategories (SEO URL without IDs)
+    for (const sub of subCategories) {
+      const parentId = Array.isArray(sub.category) ? sub.category[0] : sub.category;
+      const parentCat = parentId ? catById.get(String(parentId)) : null;
+      if (!parentCat) continue;
+
+      const catSlug = slugifyName(parentCat.name);
+      const subSlug = slugifyName(sub.name);
+      if (!catSlug || !subSlug) continue;
+
+      const subUrl = `${baseUrl}/${catSlug}/${subSlug}`;
+      pushUrl(
+        `<url>
+          <loc>${subUrl}</loc>
+          ${sub.updatedAt ? `<lastmod>${formatDate(sub.updatedAt)}</lastmod>` : ''}
+          <changefreq>weekly</changefreq>
+          ${sub.image ? `<image:image><image:loc>${escapeXml(sub.image)}</image:loc></image:image>` : ''}
+        </url>`
+      );
+    }
+
+    // Products (SEO URL without IDs)
+    for (const prod of products) {
+      const subId = Array.isArray(prod.subCategory) ? prod.subCategory[0] : prod.subCategory;
+      const sub = subId ? subById.get(String(subId)) : null;
+
+      const catId = sub && Array.isArray(sub.category) ? sub.category[0] : sub?.category;
+      const cat = catId ? catById.get(String(catId)) : null;
+
+      const prodSlug = slugifyName(prod.name);
+      let prodUrl;
+
+      if (cat && sub) {
+        const catSlug = slugifyName(cat.name);
+        const subSlug = slugifyName(sub.name);
+        if (catSlug && subSlug && prodSlug) {
+          prodUrl = `${baseUrl}/${catSlug}/${subSlug}/${prodSlug}`;
         }
+      }
 
-        // Final XML
-        const xml = `<?xml version="1.0" encoding="UTF-8"?>
+      // Fallback if relations missing: place under /product/slug
+      if (!prodUrl && prodSlug) {
+        prodUrl = `${baseUrl}/product/${prodSlug}`;
+      }
+
+      if (!prodUrl) continue;
+
+      let imageTags = '';
+      if (Array.isArray(prod.image)) {
+        imageTags = prod.image
+          .filter((img) => !!img)
+          .map(
+            (imgUrl) =>
+              `<image:image><image:loc>${escapeXml(imgUrl)}</image:loc></image:image>`
+          )
+          .join('\n');
+      } else if (typeof prod.image === 'string' && prod.image) {
+        imageTags = `<image:image><image:loc>${escapeXml(prod.image)}</image:loc></image:image>`;
+      }
+
+      pushUrl(
+        `<url>
+          <loc>${prodUrl}</loc>
+          ${prod.updatedAt ? `<lastmod>${formatDate(prod.updatedAt)}</lastmod>` : ''}
+          <changefreq>weekly</changefreq>
+          ${imageTags}
+        </url>`
+      );
+    }
+
+    // Final XML
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset 
-    xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-    xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${urls.join('\n')}
 </urlset>`;
 
-        res.header('Content-Type', 'application/xml');
-        res.send(xml);
-    } catch (error) {
-        console.error('Sitemap error:', error);
-        res.status(500).send('Could not generate sitemap');
-    }
+    res.header('Content-Type', 'application/xml');
+    res.send(xml);
+  } catch (error) {
+    console.error('Sitemap error:', error);
+    res.status(500).send('Could not generate sitemap');
+  }
 });
 // ---- END SITEMAP ROUTE ----
 
