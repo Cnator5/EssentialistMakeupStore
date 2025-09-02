@@ -2,8 +2,8 @@ import fetch from 'node-fetch';
 import { Parser } from 'xml2js';
 
 const INDEXNOW_HOST = 'www.esmakeupstore.com';
-const INDEXNOW_KEY = '55723d18a14d4d05be905526ebddb017';
-const INDEXNOW_KEY_LOCATION = 'https://www.esmakeupstore.com/55723d18a14d4d05be905526ebddb017.txt';
+const INDEXNOW_KEY = '49ada6e440e747b1ad3d7ba15dad6330';
+const INDEXNOW_KEY_LOCATION = 'https://www.esmakeupstore.com/49ada6e440e747b1ad3d7ba15dad6330.txt';
 
 // Utility: Extract all <loc> URLs from sitemap XML (supports sitemapindex too)
 async function extractUrlsFromSitemap(xml) {

@@ -379,4 +379,134 @@ export const getProductDetails = async(request,response)=>{
             success : false
         })
     }
-}
+};
+
+
+export const getProductsByCategorySubcategorySlug = async (request, response) => {
+    try {
+        const { categorySlug, subCategorySlug, page = 1, limit = 10 } = request.body;
+
+        if (!categorySlug || !subCategorySlug) {
+            return response.status(400).json({
+                message: "Provide categorySlug and subCategorySlug",
+                error: true,
+                success: false
+            });
+        }
+
+        // Function to create slug from name
+        const slugify = (text) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+        // Find category by slug
+        const categories = await CategoryModel.find();
+        const category = categories.find(cat => slugify(cat.name) === categorySlug);
+        
+        if (!category) {
+            return response.status(404).json({
+                message: "Category not found",
+                error: true,
+                success: false
+            });
+        }
+
+        // Find subcategory by slug and category
+        const subCategories = await SubCategoryModel.find().populate('category');
+        const subCategory = subCategories.find(sub => 
+            slugify(sub.name) === subCategorySlug && 
+            sub.category.some(cat => cat._id.toString() === category._id.toString())
+        );
+
+        if (!subCategory) {
+            return response.status(404).json({
+                message: "Subcategory not found",
+                error: true,
+                success: false
+            });
+        }
+
+        const query = {
+            category: { $in: [category._id] },
+            subCategory: { $in: [subCategory._id] }
+        };
+
+        const skip = (page - 1) * limit;
+
+        const [products, totalCount] = await Promise.all([
+            ProductModel.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).populate('category subCategory'),
+            ProductModel.countDocuments(query)
+        ]);
+
+        return response.json({
+            message: "Products fetched successfully",
+            data: {
+                products,
+                totalCount,
+                categoryData: category,
+                subCategoryData: subCategory
+            },
+            page,
+            limit,
+            success: true,
+            error: false
+        });
+
+    } catch (error) {
+        return response.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        });
+    }
+};
+
+export const getProductBySlug = async (request, response) => {
+    try {
+        const { categorySlug, subCategorySlug, productSlug } = request.body;
+
+        if (!categorySlug || !subCategorySlug || !productSlug) {
+            return response.status(400).json({
+                message: "Provide categorySlug, subCategorySlug, and productSlug",
+                error: true,
+                success: false
+            });
+        }
+
+        const slugify = (text) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+        // Find all products with populated category and subcategory
+        const products = await ProductModel.find().populate('category subCategory');
+        
+        // Find the product that matches all slugs
+        const product = products.find(prod => {
+            const prodSlug = slugify(prod.name);
+            const catSlug = prod.category[0] ? slugify(prod.category[0].name) : '';
+            const subCatSlug = prod.subCategory[0] ? slugify(prod.subCategory[0].name) : '';
+            
+            return prodSlug === productSlug && 
+                   catSlug === categorySlug && 
+                   subCatSlug === subCategorySlug;
+        });
+
+        if (!product) {
+            return response.status(404).json({
+                message: "Product not found",
+                error: true,
+                success: false
+            });
+        }
+
+        return response.json({
+            message: "Product details",
+            data: product,
+            error: false,
+            success: true
+        });
+
+    } catch (error) {
+        return response.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        });
+    }
+};

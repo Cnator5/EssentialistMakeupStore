@@ -28,7 +28,7 @@
 import { Router } from 'express'
 import auth from '../middleware/auth.js'
 // Import the new controller function
-import { createProductController, deleteProductDetails, getProductByCategory, getProductByCategoryAndSubCategory, getProductController, getProductDetails, searchProduct, updateProductDetails, getProductsByIds } from '../controllers/product.controller.js'
+import { createProductController, deleteProductDetails, getProductByCategory, getProductByCategoryAndSubCategory, getProductController, getProductDetails, searchProduct, updateProductDetails, getProductsByIds, getProductsByCategorySubcategorySlug, getProductBySlug  } from '../controllers/product.controller.js'
 import { admin } from '../middleware/Admin.js'
 
 const productRouter = Router()
@@ -51,5 +51,8 @@ productRouter.delete('/delete-product',auth,admin,deleteProductDetails)
 //search product 
 productRouter.post('/search-product',searchProduct)
 
+// Add these lines
+productRouter.post('/by-category-subcategory-slug', getProductsByCategorySubcategorySlug);
+productRouter.post('/by-slug', getProductBySlug);
 
 export default productRouter

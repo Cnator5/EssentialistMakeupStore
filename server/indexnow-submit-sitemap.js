@@ -2,8 +2,8 @@ import fetch from 'node-fetch';
 import { Parser } from 'xml2js';
 
 const INDEXNOW_HOST = 'www.esmakeupstore.com';
-const INDEXNOW_KEY = 'be1ca4afe49842e29f9fcb46c96f89a9';
-const INDEXNOW_KEY_LOCATION = 'https://www.esmakeupstore.com/be1ca4afe49842e29f9fcb46c96f89a9.txt';
+const INDEXNOW_KEY = '49ada6e440e747b1ad3d7ba15dad6330';
+const INDEXNOW_KEY_LOCATION = 'https://www.esmakeupstore.com/49ada6e440e747b1ad3d7ba15dad6330.txt';
 
 async function extractUrlsFromSitemap(xml) {
     const parser = new Parser();
