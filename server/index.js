@@ -134,10 +134,6 @@ app.get('/sitemap.xml', async (req, res) => {
                 <changefreq>daily</changefreq>
             </url>`,
             `<url>
-                <loc>${baseUrl}/about</loc>
-                <changefreq>monthly</changefreq>
-            </url>`,
-            `<url>
                 <loc>${baseUrl}/contact</loc>
                 <changefreq>monthly</changefreq>
             </url>`,
