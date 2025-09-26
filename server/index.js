@@ -175,16 +175,9 @@ app.get('/sitemap.xml', async (req, res) => {
             );
         }
 
-        // Products (SEO URL)
+        // Products (Updated SEO URL: Simplified to /product/slug-id without category/subCategory)
         for (const prod of products) {
-            const sub = subCategories.find(s => String(s._id) === String(prod.subCategory[0]));
-            const cat = sub ? categories.find(c => String(c._id) === String(sub.category[0])) : null;
-            let prodUrl;
-            if (cat && sub) {
-                prodUrl = `${baseUrl}/${valideURLConvert(cat.name)}-${cat._id}/${valideURLConvert(sub.name)}-${sub._id}/${valideURLConvert(prod.name)}-${prod._id}`;
-            } else {
-                prodUrl = `${baseUrl}/product/${prod._id}`;
-            }
+            const prodUrl = `${baseUrl}/product/${valideURLConvert(prod.name)}-${prod._id}`;
 
             let imageTags = '';
             if (Array.isArray(prod.image)) {
