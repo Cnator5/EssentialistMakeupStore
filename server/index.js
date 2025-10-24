@@ -27,6 +27,10 @@ import ratingRouter from "./route/rating.router.js";
 import reviewRouter from "./route/review.router.js";
 import indexnowRoutes from './route/indexnow.js'
 import indexnowNotifierMiddleware from './middleware/indexnowNotifier.js';
+import brandRouter from './route/brand.route.js';
+import compression from 'compression';
+import "./config/redisClient.js";
+
 
 const app = express();
 
@@ -56,6 +60,8 @@ app.use(express.static('public'));
 
  app.use(indexnowNotifierMiddleware);
 
+//caching
+app.use(compression());
 
 app.use('/api/user', userRouter);
 app.use('/api/category', categoryRouter);
@@ -79,6 +85,9 @@ app.use('/payments', paymentRoutes);
 
 //indexMow
 app.use('/api/indexnow', indexnowRoutes);
+
+//brands
+app.use("/api/brand", brandRouter);
 
 
 app.get('/mtn', (req, res) => {
