@@ -29,14 +29,13 @@ import indexnowRoutes from './route/indexnow.js'
 import indexnowNotifierMiddleware from './middleware/indexnowNotifier.js';
 import brandRouter from './route/brand.route.js';
 import compression from 'compression';
-import "./config/redisClient.js";
 
 
 const app = express();
 
 app.use(cors({
     credentials: true,
-    origin: [process.env.FRONTEND_URL, "http://localhost:3000", "http://localhost:5173"],
+    origin: [process.env.FRONTEND_URL, "https://esmakeupstore.com", "http://localhost:3000", "http://localhost:5173"],
 }));
 app.use(express.json());
 app.use(cookieParser());

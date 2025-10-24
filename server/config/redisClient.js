@@ -1,39 +1,17 @@
-import { createClient } from "redis";
+// config/redisClient.js
+// Redis disabled: lightweight stub to keep the rest of the app running.
 
-const redisUrl = process.env.REDIS_URL || "redis://127.0.0.1:6379";
+export const ensureRedisConnection = async () => null;
 
-const redisClient = createClient({
-  url: redisUrl
-});
-
-redisClient.on("error", (err) => {
-  console.error("Redis Client Error:", err);
-});
-
-redisClient.on("connect", () => {
-  console.log("Redis client connected");
-});
-
-redisClient.on("reconnecting", () => {
-  console.log("Redis client reconnecting…");
-});
-
-let connectPromise = null;
-
-export const ensureRedisConnection = async () => {
-  if (redisClient.isOpen) {
-    return redisClient;
-  }
-
-  if (!connectPromise) {
-    connectPromise = redisClient.connect().catch((error) => {
-      connectPromise = null;
-      throw error;
-    });
-  }
-
-  await connectPromise;
-  return redisClient;
+const redisClient = {
+  isOpen: false,
+  connect: async () => null,
+  disconnect: async () => null,
+  get: async () => null,
+  setEx: async () => null,
+  del: async () => null,
+  scanIterator: async function* () {},
+  on: () => null
 };
 
 export default redisClient;
