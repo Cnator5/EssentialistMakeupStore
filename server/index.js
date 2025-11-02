@@ -35,10 +35,22 @@ import "./jobs/receiptRegenerator.js";
 
 const app = express();
 
+// app.use(cors({
+//     credentials: true,
+//     origin: [process.env.FRONTEND_URL, "http://localhost:5173"],
+// }));
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.FRONTEND_URL_WWW,
+  process.env.LOCAL_FRONTEND_1,
+  process.env.LOCAL_FRONTEND_2
+].filter(Boolean); // Remove undefined if not set
+
 app.use(cors({
-    credentials: true,
-    origin: [process.env.FRONTEND_URL, "http://localhost:5173"],
+  origin: allowedOrigins,
+  credentials: true,
 }));
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan('dev'));
