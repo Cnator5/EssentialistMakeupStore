@@ -13,17 +13,43 @@
 // export default orderRouter
 
 
-// Updated order.router.js with guest order support
-import { Router } from 'express'
-import auth from '../middleware/auth.js'
-import { CashOnDeliveryOrderController, GuestCashOnDeliveryOrderController, getOrderDetailsController, paymentController, webhookStripe } from '../controllers/order.controller.js'
+// // Updated order.router.js with guest order support
+// import { Router } from 'express'
+// import auth from '../middleware/auth.js'
+// import { CashOnDeliveryOrderController, GuestCashOnDeliveryOrderController, getOrderDetailsController, paymentController, webhookStripe } from '../controllers/order.controller.js'
 
-const orderRouter = Router()
+// const orderRouter = Router()
 
-orderRouter.post("/cash-on-delivery", auth, CashOnDeliveryOrderController)
-orderRouter.post("/guest-cod", GuestCashOnDeliveryOrderController)
-orderRouter.post('/checkout', auth, paymentController)
-orderRouter.post('/webhook', webhookStripe)
-orderRouter.get("/order-list", auth, getOrderDetailsController)
+// orderRouter.post("/cash-on-delivery", auth, CashOnDeliveryOrderController)
+// orderRouter.post("/guest-cod", GuestCashOnDeliveryOrderController)
+// orderRouter.post('/checkout', auth, paymentController)
+// orderRouter.post('/webhook', webhookStripe)
+// orderRouter.get("/order-list", auth, getOrderDetailsController)
 
-export default orderRouter
+// export default orderRouter
+
+
+import { Router } from "express";
+import auth from "../middleware/auth.js";
+import optionalAuth from "../middleware/optionalAuth.js";
+import {
+  CashOnDeliveryOrderController,
+  GuestCashOnDeliveryOrderController,
+  getOrderDetailsController,
+  paymentController,
+  webhookStripe,
+  verifyReceiptByTokenController,
+  downloadReceiptController,
+} from "../controllers/order.controller.js";
+
+const orderRouter = Router();
+
+orderRouter.post("/verify-receipt", verifyReceiptByTokenController);
+orderRouter.post("/cash-on-delivery", auth, CashOnDeliveryOrderController);
+orderRouter.post("/guest-cod", GuestCashOnDeliveryOrderController);
+orderRouter.post("/checkout", auth, paymentController);
+orderRouter.post("/webhook", webhookStripe);
+orderRouter.get("/order-list", auth, getOrderDetailsController);
+orderRouter.get("/receipt/:orderId", optionalAuth, downloadReceiptController);
+
+export default orderRouter;

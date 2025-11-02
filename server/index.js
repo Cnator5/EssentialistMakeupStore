@@ -29,13 +29,15 @@ import indexnowRoutes from './route/indexnow.js'
 import indexnowNotifierMiddleware from './middleware/indexnowNotifier.js';
 import brandRouter from './route/brand.route.js';
 import compression from 'compression';
+import guestAdminRouter from './route/guestadmin.route.js';
+import "./jobs/receiptRegenerator.js";
 
 
 const app = express();
 
 app.use(cors({
     credentials: true,
-    origin: [process.env.FRONTEND_URL, "https://esmakeupstore.com", "http://localhost:3000", "http://localhost:5173"],
+    origin: [process.env.FRONTEND_URL, "http://localhost:5173"],
 }));
 app.use(express.json());
 app.use(cookieParser());
@@ -101,6 +103,11 @@ app.get('/payunit', (req, res) => {
 app.get('/payunit/return', (req, res) => {
   res.send('PayUnit Return URL');
 });
+
+//guest user
+app.use("/api/admin", guestAdminRouter);
+
+
 
 
 // ---- SITEMAP ROUTE ----

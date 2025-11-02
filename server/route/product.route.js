@@ -132,7 +132,7 @@ productRouter.post(
   getProductByCategory
 );
 productRouter.post(
-  "/get-pruduct-by-category-and-subcategory",
+  "/get-product-by-category-and-subcategory",
   cacheResponse({ namespace: "products:category-sub", ttlSeconds: 180 }),
   getProductByCategoryAndSubCategory
 );
