@@ -386,6 +386,24 @@ export function formatOrderForClient(orderDoc) {
       }))
     : [];
 
+  const deliveryAddressRaw = orderDoc.delivery_address ?? null;
+  let deliveryAddressId = null;
+
+  if (deliveryAddressRaw && typeof deliveryAddressRaw === "object") {
+    deliveryAddressId =
+      deliveryAddressRaw._id ??
+      deliveryAddressRaw.id ??
+      deliveryAddressRaw.addressId ??
+      null;
+  } else if (deliveryAddressRaw) {
+    deliveryAddressId = deliveryAddressRaw;
+  }
+
+  const deliveryAddressIdString =
+    deliveryAddressId != null
+      ? deliveryAddressId.toString?.() ?? String(deliveryAddressId)
+      : null;
+
   return {
     _id: orderDoc._id?.toString?.() ?? orderDoc._id,
     orderId: orderDoc.orderId,
@@ -400,7 +418,8 @@ export function formatOrderForClient(orderDoc) {
         ? "Cash on Delivery"
         : "Online Payment"),
     paymentId: orderDoc.paymentId ?? "",
-    delivery_address: orderDoc.delivery_address,
+    delivery_address: deliveryAddressRaw,
+    delivery_address_id: deliveryAddressIdString,
     contact_info: orderDoc.contact_info ?? {},
     subTotalAmt: orderDoc.subTotalAmt ?? orderDoc.subTotal ?? null,
     totalAmt:

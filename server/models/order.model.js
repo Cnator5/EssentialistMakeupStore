@@ -44,6 +44,10 @@ const orderSchema = new mongoose.Schema(
     payment_status: { type: String, default: "" },
     paymentMethod: { type: String, default: "" },
     delivery_address: { type: mongoose.Schema.Types.Mixed, required: true },
+     delivery_address : {
+        type : mongoose.Schema.ObjectId,
+        ref : 'address'
+    },
     contact_info: {
       name: String,
       customer_email: String,
@@ -52,7 +56,7 @@ const orderSchema = new mongoose.Schema(
     subTotalAmt: { type: Number, default: 0 },
     totalAmt: { type: Number, default: 0 },
     totalQuantity: { type: Number, default: 0 },
-    currency: { type: String, default: "INR" },
+    currency: { type: String, default: "XAF" },
     invoice_receipt: { type: String, default: "" },
     metadata: {
       type: mongoose.Schema.Types.Mixed,

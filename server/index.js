@@ -31,6 +31,7 @@ import brandRouter from './route/brand.route.js';
 import compression from 'compression';
 import guestAdminRouter from './route/guestadmin.route.js';
 import "./jobs/receiptRegenerator.js";
+import blogRouter from './route/blog.route.js';
 
 
 const app = express();
@@ -40,8 +41,8 @@ const app = express();
 //     origin: [process.env.FRONTEND_URL, "http://localhost:5173"],
 // }));
 const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  process.env.FRONTEND_URL_WWW,
+//   process.env.FRONTEND_URL,
+//   process.env.FRONTEND_URL_WWW,
   process.env.LOCAL_FRONTEND_1,
   process.env.LOCAL_FRONTEND_2
 ].filter(Boolean); // Remove undefined if not set
@@ -102,6 +103,8 @@ app.use('/api/indexnow', indexnowRoutes);
 //brands
 app.use("/api/brand", brandRouter);
 
+//blogs
+app.use("/api/blog", blogRouter);
 
 app.get('/mtn', (req, res) => {
   res.send('PayUnit MTN Payment API');
