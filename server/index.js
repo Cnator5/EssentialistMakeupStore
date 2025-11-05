@@ -32,6 +32,7 @@ import compression from 'compression';
 import guestAdminRouter from './route/guestadmin.route.js';
 import "./jobs/receiptRegenerator.js";
 import blogRouter from './route/blog.route.js';
+// import blogRouter from './route/blog.route.js';
 
 
 const app = express();

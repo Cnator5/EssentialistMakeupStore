@@ -1,6 +1,6 @@
 import { Router } from "express";
 import auth from "../middleware/auth.js";
-import { admin } from "../middleware/admin.js";
+// import { admin } from "../middleware/admin.js";
 import optionalAuth from "../middleware/optionalAuth.js";
 import {
   createBlogController,
@@ -9,6 +9,7 @@ import {
   getBlogListController,
   updateBlogController
 } from "../controllers/blog.controller.js";
+import { admin } from "../middleware/Admin.js";
 
 const blogRouter = Router();
 
