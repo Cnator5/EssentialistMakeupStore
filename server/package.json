@@ -12,6 +12,8 @@
   "description": "",
   "dependencies": {
     "@payunit/nodejs-sdk": "^1.1.4",
+    "accept-language": "^3.0.20",
+    "accept-language-parser": "^1.5.0",
     "bcrypt": "^5.1.0",
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.6.0",
@@ -31,6 +33,9 @@
     "helmet": "^6.0.1",
     "helmet-csp": "^4.0.0",
     "hpp": "^0.2.3",
+    "i18next": "^25.6.0",
+    "i18next-fs-backend": "^2.6.0",
+    "i18next-http-middleware": "^3.8.1",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.3",
     "morgan": "^1.10.0",
