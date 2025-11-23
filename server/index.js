@@ -33,6 +33,7 @@ import guestAdminRouter from './route/guestadmin.route.js';
 import "./jobs/receiptRegenerator.js";
 import blogRouter from './route/blog.route.js';
 // import blogRouter from './route/blog.route.js';
+import { ensureRedisConnection } from './config/redisClient.js';
 
 
 const app = express();
@@ -42,8 +43,8 @@ const app = express();
 //     origin: [process.env.FRONTEND_URL, "http://localhost:5173"],
 // }));
 const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  process.env.FRONTEND_URL_WWW,
+//   process.env.FRONTEND_URL,
+//   process.env.FRONTEND_URL_WWW,
   process.env.LOCAL_FRONTEND_1,
   process.env.LOCAL_FRONTEND_2
 ].filter(Boolean); // Remove undefined if not set
@@ -322,6 +323,11 @@ app.get('/indexnow-submit-sitemap', async (req, res) => {
         console.error('IndexNow submit error:', error);
         res.status(500).json({ error: error.message || error.toString() });
     }
+});
+
+//redis connection check
+ensureRedisConnection().catch((error) => {
+  console.error('[redis] Startup ping failed:', error);
 });
 
 connectDB().then(() => {
