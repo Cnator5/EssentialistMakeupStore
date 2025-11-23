@@ -1,10 +1,31 @@
-// middleware/cache.middleware.js
 import crypto from 'crypto';
 import redisClient, { isRedisAvailable } from '../config/redisClient.js';
 
 const DEFAULT_TTL_SECONDS = 120;
 const INDEX_PREFIX = 'cache:index';
 const KEY_PREFIX = 'cache:item';
+
+const toPositiveNumber = (value, fallback) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+};
+
+const MAX_CACHEABLE_BODY_BYTES = toPositiveNumber(
+  process.env.CACHE_MAX_BODY_BYTES,
+  64 * 1024
+);
+const MAX_CACHEABLE_RESPONSE_BYTES = toPositiveNumber(
+  process.env.CACHE_MAX_RESPONSE_BYTES,
+  512 * 1024
+);
+const MAX_CACHEABLE_SIGNATURE_BYTES = toPositiveNumber(
+  process.env.CACHE_MAX_SIGNATURE_BYTES,
+  32 * 1024
+);
+const INVALIDATION_CHUNK_SIZE = toPositiveNumber(
+  process.env.CACHE_INVALIDATION_CHUNK,
+  200
+);
 
 const normalizeValue = (value) => {
   if (Array.isArray(value)) {
@@ -23,15 +44,31 @@ const normalizeValue = (value) => {
   return value;
 };
 
-const buildCacheKey = (namespace, req) => {
-  const method = req.method.toUpperCase();
+const buildCacheMetadata = (namespace, req) => {
+  const method = req.method?.toUpperCase?.() || 'GET';
   const baseUrl = req.baseUrl || '';
   const path = req.path || req.originalUrl || '';
   const query = normalizeValue(req.query || {});
-  const body = method === 'GET' ? undefined : normalizeValue(req.body || {});
-  const fingerprint = JSON.stringify({ method, baseUrl, path, query, body });
-  const hash = crypto.createHash('sha256').update(fingerprint).digest('hex');
-  return `${KEY_PREFIX}:${namespace}:${hash}`;
+
+  const fingerprint = { method, baseUrl, path, query };
+
+  let bodyBytes = 0;
+  if (method !== 'GET' && req.body && Object.keys(req.body).length) {
+    const normalizedBody = normalizeValue(req.body);
+    fingerprint.body = normalizedBody;
+    const bodyString = JSON.stringify(normalizedBody);
+    bodyBytes = Buffer.byteLength(bodyString, 'utf8');
+  }
+
+  const fingerprintString = JSON.stringify(fingerprint);
+  const fingerprintBytes = Buffer.byteLength(fingerprintString, 'utf8');
+  const hash = crypto.createHash('sha256').update(fingerprintString).digest('hex');
+
+  return {
+    cacheKey: `${KEY_PREFIX}:${namespace}:${hash}`,
+    bodyBytes,
+    fingerprintBytes,
+  };
 };
 
 const namespaceIndexKey = (namespace) => `${INDEX_PREFIX}:${namespace}`;
@@ -39,21 +76,52 @@ const namespaceIndexKey = (namespace) => `${INDEX_PREFIX}:${namespace}`;
 const registerCacheKey = async (namespace, cacheKey, ttlSeconds) => {
   try {
     const indexKey = namespaceIndexKey(namespace);
-    await redisClient.sadd(indexKey, cacheKey);
     const indexTtl = Math.max(ttlSeconds * 2, 600);
-    await redisClient.expire(indexKey, indexTtl);
+
+    await Promise.all([
+      redisClient.sadd(indexKey, cacheKey),
+      redisClient.expire(indexKey, indexTtl),
+    ]);
   } catch (error) {
     console.error(`[cache] Failed to register cache key for namespace "${namespace}":`, error);
   }
 };
 
+const chunkArray = (array, size) => {
+  if (size <= 0) return [array];
+  const chunks = [];
+  for (let i = 0; i < array.length; i += size) {
+    chunks.push(array.slice(i, i + size));
+  }
+  return chunks;
+};
+
+const deleteKeysInChunks = async (keys) => {
+  const chunks = chunkArray(keys, INVALIDATION_CHUNK_SIZE);
+  for (const chunk of chunks) {
+    try {
+      await redisClient.del(...chunk);
+    } catch (error) {
+      console.error('[cache] Failed to delete cache chunk:', error);
+    }
+  }
+};
+
 const shouldBypassCache = (req) => {
   if (!isRedisAvailable) return 'DISABLED';
-  if (!['GET', 'POST'].includes(req.method.toUpperCase())) return 'METHOD';
+
+  const method = req.method?.toUpperCase?.() || '';
+  if (!['GET', 'POST'].includes(method)) return 'METHOD';
+
   if (req.headers['cache-control']?.includes('no-store')) return 'REQ_NO_STORE';
   if (req.headers['pragma']?.includes('no-cache')) return 'REQ_NO_CACHE';
+  if (req.headers['x-cache-bypass'] === '1') return 'BYPASS_HEADER';
+  if (req.headers['x-anon-id']) return 'ANON_HEADER';
+  if (req.query?.anonId) return 'ANON_QUERY';
+  if (req.body?.anonId) return 'ANON_BODY';
   if (req.user) return 'AUTH_USER';
   if (req.headers.authorization) return 'AUTH_HEADER';
+
   return null;
 };
 
@@ -72,17 +140,28 @@ export const cacheResponse = ({
       return next();
     }
 
-    if (ttlSeconds <= 0) {
+    if (!Number.isFinite(ttlSeconds) || ttlSeconds <= 0) {
       res.set('X-Cache', 'SKIP-TTL');
       return next();
     }
 
-    const cacheKey = buildCacheKey(namespace, req);
+    const { cacheKey, bodyBytes, fingerprintBytes } = buildCacheMetadata(namespace, req);
+
+    if (bodyBytes > MAX_CACHEABLE_BODY_BYTES) {
+      res.set('X-Cache', 'SKIP-REQ-LARGE');
+      return next();
+    }
+
+    if (fingerprintBytes > MAX_CACHEABLE_SIGNATURE_BYTES) {
+      res.set('X-Cache', 'SKIP-SIGNATURE-LARGE');
+      return next();
+    }
 
     try {
       const cachedPayload = await redisClient.get(cacheKey);
       if (cachedPayload) {
         res.set('X-Cache', 'HIT');
+        res.set('X-Cache-TTL', String(ttlSeconds));
         const parsed = JSON.parse(cachedPayload);
         return res.json(parsed);
       }
@@ -103,17 +182,26 @@ export const cacheResponse = ({
         return result;
       }
 
+      let payload;
       try {
-        const payload = JSON.stringify(body);
-        redisClient
-          .set(cacheKey, payload, { ex: ttlSeconds })
-          .then(() => registerCacheKey(namespace, cacheKey, ttlSeconds))
-          .catch((error) => {
-            console.error(`[cache] Failed to store cache key "${cacheKey}":`, error);
-          });
+        payload = JSON.stringify(body);
       } catch (error) {
         console.error(`[cache] Failed to serialize response for key "${cacheKey}":`, error);
+        return result;
       }
+
+      const payloadBytes = Buffer.byteLength(payload, 'utf8');
+      if (payloadBytes > MAX_CACHEABLE_RESPONSE_BYTES) {
+        res.set('X-Cache-Store', 'SKIP-RESP-LARGE');
+        return result;
+      }
+
+      redisClient
+        .set(cacheKey, payload, { ex: ttlSeconds })
+        .then(() => registerCacheKey(namespace, cacheKey, ttlSeconds))
+        .catch((error) => {
+          console.error(`[cache] Failed to store cache key "${cacheKey}":`, error);
+        });
 
       return result;
     };
@@ -135,7 +223,7 @@ export const invalidateCacheNamespaces = async (namespaces = []) => {
       try {
         const members = await redisClient.smembers(indexKey);
         if (members?.length) {
-          await redisClient.del(...members);
+          await deleteKeysInChunks(members);
         }
         await redisClient.del(indexKey);
       } catch (error) {
