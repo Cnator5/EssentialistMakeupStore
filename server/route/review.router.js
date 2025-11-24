@@ -1,17 +1,51 @@
-// routes/review.router.js
-import { Router } from "express";
+import express from "express";
+import optionalAuth from "../middleware/optionalAuth.js";
 import auth from "../middleware/auth.js";
-import { createOrUpdateReview, deleteMyReview, listReviews } from "../controllers/review.controller.js";
+import adminOnly from "../middleware/adminOnly.js";
+import {
+  listReviews,
+  createOrUpdateReview,
+  deleteMyReview,
+  deleteReviewById,
+  adminListReviews,
+  adminCreateReview,
+  adminUpdateReview,
+  adminDeleteReview,
+  listReviewComments,
+  createReviewComment,
+  deleteReviewComment,
+  adminDeleteReviewComment,
+} from "../controllers/review.controller.js";
 
-const reviewRouter = Router();
+const router = express.Router();
 
-// List paginated reviews for a product
-reviewRouter.get("/:productId", listReviews);
+// Public review feeds
+router.get("/public", optionalAuth, listReviews);
+router.get("/public/product/:productId", optionalAuth, listReviews);
+router.get("/:productId", optionalAuth, listReviews); // backward compatibility
 
-// Create or update my review for a product
-reviewRouter.post("/", auth, createOrUpdateReview);
+// Review CRUD
+router.post("/", optionalAuth, createOrUpdateReview);
+router.delete("/:productId", auth, deleteMyReview);
+router.delete("/id/:reviewId", optionalAuth, deleteReviewById);
 
-// Delete my review for a product
-reviewRouter.delete("/:productId", auth, deleteMyReview);
+// Comments
+router.get("/:reviewId/comments", optionalAuth, listReviewComments);
+router.post("/:reviewId/comments", optionalAuth, createReviewComment);
+router.delete("/comments/:commentId", optionalAuth, deleteReviewComment);
 
-export default reviewRouter;
+// Admin comment moderation
+router.delete(
+  "/admin/comments/:commentId",
+  auth,
+  adminOnly,
+  adminDeleteReviewComment
+);
+
+// Admin review moderation
+router.get("/", auth, adminOnly, adminListReviews);
+router.post("/admin", auth, adminOnly, adminCreateReview);
+router.put("/admin/:reviewId", auth, adminOnly, adminUpdateReview);
+router.delete("/admin/:reviewId", auth, adminOnly, adminDeleteReview);
+
+export default router;

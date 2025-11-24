@@ -1,75 +1,61 @@
-import mongoose from "mongoose";
-import CategoryModel from "../models/category.model.js";
-import SubCategoryModel from "../models/subCategory.model.js";
-import ProductModel from "../models/product.model.js";
-import BrandModel from "../models/brand.model.js";
-import { invalidateCacheNamespaces } from "../middleware/cache.middleware.js";
+// path: src/controllers/product.controller.js
+import mongoose from 'mongoose';
+import CategoryModel from '../models/category.model.js';
+import SubCategoryModel from '../models/subCategory.model.js';
+import ProductModel from '../models/product.model.js';
+import BrandModel from '../models/brand.model.js';
+import { invalidateCacheNamespaces } from '../middleware/cache.middleware.js';
 
 const PRODUCT_CACHE_NAMESPACES = [
-  "products:list",
-  "products:by-category",
-  "products:category-sub",
-  "products:details",
-  "products:search",
-  "products:ids",
-  "products:slug",
-  "products:filter-meta"
+  'products:list',
+  'products:by-category',
+  'products:category-sub',
+  'products:details',
+  'products:search',
+  'products:ids',
+  'products:slug',
+  'products:filter-meta',
 ];
 
-// const PRODUCT_DEFAULT_CACHE = {
-//   maxAge: 60,
-//   sMaxAge: 180
-// };
+const ONE_MONTH_SECONDS = 60 * 60 * 24 * 30;
 
-// const PRODUCT_DETAILS_CACHE = {
-//   maxAge: 120,
-//   sMaxAge: 600
-// };
-
-// const PRODUCT_FILTER_CACHE = {
-//   maxAge: 300,
-//   sMaxAge: 900
-// };
-
-//cache for a month
 const PRODUCT_DEFAULT_CACHE = {
-  maxAge: 2592000,
-  sMaxAge: 2592000
+  maxAge: ONE_MONTH_SECONDS,
+  sMaxAge: ONE_MONTH_SECONDS,
 };
 
 const PRODUCT_DETAILS_CACHE = {
-  maxAge: 2592000,
-  sMaxAge: 2592000
+  maxAge: ONE_MONTH_SECONDS,
+  sMaxAge: ONE_MONTH_SECONDS,
 };
 
 const PRODUCT_FILTER_CACHE = {
-  maxAge: 2592000,
-  sMaxAge: 2592000
+  maxAge: ONE_MONTH_SECONDS,
+  sMaxAge: ONE_MONTH_SECONDS,
 };
 
 const setCacheHeaders = (res, { maxAge, sMaxAge }) => {
-  res.set("Cache-Control", `public, max-age=${maxAge}, s-maxage=${sMaxAge}`);
-  res.set("Vary", "Authorization, Cookie");
+  res.set('Cache-Control', `public, max-age=${maxAge}, s-maxage=${sMaxAge}`);
+  res.set('Vary', 'Authorization, Cookie');
 };
 
 const safeInvalidateCacheNamespaces = async (namespaces) => {
   try {
     await invalidateCacheNamespaces(namespaces);
   } catch (error) {
-    console.error("Cache invalidation error:", error);
+    console.error('Cache invalidation error:', error);
   }
 };
 
-const slugify = (text = "") =>
+const slugify = (text = '') =>
   text
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 
-const sanitizeArray = (value) =>
-  Array.isArray(value) ? value.filter(Boolean) : [];
+const sanitizeArray = (value) => (Array.isArray(value) ? value.filter(Boolean) : []);
 
 const castToObjectIdArray = (value) =>
   sanitizeArray(value)
@@ -143,9 +129,9 @@ const buildProductQuery = ({ search, filters = {} }) => {
     }
   }
 
-  if (filters.stockStatus === "inStock") {
+  if (filters.stockStatus === 'inStock') {
     query.stock = { $gt: 0 };
-  } else if (filters.stockStatus === "outOfStock") {
+  } else if (filters.stockStatus === 'outOfStock') {
     query.stock = { $lte: 0 };
   }
 
@@ -182,7 +168,7 @@ const SORT_PRESETS = {
   nameAsc: { name: 1 },
   nameDesc: { name: -1 },
   discountDesc: { discount: -1 },
-  stockDesc: { stock: -1 }
+  stockDesc: { stock: -1 },
 };
 
 const buildSortOptions = (sortInput) => {
@@ -190,15 +176,15 @@ const buildSortOptions = (sortInput) => {
     return SORT_PRESETS.newest;
   }
 
-  if (typeof sortInput === "string") {
+  if (typeof sortInput === 'string') {
     return SORT_PRESETS[sortInput] || SORT_PRESETS.newest;
   }
 
-  if (typeof sortInput === "object") {
+  if (typeof sortInput === 'object') {
     const { field, order } = sortInput;
-    const allowedFields = ["price", "name", "createdAt", "discount", "stock"];
+    const allowedFields = ['price', 'name', 'createdAt', 'discount', 'stock'];
     if (allowedFields.includes(field)) {
-      const direction = order === "asc" ? 1 : -1;
+      const direction = order === 'asc' ? 1 : -1;
       return { [field]: direction };
     }
   }
@@ -213,13 +199,14 @@ const resolveBrandIdsFromFilters = async (filters = {}) => {
 
   if (Array.isArray(filters.brandSlugs) && filters.brandSlugs.length) {
     const dbBrands = await BrandModel.find({
-      slug: { $in: filters.brandSlugs }
-    }).select("_id");
+      slug: { $in: filters.brandSlugs },
+    }).select('_id');
     dbBrands.forEach((brand) => brandIds.add(brand._id));
   }
 
   return Array.from(brandIds);
 };
+
 
 export const createProductController = async (request, response) => {
   try {
