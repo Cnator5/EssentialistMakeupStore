@@ -391,8 +391,8 @@ app.disable("x-powered-by");
 app.set("trust proxy", 1);
 
 const allowedOrigins = [
-  // process.env.FRONTEND_URL,
-  // process.env.FRONTEND_URL_WWW,
+  process.env.FRONTEND_URL,
+  process.env.FRONTEND_URL_WWW,
   process.env.LOCAL_FRONTEND_1,
   process.env.LOCAL_FRONTEND_2,
 ].filter(Boolean);
