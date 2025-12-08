@@ -818,7 +818,7 @@
 
 
 
-// path: src/app.js
+// path: server/index.js
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -869,7 +869,7 @@ import slugify from "slugify";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 1100;
+const PORT = process.env.PORT || 1010;
 
 app.disable("x-powered-by");
 app.set("trust proxy", 1);
@@ -909,6 +909,7 @@ app.use(
 
 const bodyLimit = process.env.REQUEST_BODY_LIMIT || "1mb";
 const jsonParser = express.json({ limit: bodyLimit });
+
 const urlEncodedParser = express.urlencoded({
   extended: true,
   limit: bodyLimit,
@@ -995,15 +996,14 @@ app.use("/api/product", productRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/address", addressRouter);
 app.use("/api/order", orderRouter);
-
 app.use("/api/ratings", ratingRouter);
 app.use("/api/reviews", reviewRouter);
-
 app.use("/api/admin", adminRouter);
 app.use("/payments", paymentRoutes);
 app.use("/api/indexnow", indexnowRoutes);
 app.use("/api/brand", brandRouter);
 app.use("/api/blog", blogRouter);
+app.use("/api/admin", guestAdminRouter);
 
 app.get("/mtn", (req, res) => {
   res.send("PayUnit MTN Payment API");
@@ -1017,8 +1017,6 @@ app.get("/payunit", (req, res) => {
 app.get("/payunit/return", (req, res) => {
   res.send("PayUnit Return URL");
 });
-
-app.use("/api/admin", guestAdminRouter);
 
 const escapeXml = (unsafe = "") =>
   unsafe.replace(/[<>&'"]/g, (c) => {
@@ -1045,11 +1043,6 @@ const formatDate = (date) => {
 };
 
 const formatSlug = (name = "") => slugify(name, { lower: true, strict: true });
-
-const formatDecimal = (value, fallback = "0.00") => {
-  const num = Number(value);
-  return Number.isFinite(num) ? num.toFixed(2) : fallback;
-};
 
 app.get("/sitemap.xml", async (req, res) => {
   try {
@@ -1198,55 +1191,12 @@ app.get("/sitemap.xml", async (req, res) => {
         )
         .join("\n");
 
-      const productImagesMetadata = imageList.length
-        ? `<product:images>${imageList
-            .map(
-              (imgUrl) => `<product:image>${escapeXml(imgUrl)}</product:image>`
-            )
-            .join("")}</product:images>`
-        : "";
-
-      const ratingInfo = ratingMap.get(prodId);
-      const reviewInfo = reviewMap.get(prodId);
-
-      const averageRating = ratingInfo?.averageRating ?? 0;
-      const ratingCount = ratingInfo?.ratingCount ?? 0;
-      const reviewCount =
-        reviewInfo?.reviewCount ?? ratingInfo?.ratingCount ?? 0;
-
       urls.push(
         `<url>
   <loc>${prodUrl}</loc>
   ${prod.updatedAt ? `<lastmod>${formatDate(prod.updatedAt)}</lastmod>` : ""}
   <changefreq>weekly</changefreq>
   ${imageTags}
-  <product:data>
-    <product:name>${escapeXml(prod.name)}</product:name>
-    <product:description>${escapeXml(prod.description || "")}</product:description>
-    <product:price currency="XAF">${formatDecimal(prod.price)}</product:price>
-    ${
-      prod.discount !== null && prod.discount !== undefined
-        ? `<product:discount>${formatDecimal(prod.discount, "0.00")}</product:discount>`
-        : ""
-    }
-    ${
-      prod.bulkPrice !== null && prod.bulkPrice !== undefined
-        ? `<product:bulkPrice currency="XAF">${formatDecimal(
-            prod.bulkPrice
-          )}</product:bulkPrice>`
-        : ""
-    }
-    ${
-      typeof prod.stock === "number"
-        ? `<product:stock>${prod.stock}</product:stock>`
-        : ""
-    }
-    <product:reviews average="${formatDecimal(
-      averageRating,
-      "0.00"
-    )}" ratingCount="${ratingCount}" reviewCount="${reviewCount}"></product:reviews>
-    ${productImagesMetadata}
-  </product:data>
 </url>`
       );
     });
@@ -1272,8 +1222,7 @@ app.get("/sitemap.xml", async (req, res) => {
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset
   xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
-  xmlns:product="https://www.esmakeupstore.com/schemas/product">
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${urls.join("\n")}
 </urlset>`;
 
@@ -1352,7 +1301,6 @@ app.get("/indexnow-submit-sitemap", async (req, res) => {
 
     for (let i = 0; i < urls.length; i += BATCH) {
       const batch = urls.slice(i, i + BATCH);
-      // eslint-disable-next-line no-await-in-loop
       const result = await submitToIndexNow(batch);
       results.push(result);
     }
