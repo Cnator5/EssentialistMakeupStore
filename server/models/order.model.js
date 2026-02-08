@@ -186,7 +186,6 @@
 // export default OrderModel;
 
 
-
 import mongoose from "mongoose";
 import { buildOrderFingerprint } from "../utils/orderFingerprint.js";
 
@@ -267,22 +266,33 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// --- Indexes ---
 orderSchema.index({ is_guest: 1, integrityToken: 1 });
 orderSchema.index({ orderFingerprint: 1, createdAt: -1 });
 orderSchema.index({ userId: 1, createdAt: -1 });
 
-orderSchema.pre("save", function setFingerprint(next) {
-  if (!this.orderFingerprint) {
-    this.orderFingerprint = buildOrderFingerprint({
-      userId: this.userId,
-      customerEmail: this.contact_info?.customer_email,
-      customerPhone: this.contact_info?.mobile,
-      products: this.products,
-      totalAmt: this.totalAmt,
-      currency: this.currency,
-    });
+/**
+ * HARDENED PRE-SAVE HOOK
+ * Uses async/await to prevent "next is not a function" crashes.
+ */
+orderSchema.pre("save", async function () {
+  try {
+    // Only generate fingerprint if it doesn't exist
+    if (!this.orderFingerprint) {
+      this.orderFingerprint = buildOrderFingerprint({
+        userId: this.userId,
+        customerEmail: this.contact_info?.customer_email,
+        customerPhone: this.contact_info?.mobile,
+        products: this.products,
+        totalAmt: this.totalAmt,
+        currency: this.currency,
+      });
+    }
+  } catch (error) {
+    // Log the error but allow the order to save
+    console.error("⚠️ Order Fingerprint generation failed:", error.message);
+    this.orderFingerprint = `err_gen_${new mongoose.Types.ObjectId()}`;
   }
-  next();
 });
 
 const OrderModel = mongoose.model("order", orderSchema);

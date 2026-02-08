@@ -36,7 +36,7 @@ async function connectDB() {
     // Set mongoose options for enhanced security
     const options = {
       autoIndex: process.env.NODE_ENV !== 'production', // Don't build indexes in production
-      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+      serverSelectionTimeoutMS: 30000, // Timeout after 5s instead of 30s
       socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
       family: 4, // Use IPv4, skip trying IPv6
     };
@@ -62,5 +62,8 @@ async function connectDB() {
     process.exit(1);
   }
 }
+
+// console.log("USING URI:", process.env.MONGODB_URI);
+
 
 export default connectDB;

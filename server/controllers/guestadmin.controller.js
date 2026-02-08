@@ -272,7 +272,6 @@
 
 
 
-
 // backend/controllers/guestadmin.controller.js
 import mongoose from "mongoose";
 import OrderModel from "../models/order.model.js";
@@ -288,15 +287,24 @@ import {
   sendOrderNotificationToAdmin,
 } from "../utils/mail.js";
 
+/**
+ * Utility: Ensure a value is a valid finite number
+ */
 function safeNumber(n) {
   const parsed = Number(n);
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
+/**
+ * Utility: Sum values in an array based on a selector
+ */
 function sum(list = [], selector = (x) => x) {
   return list.reduce((acc, item) => acc + selector(item), 0);
 }
 
+/**
+ * Utility: Calculate percentage change between two values
+ */
 function percentChange(current, previous) {
   if (!Number.isFinite(previous) || previous === 0) {
     return Number.isFinite(current) && current !== 0 ? 100 : 0;
@@ -304,6 +312,9 @@ function percentChange(current, previous) {
   return Math.round(((current - previous) / previous) * 1000) / 10;
 }
 
+/**
+ * Logic to calculate revenue and sales growth over the last 30 vs 60 days
+ */
 function computeGrowthMetrics(orders = []) {
   const now = Date.now();
   const dayMs = 24 * 60 * 60 * 1000;
@@ -346,6 +357,9 @@ function computeGrowthMetrics(orders = []) {
   };
 }
 
+/**
+ * GET: Aggregated totals and growth metrics for the Admin Dashboard
+ */
 export async function getAdminDashboardController(request, response) {
   try {
     const [orders, totalProducts, totalUsers] = await Promise.all([
@@ -403,6 +417,9 @@ export async function getAdminDashboardController(request, response) {
   }
 }
 
+/**
+ * GET: Fetch all orders (User + Guest) for Admin Management
+ */
 export async function getAllOrdersController(request, response) {
   try {
     const orders = await OrderModel.find({}).sort({ createdAt: -1 }).lean();
@@ -430,6 +447,9 @@ export async function getAllOrdersController(request, response) {
   }
 }
 
+/**
+ * GET: Fetch only guest orders
+ */
 export async function getGuestOrdersController(request, response) {
   try {
     const orders = await OrderModel.find({ is_guest: true })
@@ -459,6 +479,9 @@ export async function getGuestOrdersController(request, response) {
   }
 }
 
+/**
+ * POST: Mark an order as delivered and notify the customer
+ */
 export async function markOrderDeliveredController(request, response) {
   try {
     const { orderId } = request.params;
@@ -505,8 +528,7 @@ export async function markOrderDeliveredController(request, response) {
     const now = new Date();
     const timelineEntry = {
       status: "Delivered",
-      note:
-        note?.trim() || "Delivery confirmed via admin dashboard.",
+      note: note?.trim() || "Delivery confirmed via admin dashboard.",
       timestamp: now,
       updatedBy: getTimelineActor(request.userId),
     };
@@ -524,10 +546,7 @@ export async function markOrderDeliveredController(request, response) {
       }
     );
 
-    const updatedOrderDoc = await OrderModel.findById(
-      existingOrder._id
-    ).lean();
-
+    const updatedOrderDoc = await OrderModel.findById(existingOrder._id).lean();
     const proofed = await ensureIntegrityProof(updatedOrderDoc);
     const formatted = formatOrderForClient(proofed);
 
@@ -556,6 +575,9 @@ export async function markOrderDeliveredController(request, response) {
   }
 }
 
+/**
+ * POST: Resend the internal order notification to the store administrator
+ */
 export async function resendAdminOrderSummaryController(request, response) {
   try {
     const { orderId } = request.params;

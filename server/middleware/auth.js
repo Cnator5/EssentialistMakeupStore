@@ -34,4 +34,7 @@ const auth = async(request,response,next)=>{
     }
 }
 
+// console.log("JWT SECRET:", process.env.SECRET_KEY_ACCESS_TOKEN);
+
+
 export default auth
