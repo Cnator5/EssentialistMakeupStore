@@ -216,7 +216,7 @@
 // export default router;
 
 
-
+// path: server/route/payments.js
 import express from "express";
 import { client } from "../config/payunit.js";
 import { paymentsLimiter } from "../middleware/rateLimiter.js";
@@ -224,6 +224,9 @@ import { requireIdempotencyKey } from "../middleware/idempotency.js";
 
 const router = express.Router();
 
+// --------------------
+// Helpers
+// --------------------
 function validatePaymentBody(body) {
   const { amount, order_id, phone } = body;
   return (
@@ -281,13 +284,20 @@ async function handlePaymentRequest(req, res, channel, customerType) {
       body: req.body,
       customerType,
     });
-    return res.json({ payment_url: payment.transaction_url });
+
+    return res.json({
+      payment_url: payment.transaction_url,
+      transaction_id: payment.transaction_id,
+    });
   } catch (err) {
     console.error(`[Payunit:${channel}]`, err);
     return res.status(500).json({ error: "Payment initiation failed" });
   }
 }
 
+// --------------------
+// Customer payments
+// --------------------
 router.post(
   "/mtn",
   paymentsLimiter,
@@ -302,6 +312,9 @@ router.post(
   (req, res) => handlePaymentRequest(req, res, "CM_ORANGE", "web")
 );
 
+// --------------------
+// Guest payments
+// --------------------
 router.post(
   "/guest-mtn",
   paymentsLimiter,
@@ -316,6 +329,9 @@ router.post(
   (req, res) => handlePaymentRequest(req, res, "CM_ORANGE", "guest")
 );
 
+// --------------------
+// Transaction status
+// --------------------
 router.get(
   "/status/:transactionId",
   paymentsLimiter,
@@ -332,6 +348,9 @@ router.get(
   }
 );
 
+// --------------------
+// Invoices
+// --------------------
 router.post(
   "/invoice",
   paymentsLimiter,
@@ -367,6 +386,9 @@ router.get(
   }
 );
 
+// --------------------
+// Disbursement (payout)
+// --------------------
 router.post(
   "/disburse",
   paymentsLimiter,
@@ -379,6 +401,7 @@ router.post(
         beneficiary_name,
         account_bank,
       } = req.body;
+
       const disbursement = await client.disbursement.createDisbursement({
         destination_currency: "XAF",
         debit_currency: "XAF",
@@ -390,6 +413,7 @@ router.post(
         country: "CM",
         account_bank,
       });
+
       res.json(disbursement);
     } catch (err) {
       console.error("[Payunit:disburse]", err);
