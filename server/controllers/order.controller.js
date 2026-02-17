@@ -4,10 +4,15 @@ import CartProductModel from "../models/cartproduct.model.js";
 import OrderModel from "../models/order.model.js";
 import UserModel from "../models/user.model.js";
 import mongoose from "mongoose";
-import { sendOrderNotificationToAdmin } from "../utils/mail.js";
+import {
+  sendOrderNotificationToAdmin,
+  sendOrderNotificationToCustomer,
+} from "../utils/mail.js";
 import AddressModel from "../models/address.model.js";
 
-const DEFAULT_CURRENCY = process.env.ORDER_DEFAULT_CURRENCY?.trim() || "INR";
+export const ORDER_DEFAULT_CURRENCY =
+  process.env.ORDER_DEFAULT_CURRENCY?.trim() || "INR";
+const DEFAULT_CURRENCY = ORDER_DEFAULT_CURRENCY;
 const RECEIPT_PRIVATE_KEY = process.env.RECEIPT_PRIVATE_KEY
   ? process.env.RECEIPT_PRIVATE_KEY.replace(/\\n/g, "\n").trim()
   : "";
@@ -158,7 +163,7 @@ function buildReceiptPayload(orderDoc = {}, { integrityToken } = {}) {
 /**
  * Sanitize and normalize guest address payloads.
  */
-function sanitizeGuestAddress(addressData = {}) {
+export function sanitizeGuestAddress(addressData = {}) {
   if (!addressData || typeof addressData !== "object") {
     return {};
   }
@@ -188,7 +193,7 @@ function sanitizeGuestAddress(addressData = {}) {
 /**
  * Sanitize and normalize guest contact information.
  */
-function sanitizeGuestContact(addressData = {}) {
+export function sanitizeGuestContact(addressData = {}) {
   const emailRaw =
     addressData.customer_email ?? addressData.email ?? addressData.contactEmail;
   const normalizedEmail = emailRaw
@@ -204,7 +209,7 @@ function sanitizeGuestContact(addressData = {}) {
 /**
  * Resolve product information for guest orders that may only include product IDs.
  */
-async function resolveGuestOrderProducts(listItems = []) {
+export async function resolveGuestOrderProducts(listItems = []) {
   if (!Array.isArray(listItems)) return [];
 
   const normalizedItems = [];
@@ -490,7 +495,7 @@ function buildReceiptDownloadResponse(orderDoc) {
   };
 }
 
-function buildInitialDeliveryTimeline({ note, updatedBy }) {
+export function buildInitialDeliveryTimeline({ note, updatedBy }) {
   return [
     {
       status: "Processing",
@@ -593,6 +598,7 @@ export async function CashOnDeliveryOrderController(request, response) {
 
     const orderWithProof = await ensureIntegrityProof(populatedOrder);
     await sendOrderNotificationToAdmin([orderWithProof]);
+    await sendOrderNotificationToCustomer(orderWithProof);
 
     await CartProductModel.deleteMany({ userId });
     await UserModel.updateOne({ _id: userId }, { shopping_cart: [] });
@@ -702,6 +708,7 @@ export async function GuestCashOnDeliveryOrderController(request, response) {
     }
 
     await sendOrderNotificationToAdmin([orderWithProof]);
+    await sendOrderNotificationToCustomer(orderWithProof);
 
     const clientOrder = formatOrderForClient(orderWithProof);
 
@@ -896,6 +903,9 @@ export async function webhookStripe(request, response) {
           }).lean();
 
           await sendOrderNotificationToAdmin(refreshedOrders);
+          await Promise.all(
+            refreshedOrders.map((order) => sendOrderNotificationToCustomer(order))
+          );
 
           await UserModel.findByIdAndUpdate(userId, {
             shopping_cart: [],
