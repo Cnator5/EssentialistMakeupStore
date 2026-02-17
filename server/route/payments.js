@@ -49,6 +49,42 @@ const PAYUNIT_CHANNEL_LABEL = {
   CM_ORANGE: "Orange Money",
 };
 
+const PAYUNIT_SUCCESS = new Set([
+  "SUCCESS",
+  "SUCCESSFUL",
+  "COMPLETED",
+  "PAID",
+  "APPROVED",
+]);
+
+const PAYUNIT_FAILED = new Set([
+  "FAILED",
+  "FAIL",
+  "CANCELLED",
+  "CANCELED",
+  "EXPIRED",
+  "TIMEOUT",
+  "REJECTED",
+  "DECLINED",
+  "ERROR",
+]);
+
+const PAYUNIT_PENDING = new Set([
+  "PENDING",
+  "PROCESSING",
+  "INITIATED",
+  "CREATED",
+  "WAITING",
+]);
+
+const TERMINAL_PAYMENT_STATUSES = new Set([
+  "PAID",
+  "FAILED",
+  "CANCELLED",
+  "CANCELED",
+  "CASH ON DELIVERY",
+]);
+
 function getChannelLabel(code) {
   return PAYUNIT_CHANNEL_LABEL[code] ?? "Payunit";
 }
@@ -79,6 +115,129 @@ function validatePaymentBody(body = {}) {
     Array.isArray(list_items) &&
     list_items.length > 0
   );
+}
+
+function normalizePayunitStatus(rawStatus) {
+  const upper = String(rawStatus ?? "").trim().toUpperCase();
+  if (PAYUNIT_SUCCESS.has(upper)) return { normalized: "SUCCESS", category: "success" };
+  if (PAYUNIT_FAILED.has(upper)) return { normalized: "FAILED", category: "failed" };
+  if (PAYUNIT_PENDING.has(upper)) return { normalized: "PENDING", category: "pending" };
+  return { normalized: upper || "UNKNOWN", category: "unknown" };
+}
+
+async function applyPayunitStatusUpdate({
+  orderRecord,
+  statusPayload,
+  amount,
+  currency,
+  channel,
+  channelLabel,
+  transactionId,
+  source = "webhook",
+  rawPayload,
+}) {
+  if (!orderRecord) return { updated: false };
+
+  const { normalized, category } = normalizePayunitStatus(statusPayload);
+  const previousPayunitStatus = String(
+    orderRecord?.metadata?.payunit?.status ?? ""
+  ).toUpperCase();
+
+  const currentPaymentStatus = String(orderRecord.payment_status ?? "").toUpperCase();
+  const isAlreadyPaid = currentPaymentStatus === "PAID";
+
+  if (isAlreadyPaid && category !== "success") {
+    return { updated: false, isSuccess: true, isFailed: false };
+  }
+
+  const statusChanged = normalized !== previousPayunitStatus;
+
+  const updatedMetadata = {
+    ...(orderRecord.metadata ?? {}),
+    payunit: {
+      ...(orderRecord.metadata?.payunit ?? {}),
+      status: normalized,
+      transactionId: transactionId ?? orderRecord.metadata?.payunit?.transactionId,
+      lastWebhookAt: new Date(),
+      lastStatusSource: source,
+      amount: amount ?? orderRecord.metadata?.payunit?.amount,
+      currency: currency ?? orderRecord.metadata?.payunit?.currency ?? "XAF",
+      channel,
+      channelLabel,
+      rawWebhook: rawPayload ?? orderRecord.metadata?.payunit?.rawWebhook,
+    },
+  };
+
+  const updatePayload = { $set: { metadata: updatedMetadata } };
+  let timelineEntry = null;
+
+  if (category === "success") {
+    updatePayload.$set.payment_status = "PAID";
+    updatePayload.$set.paymentMethod = channelLabel ?? orderRecord.paymentMethod;
+    updatePayload.$set.paymentId = transactionId ?? orderRecord.paymentId;
+    if (
+      orderRecord.totalAmt == null ||
+      Number(orderRecord.totalAmt) === 0
+    ) {
+      updatePayload.$set.totalAmt = Number(amount ?? 0) || orderRecord.totalAmt;
+    }
+    timelineEntry = {
+      status: "Payment Confirmed",
+      note: `${channelLabel ?? "Payunit"} payment confirmed${
+        transactionId ? ` (Txn ${transactionId})` : ""
+      }`,
+      timestamp: new Date(),
+      updatedBy: getTimelineActor(orderRecord.userId),
+    };
+  } else if (category === "failed") {
+    updatePayload.$set.payment_status = "FAILED";
+    if (
+      String(orderRecord.fulfillment_status ?? "").toUpperCase() !== "DELIVERED"
+    ) {
+      updatePayload.$set.fulfillment_status = "Canceled";
+    }
+    timelineEntry = {
+      status: "Payment Failed",
+      note: `${channelLabel ?? "Payunit"} payment failed (${
+        normalized || "FAILED"
+      })`,
+      timestamp: new Date(),
+      updatedBy: getTimelineActor(orderRecord.userId),
+    };
+  } else if (category === "pending") {
+    if (!currentPaymentStatus || currentPaymentStatus === "PENDING") {
+      updatePayload.$set.payment_status = "PENDING";
+    }
+  }
+
+  if (timelineEntry && statusChanged) {
+    updatePayload.$push = { deliveryTimeline: timelineEntry };
+  }
+
+  if (!statusChanged && !updatePayload.$set.payment_status) {
+    await OrderModel.updateOne(
+      { _id: orderRecord._id },
+      { $set: { metadata: updatedMetadata } }
+    );
+    return { updated: false, isSuccess: category === "success", isFailed: category === "failed" };
+  }
+
+  await OrderModel.updateOne({ _id: orderRecord._id }, updatePayload);
+
+  const refreshed = await OrderModel.findById(orderRecord._id)
+    .populate("delivery_address")
+    .lean();
+
+  const orderWithProof = await ensureIntegrityProof(refreshed);
+
+  return {
+    updated: true,
+    isSuccess: category === "success",
+    isFailed: category === "failed",
+    statusChanged,
+    order: orderWithProof,
+    normalizedStatus: normalized,
+  };
 }
 
 async function initiatePayunitPayment({
@@ -377,12 +536,29 @@ async function handlePaymentRequest(req, res, channel, customerType) {
       }
     );
 
+    const updatedOrder = await OrderModel.findById(orderWithProof._id)
+      .populate("delivery_address")
+      .lean();
+    const updatedOrderWithProof = await ensureIntegrityProof(updatedOrder);
+
+    const alreadyNotified =
+      Boolean(updatedOrderWithProof.metadata?.notifications?.orderEmailSentAt);
+
+    if (!alreadyNotified) {
+      await sendOrderNotificationToAdmin([updatedOrderWithProof]);
+      await sendOrderNotificationToCustomer(updatedOrderWithProof);
+      await OrderModel.updateOne(
+        { _id: updatedOrderWithProof._id },
+        { $set: { "metadata.notifications.orderEmailSentAt": new Date() } }
+      );
+    }
+
     return res.json({
       payment_url: payment.transaction_url,
       transaction_id: payment.transaction_id,
       orderId,
-      integrityToken: orderWithProof.integrityToken,
-      order: formatOrderForClient(orderWithProof),
+      integrityToken: updatedOrderWithProof.integrityToken,
+      order: formatOrderForClient(updatedOrderWithProof),
     });
   } catch (err) {
     console.error(`[Payunit:${channel}]`, err);
@@ -535,15 +711,6 @@ router.post("/webhook", paymentsLimiter, async (req, res) => {
     console.error("[Payunit:webhook status check]", error);
   }
 
-  const normalizedStatus = String(status ?? "").toUpperCase();
-  const isSuccess = [
-    "SUCCESS",
-    "SUCCESSFUL",
-    "COMPLETED",
-    "PAID",
-    "APPROVED",
-  ].includes(normalizedStatus);
-
   if (!orderId) {
     console.warn("[Payunit:webhook] Missing orderId in webhook payload.");
     return res.json({ received: true });
@@ -558,88 +725,75 @@ router.post("/webhook", paymentsLimiter, async (req, res) => {
     return res.json({ received: true });
   }
 
-  const alreadyPaid =
-    String(orderRecord.payment_status).toUpperCase() === "PAID";
-
-  if (!isSuccess) {
-    return res.json({ received: true });
-  }
-
-  if (alreadyPaid) {
-    return res.json({ received: true });
-  }
-
   const channelLabel =
     getChannelLabel(channel) ??
     orderRecord.metadata?.payunit?.channelLabel ??
     "Payunit";
 
-  const metadata = {
-    ...(orderRecord.metadata ?? {}),
-    payunit: {
-      ...(orderRecord.metadata?.payunit ?? {}),
-      status: normalizedStatus,
-      transactionId,
-      lastWebhookAt: new Date(),
-      amount: amount ?? orderRecord.metadata?.payunit?.amount,
-      currency: currency ?? orderRecord.metadata?.payunit?.currency ?? "XAF",
-      channel,
-      channelLabel,
-      rawWebhook: payload,
-    },
-  };
-
-  const timelineEntry = {
-    status: "Payment Confirmed",
-    note: `${channelLabel} payment confirmed${
-      transactionId ? ` (Txn ${transactionId})` : ""
-    }`,
-    timestamp: new Date(),
-    updatedBy: getTimelineActor(orderRecord.userId),
-  };
-
-  await OrderModel.updateOne(
-    { _id: orderRecord._id },
-    {
-      $set: {
-        payment_status: "PAID",
-        paymentMethod: channelLabel,
-        paymentId: transactionId ?? orderRecord.paymentId,
-        totalAmt:
-          orderRecord.totalAmt && orderRecord.totalAmt > 0
-            ? orderRecord.totalAmt
-            : Number(amount ?? orderRecord.totalAmt ?? 0),
-        metadata,
-      },
-      $push: { deliveryTimeline: timelineEntry },
-    }
-  );
-
-  const refreshed = await OrderModel.findById(orderRecord._id)
-    .populate("delivery_address")
-    .lean();
-  const orderWithProof = await ensureIntegrityProof(refreshed);
-
-  await sendOrderNotificationToAdmin([orderWithProof]);
-  await sendOrderNotificationToCustomer(orderWithProof);
-  await sendPayunitPaymentNotification({
-    orderId: orderWithProof.orderId,
+  const updateResult = await applyPayunitStatusUpdate({
+    orderRecord,
+    statusPayload: status,
+    amount,
+    currency,
+    channel,
+    channelLabel,
     transactionId,
-    amount: amount ?? orderWithProof.totalAmt,
-    currency: currency ?? orderWithProof.currency ?? "XAF",
-    status: normalizedStatus,
-    channel: channelLabel,
-    customerName: orderWithProof.contact_info?.name,
-    customerEmail: orderWithProof.contact_info?.customer_email,
-    customerPhone: orderWithProof.contact_info?.mobile,
+    source: "webhook",
+    rawPayload: payload,
   });
 
-  if (orderWithProof.userId) {
-    await CartProductModel.deleteMany({ userId: orderWithProof.userId });
-    await UserModel.updateOne(
-      { _id: orderWithProof.userId },
-      { shopping_cart: [] }
-    );
+  if (!updateResult?.order) {
+    return res.json({ received: true });
+  }
+
+  const orderWithProof = updateResult.order;
+
+  if (updateResult.isSuccess && updateResult.statusChanged) {
+    const alreadyNotified =
+      Boolean(orderWithProof.metadata?.notifications?.orderEmailSentAt);
+
+    if (!alreadyNotified) {
+      await sendOrderNotificationToAdmin([orderWithProof]);
+      await sendOrderNotificationToCustomer(orderWithProof);
+      await OrderModel.updateOne(
+        { _id: orderWithProof._id },
+        { $set: { "metadata.notifications.orderEmailSentAt": new Date() } }
+      );
+    }
+
+    await sendPayunitPaymentNotification({
+      orderId: orderWithProof.orderId,
+      transactionId,
+      amount: amount ?? orderWithProof.totalAmt,
+      currency: currency ?? orderWithProof.currency ?? "XAF",
+      status: updateResult.normalizedStatus ?? status,
+      channel: channelLabel,
+      customerName: orderWithProof.contact_info?.name,
+      customerEmail: orderWithProof.contact_info?.customer_email,
+      customerPhone: orderWithProof.contact_info?.mobile,
+    });
+
+    if (orderWithProof.userId) {
+      await CartProductModel.deleteMany({ userId: orderWithProof.userId });
+      await UserModel.updateOne(
+        { _id: orderWithProof.userId },
+        { shopping_cart: [] }
+      );
+    }
+  }
+
+  if (updateResult.isFailed && updateResult.statusChanged) {
+    await sendPayunitPaymentNotification({
+      orderId: orderWithProof.orderId,
+      transactionId,
+      amount: amount ?? orderWithProof.totalAmt,
+      currency: currency ?? orderWithProof.currency ?? "XAF",
+      status: updateResult.normalizedStatus ?? status,
+      channel: channelLabel,
+      customerName: orderWithProof.contact_info?.name,
+      customerEmail: orderWithProof.contact_info?.customer_email,
+      customerPhone: orderWithProof.contact_info?.mobile,
+    });
   }
 
   return res.json({ received: true });
@@ -660,6 +814,172 @@ router.get(
     } catch (err) {
       console.error("[Payunit:status]", err);
       res.status(500).json({ error: "Failed to fetch status" });
+    }
+  }
+);
+
+// --------------------
+// Order status (auth + guest)
+// --------------------
+router.get(
+  "/order-status/:orderId",
+  auth,
+  paymentsLimiter,
+  async (req, res) => {
+    try {
+      const { orderId } = req.params;
+      const orderRecord = await OrderModel.findOne({ orderId })
+        .populate("delivery_address")
+        .lean();
+
+      if (!orderRecord) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      if (
+        orderRecord.userId &&
+        orderRecord.userId.toString() !== req.userId?.toString()
+      ) {
+        return res.status(403).json({ error: "Not authorized" });
+      }
+
+      const orderWithProof = await ensureIntegrityProof(orderRecord);
+
+      const transactionId =
+        orderWithProof?.metadata?.payunit?.transactionId ?? null;
+
+      let updatedOrder = orderWithProof;
+
+      if (
+        transactionId &&
+        !TERMINAL_PAYMENT_STATUSES.has(
+          String(orderWithProof.payment_status ?? "").toUpperCase()
+        )
+      ) {
+        try {
+          const statusResponse = await client.collections.getTransactionStatus(
+            transactionId
+          );
+          const statusPayload = statusResponse?.data ?? statusResponse ?? {};
+          const status = statusPayload.status ?? statusPayload.transaction_status;
+          const amount = statusPayload.amount ?? statusPayload.total_amount;
+          const currency = statusPayload.currency ?? orderWithProof.currency;
+          const channel =
+            statusPayload.pay_with ??
+            statusPayload.channel ??
+            orderWithProof.metadata?.payunit?.channel;
+
+          const channelLabel =
+            getChannelLabel(channel) ??
+            orderWithProof.metadata?.payunit?.channelLabel ??
+            "Payunit";
+
+          const updateResult = await applyPayunitStatusUpdate({
+            orderRecord: orderWithProof,
+            statusPayload: status,
+            amount,
+            currency,
+            channel,
+            channelLabel,
+            transactionId,
+            source: "poll",
+            rawPayload: statusPayload,
+          });
+
+          updatedOrder = updateResult?.order ?? orderWithProof;
+        } catch (error) {
+          console.error("[Payunit:order-status poll]", error);
+        }
+      }
+
+      return res.json({
+        success: true,
+        order: formatOrderForClient(updatedOrder),
+      });
+    } catch (error) {
+      return res.status(500).json({ error: error.message || error });
+    }
+  }
+);
+
+router.get(
+  "/guest-order-status/:orderId",
+  paymentsLimiter,
+  async (req, res) => {
+    try {
+      const { orderId } = req.params;
+      const token =
+        req.query.token ?? req.headers["x-receipt-token"] ?? "";
+
+      const orderRecord = await OrderModel.findOne({ orderId })
+        .populate("delivery_address")
+        .lean();
+
+      if (!orderRecord) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      const orderWithProof = await ensureIntegrityProof(orderRecord);
+
+      if (orderWithProof.is_guest) {
+        if (!token || token !== orderWithProof.integrityToken) {
+          return res.status(403).json({ error: "Invalid token" });
+        }
+      }
+
+      const transactionId =
+        orderWithProof?.metadata?.payunit?.transactionId ?? null;
+
+      let updatedOrder = orderWithProof;
+
+      if (
+        transactionId &&
+        !TERMINAL_PAYMENT_STATUSES.has(
+          String(orderWithProof.payment_status ?? "").toUpperCase()
+        )
+      ) {
+        try {
+          const statusResponse = await client.collections.getTransactionStatus(
+            transactionId
+          );
+          const statusPayload = statusResponse?.data ?? statusResponse ?? {};
+          const status = statusPayload.status ?? statusPayload.transaction_status;
+          const amount = statusPayload.amount ?? statusPayload.total_amount;
+          const currency = statusPayload.currency ?? orderWithProof.currency;
+          const channel =
+            statusPayload.pay_with ??
+            statusPayload.channel ??
+            orderWithProof.metadata?.payunit?.channel;
+
+          const channelLabel =
+            getChannelLabel(channel) ??
+            orderWithProof.metadata?.payunit?.channelLabel ??
+            "Payunit";
+
+          const updateResult = await applyPayunitStatusUpdate({
+            orderRecord: orderWithProof,
+            statusPayload: status,
+            amount,
+            currency,
+            channel,
+            channelLabel,
+            transactionId,
+            source: "poll",
+            rawPayload: statusPayload,
+          });
+
+          updatedOrder = updateResult?.order ?? orderWithProof;
+        } catch (error) {
+          console.error("[Payunit:guest-order-status poll]", error);
+        }
+      }
+
+      return res.json({
+        success: true,
+        order: formatOrderForClient(updatedOrder),
+      });
+    } catch (error) {
+      return res.status(500).json({ error: error.message || error });
     }
   }
 );
