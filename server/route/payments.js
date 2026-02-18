@@ -36,7 +36,7 @@ const FRONTEND_URL = stripTrailingSlash(
 );
 
 const BACKEND_URL = stripTrailingSlash(
-  process.env.BACKEND_URL || process.env.API_URL || "https://esmakeupstore.com"
+  process.env.BACKEND_URL || process.env.API_URL 
 );
 
 const ORDER_CURRENCY =
