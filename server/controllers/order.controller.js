@@ -18,6 +18,22 @@ const RECEIPT_PRIVATE_KEY = process.env.RECEIPT_PRIVATE_KEY
   : "";
 const RECEIPT_SIGNATURE_ALGORITHM = "RSA-SHA256";
 
+function normalizeStripePaymentStatus(raw) {
+  const upper = String(raw ?? "").trim().toUpperCase();
+  if (upper === "PAID" || upper === "SUCCESS" || upper === "SUCCESSFUL") {
+    return "SUCCESSFUL";
+  }
+  if (upper === "NO_PAYMENT_REQUIRED") {
+    return "SUCCESSFUL";
+  }
+  if (upper === "UNPAID" || upper === "PENDING" || upper === "OPEN") {
+    return "PENDING";
+  }
+  if (upper === "FAILED" || upper === "CANCELED" || upper === "CANCELLED") {
+    return "FAILED";
+  }
+  return upper || "UNKNOWN";
+}
 
 /**
  * Canonical JSON stringifier (stable key order, no whitespace)
@@ -816,6 +832,8 @@ const getOrderProductItems = async ({
       updatedBy: getTimelineActor(userId),
     };
 
+    const normalizedStripeStatus = normalizeStripePaymentStatus(payment_status);
+
     for (const item of lineItems.data) {
       const product = await Stripe.products.retrieve(item.price.product);
 
@@ -829,7 +847,7 @@ const getOrderProductItems = async ({
           sku: product.metadata?.sku,
         },
         paymentId: paymentId,
-        payment_status: payment_status,
+        payment_status: normalizedStripeStatus,
         paymentMethod: "Stripe Checkout",
         delivery_address: addressId,
         contact_info: {
@@ -846,6 +864,7 @@ const getOrderProductItems = async ({
           ...(metadata && typeof metadata === "object" ? metadata : {}),
           stripe_product_id: product.id,
           stripe_price_id: item.price.id,
+          stripe_payment_status_raw: payment_status,
         },
         fulfillment_status: "Processing",
         deliveryTimeline: [timelineEntry],
