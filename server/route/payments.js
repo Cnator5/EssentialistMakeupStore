@@ -36,7 +36,7 @@ const FRONTEND_URL = stripTrailingSlash(
 );
 
 const BACKEND_URL = stripTrailingSlash(
-  process.env.BACKEND_URL || process.env.API_URL 
+  process.env.BACKEND_URL || process.env.API_URL
 );
 
 const ORDER_CURRENCY =
@@ -79,9 +79,17 @@ const PAYUNIT_PENDING = new Set([
 
 const TERMINAL_PAYMENT_STATUSES = new Set([
   "PAID",
+  "SUCCESS",
+  "SUCCESSFUL",
+  "COMPLETED",
+  "APPROVED",
   "FAILED",
   "CANCELLED",
   "CANCELED",
+  "DECLINED",
+  "REJECTED",
+  "EXPIRED",
+  "ERROR",
   "CASH ON DELIVERY",
 ]);
 
@@ -118,11 +126,47 @@ function validatePaymentBody(body = {}) {
 }
 
 function normalizePayunitStatus(rawStatus) {
-  const upper = String(rawStatus ?? "").trim().toUpperCase();
-  if (PAYUNIT_SUCCESS.has(upper)) return { normalized: "SUCCESS", category: "success" };
-  if (PAYUNIT_FAILED.has(upper)) return { normalized: "FAILED", category: "failed" };
-  if (PAYUNIT_PENDING.has(upper)) return { normalized: "PENDING", category: "pending" };
-  return { normalized: upper || "UNKNOWN", category: "unknown" };
+  const rawUpper = String(rawStatus ?? "").trim().toUpperCase();
+  if (PAYUNIT_SUCCESS.has(rawUpper))
+    return { normalized: "SUCCESS", category: "success", rawUpper };
+  if (PAYUNIT_FAILED.has(rawUpper))
+    return { normalized: "FAILED", category: "failed", rawUpper };
+  if (PAYUNIT_PENDING.has(rawUpper))
+    return { normalized: "PENDING", category: "pending", rawUpper };
+  return { normalized: rawUpper || "UNKNOWN", category: "unknown", rawUpper };
+}
+
+function mapPayunitPaymentStatusForDb({ category, rawUpper }) {
+  if (category === "success") {
+    if (rawUpper === "COMPLETED") return "COMPLETED";
+    if (rawUpper === "SUCCESSFUL") return "SUCCESSFUL";
+    if (rawUpper === "PAID") return "PAID";
+    if (rawUpper === "APPROVED") return "APPROVED";
+    return "SUCCESSFUL";
+  }
+
+  if (category === "failed") {
+    if (rawUpper === "CANCELLED" || rawUpper === "CANCELED") return "CANCELLED";
+    if (rawUpper === "DECLINED") return "DECLINED";
+    if (rawUpper === "REJECTED") return "REJECTED";
+    if (rawUpper === "EXPIRED") return "EXPIRED";
+    if (rawUpper === "ERROR") return "ERROR";
+    return "FAILED";
+  }
+
+  if (category === "pending") {
+    if (
+      rawUpper === "PROCESSING" ||
+      rawUpper === "INITIATED" ||
+      rawUpper === "CREATED" ||
+      rawUpper === "WAITING"
+    ) {
+      return rawUpper;
+    }
+    return "PENDING";
+  }
+
+  return rawUpper || "UNKNOWN";
 }
 
 async function applyPayunitStatusUpdate({
@@ -138,13 +182,17 @@ async function applyPayunitStatusUpdate({
 }) {
   if (!orderRecord) return { updated: false };
 
-  const { normalized, category } = normalizePayunitStatus(statusPayload);
+  const { normalized, category, rawUpper } = normalizePayunitStatus(statusPayload);
   const previousPayunitStatus = String(
     orderRecord?.metadata?.payunit?.status ?? ""
   ).toUpperCase();
 
   const currentPaymentStatus = String(orderRecord.payment_status ?? "").toUpperCase();
-  const isAlreadyPaid = currentPaymentStatus === "PAID";
+  const isAlreadyPaid =
+    currentPaymentStatus === "PAID" ||
+    currentPaymentStatus === "SUCCESSFUL" ||
+    currentPaymentStatus === "COMPLETED" ||
+    currentPaymentStatus === "APPROVED";
 
   if (isAlreadyPaid && category !== "success") {
     return { updated: false, isSuccess: true, isFailed: false };
@@ -157,6 +205,7 @@ async function applyPayunitStatusUpdate({
     payunit: {
       ...(orderRecord.metadata?.payunit ?? {}),
       status: normalized,
+      rawStatus: rawUpper || orderRecord.metadata?.payunit?.rawStatus,
       transactionId: transactionId ?? orderRecord.metadata?.payunit?.transactionId,
       lastWebhookAt: new Date(),
       lastStatusSource: source,
@@ -172,7 +221,8 @@ async function applyPayunitStatusUpdate({
   let timelineEntry = null;
 
   if (category === "success") {
-    updatePayload.$set.payment_status = "PAID";
+    const mappedStatus = mapPayunitPaymentStatusForDb({ category, rawUpper });
+    updatePayload.$set.payment_status = mappedStatus;
     updatePayload.$set.paymentMethod = channelLabel ?? orderRecord.paymentMethod;
     updatePayload.$set.paymentId = transactionId ?? orderRecord.paymentId;
     if (
@@ -190,7 +240,10 @@ async function applyPayunitStatusUpdate({
       updatedBy: getTimelineActor(orderRecord.userId),
     };
   } else if (category === "failed") {
-    updatePayload.$set.payment_status = "FAILED";
+    updatePayload.$set.payment_status = mapPayunitPaymentStatusForDb({
+      category,
+      rawUpper,
+    });
     if (
       String(orderRecord.fulfillment_status ?? "").toUpperCase() !== "DELIVERED"
     ) {
@@ -199,14 +252,17 @@ async function applyPayunitStatusUpdate({
     timelineEntry = {
       status: "Payment Failed",
       note: `${channelLabel ?? "Payunit"} payment failed (${
-        normalized || "FAILED"
+        rawUpper || "FAILED"
       })`,
       timestamp: new Date(),
       updatedBy: getTimelineActor(orderRecord.userId),
     };
   } else if (category === "pending") {
     if (!currentPaymentStatus || currentPaymentStatus === "PENDING") {
-      updatePayload.$set.payment_status = "PENDING";
+      updatePayload.$set.payment_status = mapPayunitPaymentStatusForDb({
+        category,
+        rawUpper,
+      });
     }
   }
 
