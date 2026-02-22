@@ -13,5 +13,6 @@ const RatingSchema = new mongoose.Schema(
 RatingSchema.index({ product: 1, user: 1 }, { unique: true, partialFilterExpression: { user: { $type: "objectId" } } });
 RatingSchema.index({ product: 1, anonId: 1 }, { unique: true, partialFilterExpression: { anonId: { $type: "string" } } });
 
+
 const RatingModel = mongoose.models.Rating || mongoose.model("Rating", RatingSchema);
 export default RatingModel;

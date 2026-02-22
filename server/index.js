@@ -113,7 +113,13 @@ app.use((req, res, next) => {
 });
 
 app.use(cookieParser());
-app.use(morgan("dev"));
+// app.use(morgan("dev"));
+app.use(
+  morgan("dev", {
+    skip: (req) => req.path.startsWith("/api/ratings") || req.path.startsWith("/api/reviews"),
+  })
+);
+
 app.use(mongoSanitize({ allowDots: true, replaceWith: "_" }));
 app.use(hpp());
 
