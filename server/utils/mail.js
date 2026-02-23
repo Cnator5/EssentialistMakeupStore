@@ -525,6 +525,27 @@ if (canUseTwilio) {
   );
 }
 
+const isLikelyObjectId = (value) =>
+  typeof value === "string" && /^[a-f\d]{24}$/i.test(value);
+
+const pickOrderAddressCandidate = (order) => {
+  if (!order) return null;
+
+  if (order.delivery_address) {
+    return order.delivery_address;
+  }
+
+  if (order.metadata?.guest_delivery_address) {
+    return order.metadata.guest_delivery_address;
+  }
+
+  if (order.contact_info?.address_snapshot) {
+    return order.contact_info.address_snapshot;
+  }
+
+  return null;
+};
+
 function normaliseWhatsAppPhone(phone) {
   if (!phone) return null;
 
@@ -677,7 +698,6 @@ async function sendEmailWithFallback({
       ? `<pre style="white-space:pre-wrap">${plainText}</pre>`
       : undefined);
 
-  // Nodemailer primary
   const nodemailerResult = await sendWithNodemailer({
     recipients,
     subject,
@@ -698,7 +718,6 @@ async function sendEmailWithFallback({
     );
   }
 
-  // Resend fallback
   const resendResult = await sendWithResend({
     recipients,
     subject,
@@ -739,42 +758,66 @@ function formatProductsForEmail(products = []) {
     .join("\n\n");
 }
 
-function formatAddress(addressObj) {
-  if (!addressObj || typeof addressObj !== "object") return "N/A";
+function formatAddress(addressInput) {
+  if (!addressInput) return "N/A";
 
-  return [
-    addressObj.address_line,
-    `${addressObj.city ?? ""}${addressObj.state ? `, ${addressObj.state}` : ""}`,
-    `${addressObj.country ?? ""} ${addressObj.pincode ?? ""}`.trim(),
-    addressObj.mobile ? `Mobile: ${addressObj.mobile}` : null,
-  ]
+  if (typeof addressInput === "string") {
+    return addressInput;
+  }
+
+  const addressLine =
+    addressInput.address_line ??
+    addressInput.addressLine ??
+    addressInput.street ??
+    "";
+
+  const cityState = [addressInput.city, addressInput.state]
     .filter(Boolean)
-    .join("\n");
+    .join(", ");
+
+  const countryZip = [addressInput.country, addressInput.pincode]
+    .filter(Boolean)
+    .join(" ");
+
+  const lines = [
+    addressLine,
+    cityState,
+    countryZip,
+    addressInput.landmark ? `Landmark: ${addressInput.landmark}` : null,
+    addressInput.mobile ? `Mobile: ${addressInput.mobile}` : null,
+  ].filter(Boolean);
+
+  return lines.length ? lines.join("\n") : "N/A";
 }
 
 async function resolveAddressObject(order) {
-  let addressObj = order?.delivery_address ?? null;
+  let addressObj = pickOrderAddressCandidate(order);
+
   if (
     addressObj &&
     typeof addressObj === "string" &&
-    addressObj.length >= 12
+    isLikelyObjectId(addressObj)
   ) {
     try {
       addressObj = await AddressModel.findById(addressObj).lean();
     } catch (error) {
-      console.error(
-        "resolveAddressObject: failed to look up address by id",
-        error
-      );
+      console.error("resolveAddressObject: failed to look up address by id", error);
       addressObj = null;
     }
   }
-  return addressObj ?? order?.delivery_address ?? null;
+
+  return addressObj;
 }
 
 async function resolveCustomerContact(order, addressObj) {
+  const addressFallback =
+    addressObj ??
+    order?.metadata?.guest_delivery_address ??
+    order?.contact_info?.address_snapshot ??
+    null;
+
   let name =
-    addressObj?.name ??
+    addressFallback?.name ??
     order?.contact_info?.name ??
     order?.customer?.name ??
     "Customer";
@@ -782,14 +825,14 @@ async function resolveCustomerContact(order, addressObj) {
   let email =
     order?.contact_info?.customer_email ??
     order?.contact_info?.email ??
-    addressObj?.customer_email ??
+    addressFallback?.customer_email ??
     order?.customer?.email ??
     null;
 
   let phone =
     order?.contact_info?.mobile ??
     order?.contact_info?.phone ??
-    addressObj?.mobile ??
+    addressFallback?.mobile ??
     order?.customer?.phone ??
     null;
 
@@ -813,7 +856,11 @@ async function resolveCustomerContact(order, addressObj) {
 }
 
 function formatOrderEmailForCustomer(order, addressObj) {
-  const addressText = formatAddress(addressObj ?? order?.delivery_address);
+  const addressText = formatAddress(
+    addressObj ??
+      order?.metadata?.guest_delivery_address ??
+      order?.contact_info?.address_snapshot
+  );
   const paymentStatus =
     order?.payment_status ?? order?.paymentStatus ?? "Processing";
   const paymentMethod =
@@ -845,32 +892,26 @@ export async function sendOrderNotificationToAdmin(orderArray = []) {
   }
 
   for (const order of orderArray) {
-    let addressObj = order.delivery_address;
-    if (
-      addressObj &&
-      typeof addressObj === "string" &&
-      addressObj.length >= 12
-    ) {
-      try {
-        addressObj = await AddressModel.findById(addressObj).lean();
-      } catch (error) {
-        console.error(
-          "sendOrderNotificationToAdmin: failed to look up address by id",
-          error
-        );
-        addressObj = null;
-      }
-    }
+    const addressObj = await resolveAddressObject(order);
+    const addressText = formatAddress(addressObj);
 
-    const addressText = formatAddress(addressObj ?? order.delivery_address);
     const customerName =
-      addressObj?.name ?? order.contact_info?.name ?? "Customer";
+      addressObj?.name ??
+      order.contact_info?.name ??
+      order.metadata?.guest_delivery_address?.name ??
+      "Customer";
+
     const customerEmail =
       order.contact_info?.customer_email ??
       addressObj?.customer_email ??
+      order.metadata?.guest_delivery_address?.customer_email ??
       "N/A";
+
     const customerPhone =
-      order.contact_info?.mobile ?? addressObj?.mobile ?? "N/A";
+      order.contact_info?.mobile ??
+      addressObj?.mobile ??
+      order.metadata?.guest_delivery_address?.mobile ??
+      "N/A";
 
     const subject = `${
       order.is_guest ? "[GUEST] " : ""
@@ -1012,15 +1053,18 @@ Thank you for shopping with us!
 export async function sendDeliveryConfirmationNotification(order) {
   if (!order) return;
 
+  const addressObj = await resolveAddressObject(order);
   const customerEmail =
     order.contact_info?.customer_email ??
-    order.delivery_address?.customer_email ??
+    addressObj?.customer_email ??
     null;
   const customerPhone =
-    order.contact_info?.mobile ?? order.delivery_address?.mobile ?? null;
+    order.contact_info?.mobile ??
+    addressObj?.mobile ??
+    null;
   const customerName =
     order.contact_info?.name ??
-    order.delivery_address?.name ??
+    addressObj?.name ??
     "Valued Customer";
   const orderId = order.orderId ?? order._id;
 
