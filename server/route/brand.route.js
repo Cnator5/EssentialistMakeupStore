@@ -20,7 +20,7 @@
 // export default brandRouter;
 
 
-
+//D:\EssentialistMakeupStore\server\route\brand.route.js
 import { Router } from "express";
 import auth from "../middleware/auth.js";
 import { admin } from "../middleware/Admin.js";

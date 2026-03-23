@@ -1,3 +1,4 @@
+//D:\EssentialistMakeupStore\server\models\category.model.js
 import mongoose from "mongoose";
 
 const categorySchema = new mongoose.Schema({

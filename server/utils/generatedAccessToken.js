@@ -1,3 +1,4 @@
+// D:\EssentialistMakeupStore\server\utils\generatedAccessToken.js
 import jwt from 'jsonwebtoken'
 
 const generatedAccessToken = async(userId)=>{

@@ -1,3 +1,4 @@
+//D:\EssentialistMakeupStore\server\models\cartproduct.model.js
 import mongoose from "mongoose";
 
 const cartProductSchema = new mongoose.Schema({

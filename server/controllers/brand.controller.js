@@ -1,3 +1,4 @@
+//D:\EssentialistMakeupStore\server\controllers\brand.controller.js
 import mongoose from "mongoose";
 import BrandModel from "../models/brand.model.js";
 import ProductModel from "../models/product.model.js";

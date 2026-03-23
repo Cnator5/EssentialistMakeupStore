@@ -1,3 +1,4 @@
+// D:\EssentialistMakeupStore\server\utils\forgotPasswordTemplate.js
 const forgotPasswordTemplate = ({ name, otp }) => {
     return `
     <div style="max-width:480px;margin:36px auto;padding:0;background:#f472b6;border-radius:22px;box-shadow:0 8px 32px rgba(244,114,182,0.17),0 1.5px 6px rgba(244,114,182,0.16);font-family:'Segoe UI',Arial,sans-serif;">

@@ -1,3 +1,4 @@
+//D:\EssentialistMakeupStore\server\middleware\auth.js
 import jwt from 'jsonwebtoken'
 
 const auth = async(request,response,next)=>{

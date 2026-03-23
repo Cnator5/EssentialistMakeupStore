@@ -1,13 +1,26 @@
-import mongoose from "mongoose";
-import BlogModel from "../models/blog.model.js";
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+import { v2 as cloudinary } from 'cloudinary';
+import axios from 'axios';
 
-const MONGODB_URI = process.env.MONGODB_URI;
+// Ensure this path matches your model file exactly
+import BlogModel from '../models/blog.model.js';
 
-if (!MONGODB_URI) {
-  console.error("❌ Missing MONGODB_URI");
+dotenv.config();
+
+// 1. Cloudinary Configuration
+cloudinary.config({
+  cloud_name: process.env.NEW_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.NEW_CLOUDINARY_API_KEY,
+  api_secret: process.env.NEW_CLOUDINARY_API_SECRET
+});
+
+if (!process.env.MONGODB_URI) {
+  console.error("❌ Missing MONGODB_URI in .env file");
   process.exit(1);
 }
 
+// 2. Helper Functions
 const stripHtml = (html = "") => html.replace(/<[^>]*>/g, " ");
 
 const readingTime = (content = "") => {
@@ -15,6 +28,42 @@ const readingTime = (content = "") => {
   return Math.max(1, Math.ceil(words / 200));
 };
 
+// 3. Search Function for Blog Images (Fetches 2 images per post)
+async function findBlogImages(query) {
+  const data = JSON.stringify({
+    // Appending keywords to ensure we get high-quality editorial/blog style images
+    "q": `${query} makeup beauty cosmetics editorial`, 
+    "type": "images",
+    "num": 2 // We need 1 for the cover, 1 for the content body
+  });
+
+  const config = {
+    method: 'post',
+    url: 'https://google.serper.dev/images',
+    headers: { 
+      'X-API-KEY': process.env.SERPER_API_KEY, 
+      'Content-Type': 'application/json'
+    },
+    data : data
+  };
+
+  try {
+    const response = await axios(config);
+    if (response.data.images && response.data.images.length > 0) {
+      return response.data.images.slice(0, 2).map(img => img.imageUrl);
+    }
+    return [];
+  } catch (error) {
+    console.error(`Search failed for "${query}":`, error.message);
+    return [];
+  }
+}
+
+// =========================================================================
+// PASTE YOUR ENTIRE basePosts ARRAY HERE!
+// (I have included the first two as an example, just overwrite this array 
+// with your full list of 50+ posts)
+// =========================================================================
 const basePosts = [
   {
     "title": "Where to Buy Original Makeup Products in Cameroon (2026 Guide)",
@@ -81,7 +130,6 @@ const basePosts = [
     "metaTitle": "Cameroon Bridal Makeup Looks | esmakeupstore.com",
     "metaDescription": "Explore elegant bridal makeup looks for Cameroon weddings with tips on long-wear base, eyes, and lips."
   },
-
   {
     "title": "Everyday Makeup Routine for Busy Women in Yaoundé",
     "slug": "everyday-makeup-routine-for-busy-women-in-yaounde",
@@ -95,7 +143,6 @@ const basePosts = [
     "metaTitle": "Everyday Makeup Routine in Yaoundé | esmakeupstore.com",
     "metaDescription": "Discover a fast, polished makeup routine for busy women in Yaoundé with products suited to Cameroon’s climate."
   },
-
   {
     "title": "Best Makeup for Dark Skin Tones in Cameroon",
     "slug": "best-makeup-for-dark-skin-tones-in-cameroon",
@@ -109,7 +156,6 @@ const basePosts = [
     "metaTitle": "Best Makeup for Dark Skin in Cameroon | esmakeupstore.com",
     "metaDescription": "Find the best foundation, blush, and lip shades for dark skin tones in Cameroon with expert tips."
   },
-
   {
     "title": "Makeup for the Harmattan Season in Northern Cameroon",
     "slug": "makeup-for-the-harmattan-season-in-northern-cameroon",
@@ -123,7 +169,6 @@ const basePosts = [
     "metaTitle": "Makeup for Harmattan Season in Cameroon | esmakeupstore.com",
     "metaDescription": "Keep makeup smooth during Harmattan with hydrating prep and long-wear products for northern Cameroon."
   },
-
   {
     "title": "Best Waterproof Makeup for Rainy Season in Cameroon",
     "slug": "best-waterproof-makeup-for-rainy-season-in-cameroon",
@@ -137,7 +182,6 @@ const basePosts = [
     "metaTitle": "Waterproof Makeup for Cameroon Rainy Season | esmakeupstore.com",
     "metaDescription": "Discover waterproof makeup essentials to keep your look intact during Cameroon’s rainy season."
   },
-
   {
     "title": "Soft Glam Makeup Look for Office Wear in Cameroon",
     "slug": "soft-glam-makeup-look-for-office-wear-in-cameroon",
@@ -151,7 +195,6 @@ const basePosts = [
     "metaTitle": "Soft Glam Office Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Create a polished soft glam look for office wear in Cameroon with long-lasting products and pro tips."
   },
-
   {
     "title": "Beginner Makeup Kit Essentials for Cameroon Beauty Lovers",
     "slug": "beginner-makeup-kit-essentials-for-cameroon-beauty-lovers",
@@ -165,7 +208,6 @@ const basePosts = [
     "metaTitle": "Beginner Makeup Kit Essentials in Cameroon | esmakeupstore.com",
     "metaDescription": "Learn which makeup essentials every beginner in Cameroon should own for easy, everyday beauty."
   },
-
   {
     "title": "How to Choose the Right Foundation Shade in Cameroon",
     "slug": "how-to-choose-the-right-foundation-shade-in-cameroon",
@@ -179,7 +221,6 @@ const basePosts = [
     "metaTitle": "How to Choose Foundation Shade in Cameroon | esmakeupstore.com",
     "metaDescription": "Learn how to match foundation to your undertone in Cameroon and avoid common shade mistakes."
   },
-
   {
     "title": "Makeup for University Students in Buea: Budget & Long Wear",
     "slug": "makeup-for-university-students-in-buea-budget-and-long-wear",
@@ -193,7 +234,6 @@ const basePosts = [
     "metaTitle": "Student Makeup in Buea | esmakeupstore.com",
     "metaDescription": "Affordable, long-wear makeup tips for university students in Buea and across Cameroon."
   },
-
   {
     "title": "Best Makeup for Outdoor Events in Kribi and Limbe",
     "slug": "best-makeup-for-outdoor-events-in-kribi-and-limbe",
@@ -207,7 +247,6 @@ const basePosts = [
     "metaTitle": "Outdoor Event Makeup for Kribi & Limbe | esmakeupstore.com",
     "metaDescription": "Get heat- and humidity-proof makeup tips for outdoor events in Kribi and Limbe."
   },
-
   {
     "title": "Cameroon Makeup Trends 2026: What’s New This Year",
     "slug": "cameroon-makeup-trends-2026-whats-new-this-year",
@@ -221,7 +260,6 @@ const basePosts = [
     "metaTitle": "Cameroon Makeup Trends 2026 | esmakeupstore.com",
     "metaDescription": "Explore the top makeup trends in Cameroon for 2026, including bold lips and soft-glow skin."
   },
-
   {
     "title": "How to Build a Long‑Wear Base for Cameroon Heat",
     "slug": "how-to-build-a-long-wear-base-for-cameroon-heat",
@@ -235,7 +273,6 @@ const basePosts = [
     "metaTitle": "Long-Wear Makeup Base for Cameroon Heat | esmakeupstore.com",
     "metaDescription": "Learn how to build a long-wear makeup base that withstands Cameroon’s heat and humidity."
   },
-
   {
     "title": "Top Makeup Mistakes to Avoid in Cameroon’s Climate",
     "slug": "top-makeup-mistakes-to-avoid-in-cameroons-climate",
@@ -249,13 +286,12 @@ const basePosts = [
     "metaTitle": "Makeup Mistakes to Avoid in Cameroon | esmakeupstore.com",
     "metaDescription": "Avoid common makeup mistakes in Cameroon’s heat and humidity with expert guidance."
   },
-
   {
     "title": "Best Concealers for Dark Circles in Cameroon",
     "slug": "best-concealers-for-dark-circles-in-cameroon",
     "excerpt": "Concealer tips and shade guidance for natural-looking under-eye coverage.",
     "coverImage": "https://res.cloudinary.com/dvpweiur3/image/upload/v1748211405/glamourglow/syt0vrfndhxfiwpsxnzq.jpg",
-    "content": "<p>Dark circles are common, and the right concealer can brighten the face instantly. For Cameroonian skin tones, choosing the right undertone is key. A warm or peach-toned concealer helps neutralize dark under-eye shadows, while a slightly lighter shade adds brightness.</p><p>Apply concealer after foundation and blend with a damp sponge for a seamless finish. Set lightly with powder to avoid creasing, especially in humid conditions. If you have dry under-eyes, use a hydrating formula that doesn’t settle into lines.</p><p><img src=\"https://res.cloudinary.com/dvpweiur3/image/upload/v1748211006/glamourglow/qxmho3dafk4dre3nhgzi.jpg\"/></p><p>esmakeupstore.com offers concealers with smooth coverage and multiple undertones. This makes it easier to find a match that looks natural in daylight and photos.</p><p><img src=\"https://source.unsplash.com/1600x900/?concealer,makeup\"/></p><p>Shop now at esmakeupstore.com for concealers made for Cameroon beauty needs.</p>",
+    "content": "<p>Dark circles are common, and the right concealer can brighten the face instantly. For Cameroonian skin tones, choosing the right undertone is key. A warm or peach-toned concealer helps neutralize dark under-eye shadows, while a slightly lighter shade adds brightness.</p><p>Apply concealer after foundation and blend with a damp sponge for a seamless finish. Set lightly with powder to avoid creasing, especially in humid conditions. If you have dry under-eyes, use a hydrating formula that doesn’t settle into lines.</p><p><img src=\"https://res.cloudinary.com/dvpweiur3/image/upload/v1748211006/glamourglow/qxmho3dafk4dre3nhgzi.jpg\"/></p><p>esmakeupstore.com offers concealers with smooth coverage and multiple undertones. This makes it easy to find a match that looks natural in daylight and photos.</p><p><img src=\"https://source.unsplash.com/1600x900/?concealer,makeup\"/></p><p>Shop now at esmakeupstore.com for concealers made for Cameroon beauty needs.</p>",
     "tags": ["concealer Cameroon", "dark circles", "makeup tips"],
     "status": "published",
     "author": null,
@@ -263,7 +299,6 @@ const basePosts = [
     "metaTitle": "Best Concealers for Dark Circles in Cameroon | esmakeupstore.com",
     "metaDescription": "Find the best concealers for dark circles and learn shade tips for Cameroonian skin tones."
   },
-
   {
     "title": "How to Do Natural Makeup for Church in Cameroon",
     "slug": "how-to-do-natural-makeup-for-church-in-cameroon",
@@ -277,7 +312,6 @@ const basePosts = [
     "metaTitle": "Natural Church Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Learn how to do natural, elegant makeup for church in Cameroon with simple steps."
   },
-
   {
     "title": "Best Makeup for Photoshoots in Cameroon",
     "slug": "best-makeup-for-photoshoots-in-cameroon",
@@ -291,7 +325,6 @@ const basePosts = [
     "metaTitle": "Photoshoot Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Create a flawless, camera-ready makeup look for photoshoots in Cameroon."
   },
-
   {
     "title": "Makeup Tips for Women Over 40 in Cameroon",
     "slug": "makeup-tips-for-women-over-40-in-cameroon",
@@ -305,7 +338,6 @@ const basePosts = [
     "metaTitle": "Makeup Tips for Women Over 40 in Cameroon | esmakeupstore.com",
     "metaDescription": "Learn flattering makeup tips for mature skin in Cameroon with hydrating, lightweight products."
   },
-
   {
     "title": "How to Do a Full Glam Look for Cameroon Parties",
     "slug": "how-to-do-a-full-glam-look-for-cameroon-parties",
@@ -319,7 +351,6 @@ const basePosts = [
     "metaTitle": "Full Glam Party Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Create a bold full glam look for Cameroon parties with long-wear products and pro tips."
   },
-
   {
     "title": "Best Eyebrow Products for Natural Brows in Cameroon",
     "slug": "best-eyebrow-products-for-natural-brows-in-cameroon",
@@ -333,7 +364,6 @@ const basePosts = [
     "metaTitle": "Best Eyebrow Products in Cameroon | esmakeupstore.com",
     "metaDescription": "Discover the best eyebrow products for natural, long-lasting brows in Cameroon’s climate."
   },
-
   {
     "title": "How to Prevent Flashback in Cameroon Event Photos",
     "slug": "how-to-prevent-flashback-in-cameroon-event-photos",
@@ -347,7 +377,6 @@ const basePosts = [
     "metaTitle": "Prevent Makeup Flashback in Cameroon Photos | esmakeupstore.com",
     "metaDescription": "Learn how to avoid flashback in event photos with the right powders and setting sprays."
   },
-
   {
     "title": "Best Setting Sprays for Cameroon Weather",
     "slug": "best-setting-sprays-for-cameroon-weather",
@@ -361,7 +390,6 @@ const basePosts = [
     "metaTitle": "Best Setting Sprays for Cameroon | esmakeupstore.com",
     "metaDescription": "Discover setting sprays that lock makeup in place for Cameroon’s heat and humidity."
   },
-
   {
     "title": "Best Highlighters for Deep Skin in Cameroon",
     "slug": "best-highlighters-for-deep-skin-in-cameroon",
@@ -375,7 +403,6 @@ const basePosts = [
     "metaTitle": "Best Highlighters for Deep Skin in Cameroon | esmakeupstore.com",
     "metaDescription": "Find the best highlighter shades for deep skin tones in Cameroon for a natural, radiant glow."
   },
-
   {
     "title": "Best Blush Shades for Cameroonian Skin Tones",
     "slug": "best-blush-shades-for-cameroonian-skin-tones",
@@ -389,7 +416,6 @@ const basePosts = [
     "metaTitle": "Best Blush Shades for Cameroon | esmakeupstore.com",
     "metaDescription": "Discover flattering blush shades for Cameroonian skin tones, from peach to deep berry."
   },
-
   {
     "title": "Makeup for Oily Skin in Cameroon: Full Routine",
     "slug": "makeup-for-oily-skin-in-cameroon-full-routine",
@@ -403,7 +429,6 @@ const basePosts = [
     "metaTitle": "Oily Skin Makeup Routine in Cameroon | esmakeupstore.com",
     "metaDescription": "Learn a full makeup routine for oily skin in Cameroon with oil-control and long-wear products."
   },
-
   {
     "title": "Simple 5‑Minute Makeup for Cameroonian Mornings",
     "slug": "simple-5-minute-makeup-for-cameroonian-mornings",
@@ -417,7 +442,6 @@ const basePosts = [
     "metaTitle": "5‑Minute Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Achieve a polished look in 5 minutes with this simple Cameroon-friendly makeup routine."
   },
-
   {
     "title": "Makeup for Graduation Ceremonies in Cameroon",
     "slug": "makeup-for-graduation-ceremonies-in-cameroon",
@@ -431,7 +455,6 @@ const basePosts = [
     "metaTitle": "Graduation Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Create a polished, long-wear graduation makeup look for ceremonies across Cameroon."
   },
-
   {
     "title": "How to Layer Skincare and Makeup in Cameroon’s Heat",
     "slug": "how-to-layer-skincare-and-makeup-in-cameroons-heat",
@@ -445,7 +468,6 @@ const basePosts = [
     "metaTitle": "Layer Skincare & Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Learn the correct way to layer skincare and makeup for lasting wear in Cameroon’s heat."
   },
-
   {
     "title": "Best Makeup for Interviews in Cameroon",
     "slug": "best-makeup-for-interviews-in-cameroon",
@@ -459,7 +481,6 @@ const basePosts = [
     "metaTitle": "Interview Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Achieve a polished, professional makeup look for job interviews in Cameroon."
   },
-
   {
     "title": "Makeup for Festival Season in Cameroon",
     "slug": "makeup-for-festival-season-in-cameroon",
@@ -473,7 +494,6 @@ const basePosts = [
     "metaTitle": "Festival Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Create vibrant, long-lasting makeup looks for Cameroon’s festival season."
   },
-
   {
     "title": "Best Lip Liners for Dark Skin Tones in Cameroon",
     "slug": "best-lip-liners-for-dark-skin-tones-in-cameroon",
@@ -487,7 +507,6 @@ const basePosts = [
     "metaTitle": "Best Lip Liners for Dark Skin in Cameroon | esmakeupstore.com",
     "metaDescription": "Find the best lip liner shades for dark skin tones in Cameroon."
   },
-
   {
     "title": "Makeup for Businesswomen in Douala: Polished & Practical",
     "slug": "makeup-for-businesswomen-in-douala-polished-and-practical",
@@ -501,7 +520,6 @@ const basePosts = [
     "metaTitle": "Business Makeup in Douala | esmakeupstore.com",
     "metaDescription": "Polished, practical makeup tips for businesswomen in Douala and across Cameroon."
   },
-
   {
     "title": "Makeup for Teenagers in Cameroon: Safe & Simple",
     "slug": "makeup-for-teenagers-in-cameroon-safe-and-simple",
@@ -515,7 +533,6 @@ const basePosts = [
     "metaTitle": "Teen Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Safe and simple makeup tips for teenagers in Cameroon with skin-friendly products."
   },
-
   {
     "title": "How to Match Lipstick with Traditional Attire in Cameroon",
     "slug": "how-to-match-lipstick-with-traditional-attire-in-cameroon",
@@ -529,7 +546,6 @@ const basePosts = [
     "metaTitle": "Match Lipstick with Traditional Attire in Cameroon | esmakeupstore.com",
     "metaDescription": "Learn how to match lipstick with Cameroon’s traditional attire for a polished look."
   },
-
   {
     "title": "Best Nude Lipsticks for Cameroonian Skin Tones",
     "slug": "best-nude-lipsticks-for-cameroonian-skin-tones",
@@ -543,7 +559,6 @@ const basePosts = [
     "metaTitle": "Best Nude Lipsticks for Cameroon | esmakeupstore.com",
     "metaDescription": "Discover nude lipstick shades that flatter Cameroonian skin tones without looking ashy."
   },
-
   {
     "title": "How to Do Soft Matte Skin in Cameroon’s Humidity",
     "slug": "how-to-do-soft-matte-skin-in-cameroons-humidity",
@@ -557,7 +572,6 @@ const basePosts = [
     "metaTitle": "Soft Matte Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Learn how to achieve a soft matte finish in Cameroon’s humid climate without dryness."
   },
-
   {
     "title": "Best Makeup for Date Night in Cameroon",
     "slug": "best-makeup-for-date-night-in-cameroon",
@@ -571,7 +585,6 @@ const basePosts = [
     "metaTitle": "Date Night Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Create a romantic, long-wear date night makeup look for Cameroonian evenings."
   },
-
   {
     "title": "How to Choose the Best Primer for Cameroon Skin Types",
     "slug": "how-to-choose-the-best-primer-for-cameroon-skin-types",
@@ -585,7 +598,6 @@ const basePosts = [
     "metaTitle": "Best Primers for Cameroon Skin Types | esmakeupstore.com",
     "metaDescription": "Find the right primer for oily, dry, or combination skin in Cameroon."
   },
-
   {
     "title": "Best Makeup for Light Skin Tones in Cameroon",
     "slug": "best-makeup-for-light-skin-tones-in-cameroon",
@@ -599,7 +611,6 @@ const basePosts = [
     "metaTitle": "Makeup for Light Skin Tones in Cameroon | esmakeupstore.com",
     "metaDescription": "Discover foundation, blush, and lip shades that flatter light skin tones in Cameroon."
   },
-
   {
     "title": "Makeup for Medium Skin Tones in Cameroon",
     "slug": "makeup-for-medium-skin-tones-in-cameroon",
@@ -613,7 +624,6 @@ const basePosts = [
     "metaTitle": "Makeup for Medium Skin in Cameroon | esmakeupstore.com",
     "metaDescription": "Find the best makeup shades and finishes for medium skin tones in Cameroon."
   },
-
   {
     "title": "Best Makeup for Bafoussam Climate: Balanced and Fresh",
     "slug": "best-makeup-for-bafoussam-climate-balanced-and-fresh",
@@ -627,7 +637,6 @@ const basePosts = [
     "metaTitle": "Makeup for Bafoussam Climate | esmakeupstore.com",
     "metaDescription": "Discover balanced, fresh makeup routines for Bafoussam’s cooler climate."
   },
-
   {
     "title": "Makeup for Bamenda Events: Elegant and Long‑Wear",
     "slug": "makeup-for-bamenda-events-elegant-and-long-wear",
@@ -641,7 +650,6 @@ const basePosts = [
     "metaTitle": "Event Makeup for Bamenda | esmakeupstore.com",
     "metaDescription": "Get elegant, long-wear makeup tips for Bamenda events and ceremonies."
   },
-
   {
     "title": "Best Eye Makeup Looks for Cameroonian Skin Tones",
     "slug": "best-eye-makeup-looks-for-cameroonian-skin-tones",
@@ -655,7 +663,6 @@ const basePosts = [
     "metaTitle": "Best Eye Makeup for Cameroon Skin Tones | esmakeupstore.com",
     "metaDescription": "Discover eye makeup looks and colors that flatter Cameroonian skin tones."
   },
-
   {
     "title": "How to Create a Natural Glow Makeup Look in Cameroon",
     "slug": "how-to-create-a-natural-glow-makeup-look-in-cameroon",
@@ -669,7 +676,6 @@ const basePosts = [
     "metaTitle": "Natural Glow Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Create a radiant, natural glow makeup look that works in Cameroon’s humidity."
   },
-
   {
     "title": "Best Makeup for Nightclubs in Douala",
     "slug": "best-makeup-for-nightclubs-in-douala",
@@ -683,7 +689,6 @@ const basePosts = [
     "metaTitle": "Nightclub Makeup in Douala | esmakeupstore.com",
     "metaDescription": "Create bold, long-lasting nightclub makeup looks for Douala’s nightlife."
   },
-
   {
     "title": "How to Choose the Right Powder for Cameroon Skin",
     "slug": "how-to-choose-the-right-powder-for-cameroon-skin",
@@ -697,7 +702,6 @@ const basePosts = [
     "metaTitle": "Best Makeup Powders in Cameroon | esmakeupstore.com",
     "metaDescription": "Learn how to choose the right powder for Cameroonian skin tones and climate."
   },
-
   {
     "title": "Makeup for Teachers in Cameroon: Neat and Natural",
     "slug": "makeup-for-teachers-in-cameroon-neat-and-natural",
@@ -711,13 +715,12 @@ const basePosts = [
     "metaTitle": "Makeup for Teachers in Cameroon | esmakeupstore.com",
     "metaDescription": "Discover neat, natural makeup tips for teachers in Cameroon."
   },
-
   {
     "title": "Best Makeup for TV and Media Appearances in Cameroon",
     "slug": "best-makeup-for-tv-and-media-appearances-in-cameroon",
     "excerpt": "Camera-ready makeup tips for TV interviews and media events.",
     "coverImage": "https://res.cloudinary.com/dvpweiur3/image/upload/v1748247970/glamourglow/bt4uhftifsa2gpe9azyv.jpg",
-    "content": "<p>TV makeup should look polished under bright studio lights. Choose a full-coverage foundation that blends seamlessly and set with a powder that avoids flashback. Use subtle contouring to define features for the camera.</p><p>Neutral eyeshadow shades and a precise eyeliner keep the look professional. Avoid overly glossy lips; a satin finish is best for camera. Always check your makeup under bright light before filming.</p><p><img src=\"https://res.cloudinary.com/dvpweiur3/image/upload/v1748247773/glamourglow/odemdzbu71anqoohdtjq.jpg\"/></p><p>esmakeupstore.com offers camera-ready products suitable for media appearances in Cameroon, ensuring you look confident on screen.</p><p><img src=\"https://source.unsplash.com/1600x900/?studio,makeup\"/></p><p>Shop now at esmakeupstore.com for TV-ready makeup essentials.</p>",
+    "content": "<p>TV makeup should look polished under bright studio lights. Choose a full-coverage foundation that blends seamlessly and set with a powder that avoids flashback. Use subtle contouring to define features for the camera.</p><p>Neutral eyeshadow and precise eyeliner keep the look clean and professional. A satin lipstick in a flattering shade completes the look. Avoid overly glossy products that can reflect light excessively.</p><p><img src=\"https://res.cloudinary.com/dvpweiur3/image/upload/v1748247773/glamourglow/odemdzbu71anqoohdtjq.jpg\"/></p><p>esmakeupstore.com offers camera-ready products suitable for media appearances in Cameroon, ensuring you look confident on screen.</p><p><img src=\"https://source.unsplash.com/1600x900/?studio,makeup\"/></p><p>Shop now at esmakeupstore.com for TV-ready makeup essentials.</p>",
     "tags": ["TV makeup", "media appearance", "Cameroon beauty"],
     "status": "published",
     "author": null,
@@ -725,7 +728,6 @@ const basePosts = [
     "metaTitle": "TV Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Get camera-ready makeup tips for TV and media appearances in Cameroon."
   },
-
   {
     "title": "How to Do a Fresh No‑Makeup Makeup Look in Cameroon",
     "slug": "how-to-do-a-fresh-no-makeup-makeup-look-in-cameroon",
@@ -739,7 +741,6 @@ const basePosts = [
     "metaTitle": "No‑Makeup Makeup Look in Cameroon | esmakeupstore.com",
     "metaDescription": "Learn how to do a fresh no‑makeup makeup look in Cameroon’s climate."
   },
-
   {
     "title": "Best Makeup Brushes and Tools in Cameroon",
     "slug": "best-makeup-brushes-and-tools-in-cameroon",
@@ -753,7 +754,6 @@ const basePosts = [
     "metaTitle": "Best Makeup Brushes in Cameroon | esmakeupstore.com",
     "metaDescription": "Find the best makeup brushes and tools for smooth, long-lasting application in Cameroon."
   },
-
   {
     "title": "Makeup for Travel in Cameroon: What to Pack",
     "slug": "makeup-for-travel-in-cameroon-what-to-pack",
@@ -767,7 +767,6 @@ const basePosts = [
     "metaTitle": "Travel Makeup Essentials for Cameroon | esmakeupstore.com",
     "metaDescription": "Discover what makeup to pack for travel in Cameroon with compact, multi-use products."
   },
-
   {
     "title": "How to Fix Cakey Makeup in Cameroon’s Heat",
     "slug": "how-to-fix-cakey-makeup-in-cameroons-heat",
@@ -781,7 +780,6 @@ const basePosts = [
     "metaTitle": "Fix Cakey Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Learn how to fix cakey makeup in Cameroon’s heat with easy touch-up techniques."
   },
-
   {
     "title": "Best Makeup for Engagement Shoots in Cameroon",
     "slug": "best-makeup-for-engagement-shoots-in-cameroon",
@@ -795,7 +793,6 @@ const basePosts = [
     "metaTitle": "Engagement Shoot Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Create a soft, romantic makeup look for engagement shoots in Cameroon."
   },
-
   {
     "title": "How to Make Matte Lipstick Comfortable in Cameroon",
     "slug": "how-to-make-matte-lipstick-comfortable-in-cameroon",
@@ -809,7 +806,6 @@ const basePosts = [
     "metaTitle": "Comfortable Matte Lipstick in Cameroon | esmakeupstore.com",
     "metaDescription": "Learn how to keep matte lipstick comfortable and smooth in Cameroon’s climate."
   },
-
   {
     "title": "Best Makeup for Muslim Brides in Cameroon",
     "slug": "best-makeup-for-muslim-brides-in-cameroon",
@@ -823,7 +819,6 @@ const basePosts = [
     "metaTitle": "Muslim Bridal Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Elegant, long-wear bridal makeup tips for Muslim brides in Cameroon."
   },
-
   {
     "title": "How to Create a Smoky Eye for Cameroon Night Events",
     "slug": "how-to-create-a-smoky-eye-for-cameroon-night-events",
@@ -837,7 +832,6 @@ const basePosts = [
     "metaTitle": "Smoky Eye Makeup for Cameroon Events | esmakeupstore.com",
     "metaDescription": "Create a flattering smoky eye look for night events in Cameroon."
   },
-
   {
     "title": "Best Makeup for Outdoor Photos in Cameroon’s Sun",
     "slug": "best-makeup-for-outdoor-photos-in-cameroons-sun",
@@ -851,7 +845,6 @@ const basePosts = [
     "metaTitle": "Outdoor Photo Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Get photo-ready makeup tips that look flawless in Cameroon’s bright sunlight."
   },
-
   {
     "title": "Best Makeup for Women in Garoua and Maroua",
     "slug": "best-makeup-for-women-in-garoua-and-maroua",
@@ -865,7 +858,6 @@ const basePosts = [
     "metaTitle": "Makeup for Garoua & Maroua | esmakeupstore.com",
     "metaDescription": "Heat-friendly makeup tips for Garoua and Maroua’s dry climate."
   },
-
   {
     "title": "Best Makeup for Oil Control Without Dryness in Cameroon",
     "slug": "best-makeup-for-oil-control-without-dryness-in-cameroon",
@@ -879,7 +871,6 @@ const basePosts = [
     "metaTitle": "Oil Control Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Control shine without drying your skin in Cameroon’s humid climate."
   },
-
   {
     "title": "How to Do a Bold Red Lip in Cameroon",
     "slug": "how-to-do-a-bold-red-lip-in-cameroon",
@@ -893,7 +884,6 @@ const basePosts = [
     "metaTitle": "Bold Red Lip in Cameroon | esmakeupstore.com",
     "metaDescription": "Learn how to apply a bold red lip that lasts in Cameroon’s climate."
   },
-
   {
     "title": "Best Makeup for Bridesmaids in Cameroon",
     "slug": "best-makeup-for-bridesmaids-in-cameroon",
@@ -907,7 +897,6 @@ const basePosts = [
     "metaTitle": "Bridesmaid Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Create coordinated, long-wear bridesmaid makeup looks for Cameroon weddings."
   },
-
   {
     "title": "How to Do Makeup for Passport Photos in Cameroon",
     "slug": "how-to-do-makeup-for-passport-photos-in-cameroon",
@@ -921,7 +910,6 @@ const basePosts = [
     "metaTitle": "Passport Photo Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Get clean, professional makeup tips for passport photos in Cameroon."
   },
-
   {
     "title": "Best Lip Gloss for Cameroon Weather",
     "slug": "best-lip-gloss-for-cameroon-weather",
@@ -935,7 +923,6 @@ const basePosts = [
     "metaTitle": "Best Lip Gloss in Cameroon | esmakeupstore.com",
     "metaDescription": "Find hydrating lip glosses that look great and feel comfortable in Cameroon’s climate."
   },
-
   {
     "title": "How to Do Makeup for Traditional Dowry Ceremonies in Cameroon",
     "slug": "how-to-do-makeup-for-traditional-dowry-ceremonies-in-cameroon",
@@ -949,7 +936,6 @@ const basePosts = [
     "metaTitle": "Traditional Ceremony Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Create elegant makeup looks for traditional dowry ceremonies in Cameroon."
   },
-
   {
     "title": "Best Makeup for Natural Hair and Makeup Pairing in Cameroon",
     "slug": "best-makeup-for-natural-hair-and-makeup-pairing-in-cameroon",
@@ -963,7 +949,6 @@ const basePosts = [
     "metaTitle": "Makeup for Natural Hair in Cameroon | esmakeupstore.com",
     "metaDescription": "Learn how to pair natural hairstyles with flattering makeup looks in Cameroon."
   },
-
   {
     "title": "How to Do Makeup for Corporate Events in Cameroon",
     "slug": "how-to-do-makeup-for-corporate-events-in-cameroon",
@@ -977,7 +962,6 @@ const basePosts = [
     "metaTitle": "Corporate Event Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Create a professional, elegant makeup look for corporate events in Cameroon."
   },
-
   {
     "title": "Best Makeup for Saturday Weddings in Cameroon",
     "slug": "best-makeup-for-saturday-weddings-in-cameroon",
@@ -991,7 +975,6 @@ const basePosts = [
     "metaTitle": "Wedding Guest Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Get long-wear wedding guest makeup tips for Cameroon’s all-day celebrations."
   },
-
   {
     "title": "Best Makeup for Sunday Brunch in Cameroon",
     "slug": "best-makeup-for-sunday-brunch-in-cameroon",
@@ -1005,7 +988,6 @@ const basePosts = [
     "metaTitle": "Sunday Brunch Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Create a fresh, light makeup look for Sunday brunch in Cameroon."
   },
-
   {
     "title": "Best Makeup for Outdoor Sports Events in Cameroon",
     "slug": "best-makeup-for-outdoor-sports-events-in-cameroon",
@@ -1019,7 +1001,6 @@ const basePosts = [
     "metaTitle": "Sports Event Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Discover sweat-resistant makeup tips for outdoor sports events in Cameroon."
   },
-
   {
     "title": "Best Makeup for Family Photos in Cameroon",
     "slug": "best-makeup-for-family-photos-in-cameroon",
@@ -1033,7 +1014,6 @@ const basePosts = [
     "metaTitle": "Family Photo Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Create soft, flattering makeup looks for family photos in Cameroon."
   },
-
   {
     "title": "Best Makeup for Influencers in Cameroon",
     "slug": "best-makeup-for-influencers-in-cameroon",
@@ -1047,7 +1027,6 @@ const basePosts = [
     "metaTitle": "Influencer Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Create social media-ready makeup looks with pro tips for Cameroonian influencers."
   },
-
   {
     "title": "Best Makeup for Skin with Hyperpigmentation in Cameroon",
     "slug": "best-makeup-for-skin-with-hyperpigmentation-in-cameroon",
@@ -1061,7 +1040,6 @@ const basePosts = [
     "metaTitle": "Makeup for Hyperpigmentation in Cameroon | esmakeupstore.com",
     "metaDescription": "Learn how to cover hyperpigmentation with natural, long-wear makeup in Cameroon."
   },
-
   {
     "title": "Best Makeup for Acne‑Prone Skin in Cameroon",
     "slug": "best-makeup-for-acne-prone-skin-in-cameroon",
@@ -1075,7 +1053,6 @@ const basePosts = [
     "metaTitle": "Makeup for Acne‑Prone Skin in Cameroon | esmakeupstore.com",
     "metaDescription": "Discover makeup tips and products for acne‑prone skin in Cameroon."
   },
-
   {
     "title": "Best Makeup for Engagement Parties in Cameroon",
     "slug": "best-makeup-for-engagement-parties-in-cameroon",
@@ -1089,7 +1066,6 @@ const basePosts = [
     "metaTitle": "Engagement Party Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Create elegant, long-wear makeup looks for engagement parties in Cameroon."
   },
-
   {
     "title": "Best Makeup for Graduation Photos in Cameroon",
     "slug": "best-makeup-for-graduation-photos-in-cameroon",
@@ -1103,7 +1079,6 @@ const basePosts = [
     "metaTitle": "Graduation Photo Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Get clean, photo-friendly makeup tips for graduation portraits in Cameroon."
   },
-
   {
     "title": "Makeup for Job Interviews in Yaoundé: Professional Look",
     "slug": "makeup-for-job-interviews-in-yaounde-professional-look",
@@ -1117,7 +1092,6 @@ const basePosts = [
     "metaTitle": "Interview Makeup in Yaoundé | esmakeupstore.com",
     "metaDescription": "Professional makeup tips for job interviews in Yaoundé."
   },
-
   {
     "title": "Best Makeup for Market Days in Cameroon",
     "slug": "best-makeup-for-market-days-in-cameroon",
@@ -1131,7 +1105,6 @@ const basePosts = [
     "metaTitle": "Market Day Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Light, sweat-resistant makeup tips for outdoor market days in Cameroon."
   },
-
   {
     "title": "Best Makeup for TV Presenters in Cameroon",
     "slug": "best-makeup-for-tv-presenters-in-cameroon",
@@ -1145,7 +1118,6 @@ const basePosts = [
     "metaTitle": "TV Presenter Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Professional, camera-ready makeup tips for TV presenters in Cameroon."
   },
-
   {
     "title": "Best Makeup for Makeup Artists in Cameroon: Pro Kit Basics",
     "slug": "best-makeup-for-makeup-artists-in-cameroon-pro-kit-basics",
@@ -1159,7 +1131,6 @@ const basePosts = [
     "metaTitle": "Pro Makeup Kit in Cameroon | esmakeupstore.com",
     "metaDescription": "Build a professional makeup kit tailored to Cameroon’s climate and diverse skin tones."
   },
-
   {
     "title": "Best Makeup for Gym‑to‑Work Days in Cameroon",
     "slug": "best-makeup-for-gym-to-work-days-in-cameroon",
@@ -1173,7 +1144,6 @@ const basePosts = [
     "metaTitle": "Gym‑to‑Work Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Lightweight, sweat-resistant makeup tips for gym-to-work days in Cameroon."
   },
-
   {
     "title": "Best Makeup for Night Weddings in Cameroon",
     "slug": "best-makeup-for-night-weddings-in-cameroon",
@@ -1187,7 +1157,6 @@ const basePosts = [
     "metaTitle": "Night Wedding Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Create rich, elegant makeup looks for night weddings in Cameroon."
   },
-
   {
     "title": "Best Makeup for Day Weddings in Cameroon",
     "slug": "best-makeup-for-day-weddings-in-cameroon",
@@ -1201,7 +1170,6 @@ const basePosts = [
     "metaTitle": "Day Wedding Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Soft, radiant makeup tips for daytime weddings in Cameroon."
   },
-
   {
     "title": "Makeup for Outdoor Church Crusades in Cameroon",
     "slug": "makeup-for-outdoor-church-crusades-in-cameroon",
@@ -1215,13 +1183,12 @@ const basePosts = [
     "metaTitle": "Church Crusade Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Long-wear, respectful makeup tips for outdoor church crusades in Cameroon."
   },
-
   {
     "title": "Best Makeup for Cultural Dancers in Cameroon",
     "slug": "best-makeup-for-cultural-dancers-in-cameroon",
     "excerpt": "Durable makeup that stays vibrant during dance performances.",
     "coverImage": "https://res.cloudinary.com/dvpweiur3/image/upload/v1748247970/glamourglow/bt4uhftifsa2gpe9azyv.jpg",
-    "content": "<p>Cultural dance performances require makeup that is vibrant and long lasting. Use a strong base with full coverage and set with powder to handle sweat. Bold eye makeup and vivid lip colors enhance facial expressions on stage.</p><p>Waterproof eyeliner and mascara are essential to prevent smudging. A setting spray helps lock everything in place during energetic performances.</p><p><img src=\"https://res.cloudinary.com/dvpweiur3/image/upload/v1748247773/glamourglow/odemdzbu71anqoohdtjq.jpg\"/></p><p>esmakeupstore.com offers performance-ready products that maintain color intensity and durability for dancers across Cameroon.</p><p><img src=\"https://source.unsplash.com/1600x900/?dance,makeup\"/></p><p>Shop now at esmakeupstore.com for performance makeup essentials.</p>",
+    "content": "<p>Cultural dance performances require makeup that is vibrant and long lasting. Use a strong base with full coverage and set well with powder to handle sweat. Bold eye makeup and vivid lip colors enhance facial expressions on stage.</p><p>Waterproof eyeliner and mascara are essential to prevent smudging. A setting spray helps lock everything in place during energetic performances.</p><p><img src=\"https://res.cloudinary.com/dvpweiur3/image/upload/v1748247773/glamourglow/odemdzbu71anqoohdtjq.jpg\"/></p><p>esmakeupstore.com offers performance-ready products that maintain color intensity and durability for dancers across Cameroon.</p><p><img src=\"https://source.unsplash.com/1600x900/?dance,makeup\"/></p><p>Shop now at esmakeupstore.com for performance makeup essentials.</p>",
     "tags": ["dance makeup", "performance makeup", "Cameroon culture"],
     "status": "published",
     "author": null,
@@ -1229,7 +1196,6 @@ const basePosts = [
     "metaTitle": "Performance Makeup for Dancers in Cameroon | esmakeupstore.com",
     "metaDescription": "Durable, vibrant makeup tips for cultural dancers in Cameroon."
   },
-
   {
     "title": "Best Makeup for Travel to Europe from Cameroon",
     "slug": "best-makeup-for-travel-to-europe-from-cameroon",
@@ -1243,7 +1209,6 @@ const basePosts = [
     "metaTitle": "Travel Makeup from Cameroon to Europe | esmakeupstore.com",
     "metaDescription": "Pack the right makeup for travel from Cameroon to Europe with climate-smart essentials."
   },
-
   {
     "title": "Best Makeup for Rainy Season Commuters in Cameroon",
     "slug": "best-makeup-for-rainy-season-commuters-in-cameroon",
@@ -1257,7 +1222,6 @@ const basePosts = [
     "metaTitle": "Rainy Season Commuter Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Water-resistant makeup tips for commuting during Cameroon’s rainy season."
   },
-
   {
     "title": "Best Makeup for Natural Lighting in Cameroon",
     "slug": "best-makeup-for-natural-lighting-in-cameroon",
@@ -1271,7 +1235,6 @@ const basePosts = [
     "metaTitle": "Natural Light Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Makeup tips that look best in natural light and daylight photos in Cameroon."
   },
-
   {
     "title": "Best Makeup for First Dates in Cameroon",
     "slug": "best-makeup-for-first-dates-in-cameroon",
@@ -1285,7 +1248,6 @@ const basePosts = [
     "metaTitle": "First Date Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Create a soft, romantic first-date makeup look in Cameroon."
   },
-
   {
     "title": "Best Makeup for Brides in Douala",
     "slug": "best-makeup-for-brides-in-douala",
@@ -1299,7 +1261,6 @@ const basePosts = [
     "metaTitle": "Bridal Makeup in Douala | esmakeupstore.com",
     "metaDescription": "Humidity-resistant bridal makeup tips for Douala weddings in Cameroon."
   },
-
   {
     "title": "Best Makeup for Brides in Yaoundé",
     "slug": "best-makeup-for-brides-in-yaounde",
@@ -1313,7 +1274,6 @@ const basePosts = [
     "metaTitle": "Bridal Makeup in Yaoundé | esmakeupstore.com",
     "metaDescription": "Elegant bridal makeup tips for Yaoundé weddings in Cameroon."
   },
-
   {
     "title": "Best Makeup for Brides in Buea",
     "slug": "best-makeup-for-brides-in-buea",
@@ -1327,7 +1287,6 @@ const basePosts = [
     "metaTitle": "Bridal Makeup in Buea | esmakeupstore.com",
     "metaDescription": "Bridal makeup tips for Buea weddings with soft glam and long wear."
   },
-
   {
     "title": "Best Makeup for Brides in Bamenda",
     "slug": "best-makeup-for-brides-in-bamenda",
@@ -1341,7 +1300,6 @@ const basePosts = [
     "metaTitle": "Bridal Makeup in Bamenda | esmakeupstore.com",
     "metaDescription": "Timeless bridal makeup tips for Bamenda weddings in Cameroon."
   },
-
   {
     "title": "Best Makeup for Brides in Kribi",
     "slug": "best-makeup-for-brides-in-kribi",
@@ -1355,7 +1313,6 @@ const basePosts = [
     "metaTitle": "Bridal Makeup in Kribi | esmakeupstore.com",
     "metaDescription": "Beach-friendly bridal makeup tips for Kribi weddings in Cameroon."
   },
-
   {
     "title": "Best Makeup for Brides in Limbe",
     "slug": "best-makeup-for-brides-in-limbe",
@@ -1369,7 +1326,6 @@ const basePosts = [
     "metaTitle": "Bridal Makeup in Limbe | esmakeupstore.com",
     "metaDescription": "Humidity-resistant bridal makeup tips for Limbe weddings in Cameroon."
   },
-
   {
     "title": "Best Makeup for Brides in Bafoussam",
     "slug": "best-makeup-for-brides-in-bafoussam",
@@ -1383,7 +1339,6 @@ const basePosts = [
     "metaTitle": "Bridal Makeup in Bafoussam | esmakeupstore.com",
     "metaDescription": "Elegant bridal makeup tips for Bafoussam weddings in Cameroon."
   },
-
   {
     "title": "Best Makeup for Brides in Garoua",
     "slug": "best-makeup-for-brides-in-garoua",
@@ -1397,7 +1352,6 @@ const basePosts = [
     "metaTitle": "Bridal Makeup in Garoua | esmakeupstore.com",
     "metaDescription": "Heat-friendly bridal makeup tips for Garoua weddings in Cameroon."
   },
-
   {
     "title": "Best Makeup for Brides in Maroua",
     "slug": "best-makeup-for-brides-in-maroua",
@@ -1411,7 +1365,6 @@ const basePosts = [
     "metaTitle": "Bridal Makeup in Maroua | esmakeupstore.com",
     "metaDescription": "Bridal makeup tips for Maroua weddings in Cameroon’s dry climate."
   },
-
   {
     "title": "Best Makeup for Brides in Ngaoundéré",
     "slug": "best-makeup-for-brides-in-ngaoundere",
@@ -1425,7 +1378,6 @@ const basePosts = [
     "metaTitle": "Bridal Makeup in Ngaoundéré | esmakeupstore.com",
     "metaDescription": "Elegant bridal makeup tips for Ngaoundéré weddings in Cameroon."
   },
-
   {
     "title": "Best Makeup for Brides in Ebolowa",
     "slug": "best-makeup-for-brides-in-ebolowa",
@@ -1439,7 +1391,6 @@ const basePosts = [
     "metaTitle": "Bridal Makeup in Ebolowa | esmakeupstore.com",
     "metaDescription": "Soft glam bridal makeup tips for Ebolowa weddings in Cameroon."
   },
-
   {
     "title": "Best Makeup for Brides in Bertoua",
     "slug": "best-makeup-for-brides-in-bertoua",
@@ -1453,7 +1404,6 @@ const basePosts = [
     "metaTitle": "Bridal Makeup in Bertoua | esmakeupstore.com",
     "metaDescription": "Durable, elegant bridal makeup tips for Bertoua weddings in Cameroon."
   },
-
   {
     "title": "Best Makeup for Brides in Buea Outdoor Venues",
     "slug": "best-makeup-for-brides-in-buea-outdoor-venues",
@@ -1467,13 +1417,12 @@ const basePosts = [
     "metaTitle": "Outdoor Bridal Makeup in Buea | esmakeupstore.com",
     "metaDescription": "Outdoor bridal makeup tips for Buea weddings in Cameroon."
   },
-
   {
     "title": "Makeup for Traditional Dances in Cameroon",
     "slug": "makeup-for-traditional-dances-in-cameroon",
     "excerpt": "Bold, durable makeup ideas for traditional dance performances.",
     "coverImage": "https://res.cloudinary.com/dvpweiur3/image/upload/v1748211626/glamourglow/dhkwymdwlflypgbqxl7q.jpg",
-    "content": "<p>Traditional dances require makeup that is bold and long lasting. Use a strong base with full coverage and set well with powder. Choose bright or deep lip colors that stand out on stage and enhance facial expression.</p><p>Eye makeup should be defined, using rich eyeshadow colors and waterproof liner. A setting spray ensures everything stays in place during energetic performances.</p><p><img src=\"https://res.cloudinary.com/dvpweiur3/image/upload/v1748211595/glamourglow/qhtpofp3raqyzomhjwrf.jpg\"/></p><p>esmakeupstore.com offers performance-ready products perfect for traditional dancers in Cameroon.</p><p><img src=\"https://source.unsplash.com/1600x900/?traditional,dance,makeup\"/></p><p>Shop now at esmakeupstore.com for performance makeup essentials.</p>",
+    "content": "<p>Traditional dances require makeup that is bold and long lasting. Use a strong base with full coverage and set well with powder to handle sweat. Bold eye makeup and vivid lip colors enhance facial expressions on stage.</p><p>Waterproof eyeliner and mascara are essential to prevent smudging. A setting spray helps lock everything in place during energetic performances.</p><p><img src=\"https://res.cloudinary.com/dvpweiur3/image/upload/v1748211595/glamourglow/qhtpofp3raqyzomhjwrf.jpg\"/></p><p>esmakeupstore.com offers performance-ready products perfect for traditional dancers in Cameroon.</p><p><img src=\"https://source.unsplash.com/1600x900/?traditional,dance,makeup\"/></p><p>Shop now at esmakeupstore.com for performance makeup essentials.</p>",
     "tags": ["traditional dance makeup", "Cameroon culture", "performance makeup"],
     "status": "published",
     "author": null,
@@ -1481,7 +1430,6 @@ const basePosts = [
     "metaTitle": "Traditional Dance Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Bold, durable makeup tips for traditional dance performances in Cameroon."
   },
-
   {
     "title": "Best Makeup for Cultural Festivals in Cameroon",
     "slug": "best-makeup-for-cultural-festivals-in-cameroon",
@@ -1495,7 +1443,6 @@ const basePosts = [
     "metaTitle": "Cultural Festival Makeup in Cameroon | esmakeupstore.com",
     "metaDescription": "Festival-ready makeup tips with bold colors and long wear for Cameroon cultural events."
   },
-
   {
     "title": "Best Makeup for Graduation Parties in Cameroon",
     "slug": "best-makeup-for-graduation-parties-in-cameroon",
@@ -1510,31 +1457,88 @@ const basePosts = [
     "metaDescription": "Celebrate in style with graduation party makeup tips for Cameroon."
   }
 ];
+// =========================================================================
 
+// 4. Main Execution Function
 const run = async () => {
   try {
-    await mongoose.connect(MONGODB_URI);
-    console.log("MongoDB connected");
+    console.log("Connecting to MongoDB...");
+    await mongoose.connect(process.env.MONGODB_URI);
+    console.log("✅ MongoDB connected");
+    console.log(`\n--- Starting Automated Blog Seeding (${basePosts.length} posts) ---`);
 
     for (const post of basePosts) {
+      console.log(`\nProcessing: "${post.title}"`);
+
+      // Find new images online
+      const foundImageUrls = await findBlogImages(post.title);
+      let coverUrl = post.coverImage; 
+      let contentUrl = post.coverImage;
+
+      if (foundImageUrls.length > 0) {
+        try {
+          // Upload the 1st image for the Cover
+          const coverUpload = await cloudinary.uploader.upload(foundImageUrls[0], {
+            folder: 'blog_images',
+          });
+          coverUrl = coverUpload.secure_url;
+          console.log(`   ✅ Cover image uploaded`);
+
+          // Upload the 2nd image for the Content Body (if it found one, else reuse cover)
+          if (foundImageUrls[1]) {
+            const contentUpload = await cloudinary.uploader.upload(foundImageUrls[1], {
+              folder: 'blog_images',
+            });
+            contentUrl = contentUpload.secure_url;
+            console.log(`   ✅ Content image uploaded`);
+          } else {
+            contentUrl = coverUrl; // Fallback
+          }
+        } catch (uploadError) {
+          console.error(`   ⚠️ Cloudinary upload failed:`, uploadError.message);
+        }
+      } else {
+        console.log(`   ❌ No images found online for this post.`);
+      }
+
+      // 1. Set the new cover image
+      post.coverImage = coverUrl;
+
+      // 2. Magic Regex: Find ANY old <img> tag in the HTML content and replace the src with our new Cloudinary image!
+      post.content = post.content.replace(
+        /<img[^>]+src="([^">]+)"[^>]*>/g, 
+        `<img src="${contentUrl}" style="max-width:100%; height:auto; border-radius:8px; margin: 20px 0;" alt="${post.title}" />`
+      );
+
+      // 3. Calculate reading time
+      post.readingTime = readingTime(post.content);
+
+      // 4. Save to Database
       await BlogModel.updateOne(
         { slug: post.slug },
-        {
-          $set: {
-            ...post,
-            readingTime: readingTime(post.content)
-          }
-        },
+        { $set: post },
         { upsert: true }
       );
+      
+      console.log(`   ✨ Successfully saved to database.`);
+
+      // Add a 1.5-second delay to respect Serper and Cloudinary API limits
+      await new Promise(resolve => setTimeout(resolve, 1500));
     }
 
-    console.log("✅ Seed complete");
-    process.exit(0);
+    console.log("\n---------------------------------------------------------");
+    console.log("✅ Seed complete - All blog posts updated with new API images!");
+    console.log(`📝 Total posts processed: ${basePosts.length}`);
+    console.log("---------------------------------------------------------");
+    
   } catch (err) {
-    console.error(err);
-    process.exit(1);
+    console.error("❌ Fatal Error:", err.message);
+  } finally {
+    await mongoose.disconnect();
+    console.log("Disconnected from database.");
+    process.exit(0);
   }
 };
 
+// Execute
 run();

@@ -5,7 +5,7 @@ dotenv.config();
 
 const RESEND_API_KEY = process.env.RESEND_API ?? "";
 const DEFAULT_FROM =
-  process.env.RESEND_SENDER ?? "EssentialistMakeupStore <onboarding@resend.dev>";
+  process.env.RESEND_SENDER ?? "Essentialist Makeup Store <onboarding@resend.dev>";
 
 if (!RESEND_API_KEY) {
   console.warn("Provide RESEND_API in the .env file to enable Resend emails.");
